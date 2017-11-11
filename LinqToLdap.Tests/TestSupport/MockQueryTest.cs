@@ -1,0 +1,101 @@
+﻿using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
+using System.Linq;
+using LinqToLdap.Collections;
+using LinqToLdap.TestSupport;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SharpTestsEx;
+
+namespace LinqToLdap.Tests.TestSupport
+{
+    [TestClass]
+    public class MockQueryTest
+    {
+        [TestMethod]
+        public void ToList_Query_Returns_Result()
+        {
+            //arrange
+            var list = new List<string>();
+            var context = new Mock<IDirectoryContext>();
+            var query = new MockQuery<IDirectoryAttributes>(new List<object>{list});
+            context.Setup(x => x.Query("test", SearchScope.Subtree, null, null, null))
+                .Returns(query);
+
+            //act
+            var result = context.Object.Query("test")
+                .Where(x => Filter.Equal(x, "x", "y", false))
+                .Select(x => x.GetString("whatever"))
+                .ToList();
+
+            //assert
+            query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(1);
+            result.Should().Be.SameInstanceAs(list);
+        }
+
+        [TestMethod]
+        public void MultipleExecutions_Query_Returns_Result()
+        {
+            //arrange
+            var array = new[]{"one"};
+            var item = "two";
+            var context = new Mock<IDirectoryContext>();
+            var query = new MockQuery<IDirectoryAttributes>(new List<object>{array, item});
+            context.Setup(x => x.Query("test", SearchScope.Subtree, null, null, null))
+                .Returns(query);
+
+            //act
+            var result1 = context.Object.Query("test")
+                .Where(x => Filter.Equal(x, "x", "y", false))
+                .Select(x => x.GetString("whatever"))
+                .ToArray();
+
+            var result2 = context.Object.Query("test")
+                .Select(x => x.GetString("whatever"))
+                .FirstOrDefault();
+            
+            query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(2);
+            query.MockProvider.ExecutedExpressions[0].ToString()
+                .Should().Contain("Where")
+                .And.Not.Contain("FirstOrDefault");
+            query.MockProvider.ExecutedExpressions[1].ToString()
+                .Should().Contain("FirstOrDefault")
+                .And.Not.Contain("Where");
+            result1.Should().Have.SameSequenceAs(array);
+            result2.Should().Be.EqualTo(item);
+        }
+
+        [TestMethod]
+        public void PredicateBuilder_Query_Returns_Result()
+        {
+            //arrange
+            var array = new[] { "one" };
+            var context = new Mock<IDirectoryContext>();
+            var query = new MockQuery<IDirectoryAttributes>(new List<object> { array });
+            context.Setup(x => x.Query("test", SearchScope.Subtree, null, null, null))
+                .Returns(query);
+            var expression = PredicateBuilder.Create<IDirectoryAttributes>()
+                .And(x => Filter.Equal(x, "x", "y", false))
+                .Or(x => Filter.Equal(x, "a", "b", true));
+
+            //act
+            var result = context.Object.Query("test")
+                .Where(expression)
+                .Select(x => x.GetString("whatever"))
+                .ToArray();
+
+            query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(1);
+            query.MockProvider.ExecutedExpressions[0].ToString()
+                .Should().Contain("Equal(x, \"x\", \"y\", False)")
+#if NET35
+                .And.Contain(" || ")
+#else
+                .And.Contain("OrElse")
+#endif
+                .And.Contain("Equal(x, \"a\", \"b\", True)")
+                .And.Contain("x => x.GetString(\"whatever\")");
+
+            result.Should().Have.SameSequenceAs(array);
+        }
+    }
+}

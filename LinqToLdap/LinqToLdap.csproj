@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{756E3C02-5C35-4956-8D31-558BB4F8C4D1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LinqToLdap</RootNamespace>
+    <AssemblyName>LinqToLdap</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\LinqToLdap.XML</DocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>linqtoldap.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'NET35'">
+    <OutputPath>bin\NET35\</OutputPath>
+    <DefineConstants>TRACE;NET35</DefineConstants>
+    <DocumentationFile>bin\NET35\LinqToLdap.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'NET40'">
+    <OutputPath>bin\NET40\</OutputPath>
+    <DefineConstants>TRACE;NET40</DefineConstants>
+    <DocumentationFile>bin\NET40\LinqToLdap.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'NET45'">
+    <OutputPath>bin\NET45\</OutputPath>
+    <DefineConstants>TRACE;NET45</DefineConstants>
+    <DocumentationFile>bin\NET45\LinqToLdap.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET35|AnyCPU'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET40|AnyCPU'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET45|AnyCPU'">
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NET46|AnyCPU'">
+    <OutputPath>bin\NET46\</OutputPath>
+    <DefineConstants>TRACE;NET45</DefineConstants>
+    <DocumentationFile>bin\NET46\LinqToLdap.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0" Condition="'$(Configuration)' == 'Debug'" />
+    <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0" Condition="'$(Configuration)' == 'NET40'" />
+    <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0" Condition="'$(Configuration)' == 'NET45'" />
+    <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0" Condition="'$(Configuration)' == 'NET46'" />
+    <Reference Include="System.DirectoryServices.Protocols, Version=2.0.0.0" Condition="'$(Configuration)' == 'NET35'" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\IVirtualListView.cs" />
+    <Compile Include="Collections\SafeDictionary.cs" />
+    <Compile Include="Collections\SafeList.cs" />
+    <Compile Include="Collections\DirectoryAttributes.cs" />
+    <Compile Include="Collections\IDirectoryAttributes.cs" />
+    <Compile Include="Collections\ILdapPage.cs" />
+    <Compile Include="Collections\LdapPage.cs" />
+    <Compile Include="Collections\Nothing.cs" />
+    <Compile Include="Collections\OriginalValuesCollection.cs" />
+    <Compile Include="Collections\SearchResponseEnumerable.cs" />
+    <Compile Include="Collections\SerializableKeyValuePair.cs" />
+    <Compile Include="Collections\VirtualListView.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="EventListeners\IEventListener.cs" />
+    <Compile Include="EventListeners\IPostAddEventListener.cs" />
+    <Compile Include="EventListeners\IPostDeleteEventListener.cs" />
+    <Compile Include="EventListeners\IPostUpdateEventListener.cs" />
+    <Compile Include="EventListeners\IPreAddEventListener.cs" />
+    <Compile Include="EventListeners\IPreDeleteEventListener.cs" />
+    <Compile Include="EventListeners\IPreUpdateEventListener.cs" />
+    <Compile Include="EventListeners\ListenerPostArgs.cs" />
+    <Compile Include="EventListeners\ListenerPreArgs.cs" />
+    <Compile Include="Helpers\InternalTuple.cs" />
+    <Compile Include="Helpers\TypeSystem.cs" />
+    <Compile Include="ILdapConfiguration.cs" />
+    <Compile Include="IPooledLdapConnectionFactory.cs" />
+    <Compile Include="LdapConnectionExtensions.cs" />
+    <Compile Include="LdapConnectionFactory.cs" />
+    <Compile Include="ConnectionFactoryBase.cs" />
+    <Compile Include="DirectoryContext.cs" />
+    <Compile Include="DirectoryQuery.cs" />
+    <Compile Include="DirectoryQueryProvider.cs" />
+    <Compile Include="Exceptions\FilterException.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Filter.cs" />
+    <Compile Include="Helpers\DnParser.cs" />
+    <Compile Include="ILdapConnectionFactoryConfiguration.cs" />
+    <Compile Include="IPooledConnectionFactoryConfiguration.cs" />
+    <Compile Include="Logging\SimpleTextLogger.cs" />
+    <Compile Include="Logging\ILinqToLdapLogger.cs" />
+    <Compile Include="Logging\LoggingExtensions.cs" />
+    <Compile Include="Logging\ObjectDumper.cs" />
+    <Compile Include="Logging\TraceTextWriter.cs" />
+    <Compile Include="Mapping\AttributeClassMap.cs" />
+    <Compile Include="Mapping\ClassMapMapMethods.cs" />
+    <Compile Include="Mapping\CustomPropertyMappingBuilder.cs" />
+    <Compile Include="Mapping\DistinguishedNameAttribute.cs" />
+    <Compile Include="Mapping\DirectoryAttributeAttribute.cs" />
+    <Compile Include="Mapping\DirectoryObjectBase.cs" />
+    <Compile Include="Mapping\DirectorySchemaAttribute.cs" />
+    <Compile Include="ILdapConnectionFactory.cs" />
+    <Compile Include="Mapping\DynamicObjectMapping.cs" />
+    <Compile Include="Mapping\ICustomPropertyMapper.cs" />
+    <Compile Include="Mapping\IDirectoryMapper.cs" />
+    <Compile Include="Mapping\IDirectoryObject.cs" />
+    <Compile Include="Mapping\IPropertyMapper.cs" />
+    <Compile Include="Mapping\IPropertyMappingBuilder.cs" />
+    <Compile Include="LdapConfiguration.cs" />
+    <Compile Include="Mapping\PropertyMappingBuilder.cs" />
+    <Compile Include="Exceptions\MappingException.cs" />
+    <Compile Include="Exceptions\MissingConstructorException.cs" />
+    <Compile Include="Helpers\DelegateBuilder.cs" />
+    <Compile Include="IDirectoryContext.cs" />
+    <Compile Include="Mapping\AnonymousObjectMapping.cs" />
+    <Compile Include="Mapping\AutoClassMap.cs" />
+    <Compile Include="Mapping\ClassMap.cs" />
+    <Compile Include="Mapping\DirectoryMapper.cs" />
+    <Compile Include="Mapping\IClassMap.cs" />
+    <Compile Include="Mapping\IObjectMapping.cs" />
+    <Compile Include="Mapping\IPropertyMapping.cs" />
+    <Compile Include="Mapping\ObjectMapping.cs" />
+    <Compile Include="Mapping\PropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappingBuilders\DateTimePropertyMappingBuilder.cs" />
+    <Compile Include="Mapping\PropertyMappingBuilders\IDateTimePropertyMappingBuilder.cs" />
+    <Compile Include="Mapping\PropertyMappingBuilders\IDirectoryValueConversionMapper.cs" />
+    <Compile Include="Mapping\PropertyMappingGeneric.cs" />
+    <Compile Include="Mapping\PropertyMappings\BooleanPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\ByteArrayPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\ByteArrayArrayPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\ByteArrayCollectionPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\CatchAllPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\CustomPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\DateArrayPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\DateCollectionPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\SecurityIdentifierCollectionPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\SecurityIdentifierArrayPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\X509Certificate2ArrayPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\X509Certificate2CollectionPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\X509Certificate2PropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\DatePropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\EnumPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\GuidPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\StringCollectionPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\NumericPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\PropertyMappingArguments.cs" />
+    <Compile Include="Mapping\PropertyMappings\SecurityIdentifierPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\StringArrayPropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyMappings\StringPropertyMapping.cs" />
+    <Compile Include="Mapping\ServerObjectMapping.cs" />
+    <Compile Include="Mapping\StandardObjectMapping.cs" />
+    <Compile Include="Mapping\SubClassMap.cs" />
+    <Compile Include="OC.cs" />
+    <Compile Include="PooledLdapConnectionFactory.cs" />
+    <Compile Include="PredicateBuilder.cs" />
+    <Compile Include="QueryableExtensions.cs" />
+    <Compile Include="QueryCommands\AnyQueryCommand.cs" />
+    <Compile Include="QueryCommands\CountQueryCommand.cs" />
+    <Compile Include="QueryCommands\FirstOrDefaultQueryCommand.cs" />
+    <Compile Include="QueryCommands\GetRequestCommand.cs" />
+    <Compile Include="QueryCommands\IQueryCommand.cs" />
+    <Compile Include="QueryCommands\IQueryCommandFactory.cs" />
+    <Compile Include="QueryCommands\Options\DynamicQueryCommandOptions.cs" />
+    <Compile Include="QueryCommands\Options\ISortingOptions.cs" />
+    <Compile Include="QueryCommands\Options\SortingOptions.cs" />
+    <Compile Include="QueryCommands\Options\IPagingOptions.cs" />
+    <Compile Include="QueryCommands\Options\IQueryCommandOptions.cs" />
+    <Compile Include="QueryCommands\Options\ListAttributesQueryCommandOptions.cs" />
+    <Compile Include="QueryCommands\Options\PagingOptions.cs" />
+    <Compile Include="QueryCommands\Options\ProjectionQueryCommandOptions.cs" />
+    <Compile Include="QueryCommands\Options\QueryCommandOptions.cs" />
+    <Compile Include="QueryCommands\Options\StandardQueryCommandOptions.cs" />
+    <Compile Include="QueryCommands\QueryCommand.cs" />
+    <Compile Include="QueryCommands\QueryCommandFactory.cs" />
+    <Compile Include="QueryCommands\SingleOrDefaultQueryCommand.cs" />
+    <Compile Include="QueryCommands\SingleQueryCommand.cs" />
+    <Compile Include="QueryCommands\StandardQueryCommand.cs" />
+    <Compile Include="Collections\ReadOnlyDictionary.cs" />
+    <Compile Include="TestSupport\MockQuery.cs" />
+    <Compile Include="TestSupport\MockQueryProvider.cs" />
+    <Compile Include="Transformers\DynamicResultTransformer.cs" />
+    <Compile Include="Transformers\IResultTransformer.cs" />
+    <Compile Include="Transformers\RawEntryResultTransformer.cs" />
+    <Compile Include="Transformers\ProjectionResultTransformer.cs" />
+    <Compile Include="Transformers\ResultTransformer.cs" />
+    <Compile Include="SelectProjection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryProvider.cs" />
+    <Compile Include="Visitors\BooleanReducer.cs" />
+    <Compile Include="Visitors\DynamicSelectProjector.cs" />
+    <Compile Include="Visitors\EnumerableVisitor.cs" />
+    <Compile Include="Visitors\Evaluator.cs" />
+    <Compile Include="Visitors\ExpressionVisitor.cs" />
+    <Compile Include="Visitors\BooleanRewriter.cs" />
+    <Compile Include="Visitors\MemberVisitor.cs" />
+    <Compile Include="Visitors\Nominator.cs" />
+    <Compile Include="Visitors\NullVisitor.cs" />
+    <Compile Include="Visitors\QueryTranslator.cs" />
+    <Compile Include="Visitors\SelectProjector.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="linqtoldap.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="linqtoldap.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
