@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
@@ -19,12 +9,13 @@ namespace LinqToLdap.Mapping.PropertyMappings
     internal class X509Certificate2ArrayPropertyMapping<T> : PropertyMappingGeneric<T> where T : class
     {
         private readonly bool _isX5092;
+
         public X509Certificate2ArrayPropertyMapping(PropertyMappingArguments<T> arguments)
             : base(arguments)
         {
             _isX5092 = PropertyType.GetElementType() == typeof(X509Certificate2);
         }
-        
+
         public override string FormatValueToFilter(object value)
         {
             if (!(value is X509Certificate))
@@ -65,9 +56,9 @@ namespace LinqToLdap.Mapping.PropertyMappings
             {
                 if (_isX5092)
                 {
-                    X509Certificate2[] certs = Array.ConvertAll(value.GetValues(typeof (byte[])),
+                    X509Certificate2[] certs = Array.ConvertAll(value.GetValues(typeof(byte[])),
                                                                 obj =>
-                                                                new X509Certificate2((byte[]) obj));
+                                                                new X509Certificate2((byte[])obj));
                     return certs;
                 }
                 else

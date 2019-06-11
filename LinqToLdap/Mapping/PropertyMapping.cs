@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.Mapping
@@ -23,7 +13,7 @@ namespace LinqToLdap.Mapping
             PropertyType = propertyType;
             PropertyName = propertyName;
             AttributeName = attributeName;
-            
+
             IsNullable = DetermineIfNullable();
             UnderlyingType = IsNullable && PropertyType.IsValueType
                                   ? Nullable.GetUnderlyingType(PropertyType)
@@ -32,7 +22,6 @@ namespace LinqToLdap.Mapping
             DefaultValue = GetType()
                 .GetMethod("GetDefault")
                 .MakeGenericMethod(PropertyType).Invoke(this, null);
-
         }
 
         private bool DetermineIfNullable()
@@ -52,8 +41,9 @@ namespace LinqToLdap.Mapping
 
         public string PropertyName { get; private set; }
         public string AttributeName { get; private set; }
-        
+
         public abstract object GetValue(object instance);
+
         public abstract void SetValue(object instance, object value);
 
         public virtual object Default()
@@ -64,6 +54,7 @@ namespace LinqToLdap.Mapping
         public abstract object FormatValueFromDirectory(DirectoryAttribute value, string dn);
 
         public abstract string FormatValueToFilter(object value);
+
         public abstract DirectoryAttributeModification GetDirectoryAttributeModification(object instance);
 
         public virtual DirectoryAttribute GetDirectoryAttribute(object instance)
@@ -86,7 +77,7 @@ namespace LinqToLdap.Mapping
 
         public TType GetDefault<TType>()
         {
-            return default(TType);
+            return default;
         }
     }
 }

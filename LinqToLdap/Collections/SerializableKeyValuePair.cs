@@ -14,7 +14,7 @@ namespace LinqToLdap.Collections
         /// <summary>
         /// Default parameterless constructor.
         /// </summary>
-        public SerializableKeyValuePair(){}
+        public SerializableKeyValuePair() { }
 
         /// <summary>
         /// Default constructor with initial values.

@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -16,7 +6,6 @@ namespace LinqToLdap.Mapping
 {
     internal class ServerObjectMapping : IObjectMapping
     {
-
         public Type Type => GetType();
 
         public bool IsForAnonymousType => false;
@@ -32,7 +21,7 @@ namespace LinqToLdap.Mapping
         public bool HasCatchAllMapping => false;
         public bool IncludeObjectClasses => false;
 
-#if NET45
+#if (!NET35 && !NET40)
         public System.Collections.ObjectModel.ReadOnlyDictionary<string, string> Properties => new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(new Dictionary<string, string>());
 #else
         public Collections.ReadOnlyDictionary<string, string> Properties => new Collections.ReadOnlyDictionary<string, string>(new Dictionary<string, string>());

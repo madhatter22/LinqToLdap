@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace LinqToLdap.Visitors
 {
@@ -34,8 +24,8 @@ namespace LinqToLdap.Visitors
             if (b.NodeType == ExpressionType.AndAlso)
             {
                 if (b.Left.NodeType == ExpressionType.Constant &&
-                    b.Right.NodeType == ExpressionType.Constant && 
-                    b.Left.Type == typeof(bool) && 
+                    b.Right.NodeType == ExpressionType.Constant &&
+                    b.Left.Type == typeof(bool) &&
                     b.Right.Type == typeof(bool))
                 {
                     _requiresEvaluation = true;
@@ -54,7 +44,7 @@ namespace LinqToLdap.Visitors
                         return Visit(b.Left);
                     }
                 }
-                if (b.Left.NodeType == ExpressionType.Constant && b.Left.Type == typeof (bool))
+                if (b.Left.NodeType == ExpressionType.Constant && b.Left.Type == typeof(bool))
                 {
                     var value = (b.Left as ConstantExpression).Value;
                     if (false.Equals(value))
@@ -66,7 +56,7 @@ namespace LinqToLdap.Visitors
                         return Visit(b.Right);
                     }
                 }
-                else if (b.Right.NodeType == ExpressionType.Constant && b.Right.Type == typeof (bool))
+                else if (b.Right.NodeType == ExpressionType.Constant && b.Right.Type == typeof(bool))
                 {
                     var value = (b.Right as ConstantExpression).Value;
                     if (false.Equals(value))

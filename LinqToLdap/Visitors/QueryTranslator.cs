@@ -1,13 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
+using LinqToLdap.Mapping;
+using LinqToLdap.QueryCommands;
+using LinqToLdap.QueryCommands.Options;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,10 +9,6 @@ using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using LinqToLdap.Exceptions;
-using LinqToLdap.Mapping;
-using LinqToLdap.QueryCommands;
-using LinqToLdap.QueryCommands.Options;
 
 namespace LinqToLdap.Visitors
 {
@@ -113,8 +103,8 @@ namespace LinqToLdap.Visitors
                             ? $"(&{_sbCustomFilter})"
                             : _sbCustomFilter.ToString();
 
-                        filter = filter.IsNullOrEmpty() 
-                            ? customFilter 
+                        filter = filter.IsNullOrEmpty()
+                            ? customFilter
                             : $"(&{customFilter}{filter})";
                     }
                 }
@@ -164,8 +154,8 @@ namespace LinqToLdap.Visitors
                     return $"(&{category}{classes})";
                 }
 
-                return category == null 
-                    ? classes 
+                return category == null
+                    ? classes
                     : $"(&{category}{classes})";
             }
 
@@ -208,27 +198,27 @@ namespace LinqToLdap.Visitors
         {
             while (e.NodeType == ExpressionType.Quote)
             {
-                e = ((UnaryExpression) e).Operand;
+                e = ((UnaryExpression)e).Operand;
             }
             return e;
         }
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof (Queryable) || m.Method.DeclaringType == typeof (QueryableExtensions) || 
+            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(QueryableExtensions) ||
                 m.Method.DeclaringType == typeof(PredicateBuilder))
             {
                 VisitQueryableMethods(m);
             }
-            else if (m.Method.DeclaringType == typeof (Filter))
+            else if (m.Method.DeclaringType == typeof(Filter))
             {
                 VisitFilterMethods(m);
             }
-            else if (m.Method.DeclaringType == typeof (string))
+            else if (m.Method.DeclaringType == typeof(string))
             {
                 VisitStringMethods(m);
             }
-            else if (m.Method.DeclaringType == typeof (Enumerable) ||
+            else if (m.Method.DeclaringType == typeof(Enumerable) ||
                      (m.Method.DeclaringType?.GetInterface("IEnumerable`1") != null))
             {
                 VisitEnumerableMethods(m);
@@ -256,6 +246,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.StandardCommand;
                     break;
+
                 case "WithoutPaging":
                     foreach (Expression t in m.Arguments)
                     {
@@ -264,6 +255,7 @@ namespace LinqToLdap.Visitors
                     _commandType = QueryCommandType.StandardCommand;
                     _withoutPaging = true;
                     break;
+
                 case "GetRequest":
                     foreach (Expression t in m.Arguments)
                     {
@@ -271,6 +263,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.GetRequestCommand;
                     break;
+
                 case "Any":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
@@ -279,6 +272,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.AnyCommand;
                     break;
+
                 case "FirstOrDefault":
                 case "First":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
@@ -288,6 +282,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.FirstOrDefaultCommand;
                     break;
+
                 case "SingleOrDefault":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
@@ -296,6 +291,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.SingleOrDefaultCommand;
                     break;
+
                 case "Single":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
@@ -304,6 +300,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.SingleCommand;
                     break;
+
                 case "LongCount":
                 case "Count":
                     _isLongCount = m.Method.Name == "LongCount";
@@ -314,6 +311,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.CountCommand;
                     break;
+
                 case "ListAttributes":
                     Dictionary<string, string> attributes = null;
                     foreach (Expression t in m.Arguments)
@@ -330,6 +328,7 @@ namespace LinqToLdap.Visitors
                     _commandOptions = new ListAttributesQueryCommandOptions(attributes);
                     _commandType = QueryCommandType.StandardCommand;
                     break;
+
                 case "FilterWith":
                     foreach (Expression t in m.Arguments)
                     {
@@ -345,11 +344,11 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.StandardCommand;
                     break;
+
                 case "Select":
                     foreach (Expression t in m.Arguments)
                     {
-                        var lambda = StripQuotes(t) as LambdaExpression;
-                        if (lambda != null)
+                        if (StripQuotes(t) is LambdaExpression lambda)
                         {
                             if (_commandOptions != null) throw new FilterException("Cannot have multiple Select projections.");
 
@@ -383,6 +382,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.StandardCommand;
                     break;
+
                 case "ToPage":
                     int pageSize = 0;
                     byte[] nextPage = null;
@@ -407,6 +407,7 @@ namespace LinqToLdap.Visitors
                     }
                     _pagingOptions = new PagingOptions(pageSize, nextPage);
                     break;
+
                 case "InPagesOf":
                     foreach (Expression t in m.Arguments)
                     {
@@ -421,6 +422,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.StandardCommand;
                     break;
+
                 case "ToList":
                     foreach (Expression t in m.Arguments)
                     {
@@ -428,6 +430,7 @@ namespace LinqToLdap.Visitors
                     }
                     _commandType = QueryCommandType.StandardCommand;
                     break;
+
                 case "Take":
                     int takeAmount = 0;
                     foreach (Expression t in m.Arguments)
@@ -443,6 +446,7 @@ namespace LinqToLdap.Visitors
                     }
                     _takeSize = takeAmount;
                     break;
+
                 case "Skip":
                     int skipAmount = 0;
                     foreach (Expression t in m.Arguments)
@@ -459,12 +463,12 @@ namespace LinqToLdap.Visitors
                     if (skipAmount < 0) throw new ArgumentException("Skip value must be greater than zero.");
                     _skipSize = skipAmount;
                     break;
+
                 case "WithControls":
                     if (_controls == null) _controls = new List<DirectoryControl>();
                     foreach (Expression t in m.Arguments)
                     {
-                        IEnumerable<DirectoryControl> controls;
-                        if (t is ConstantExpression && (controls = ((ConstantExpression)t).Value as IEnumerable<DirectoryControl>) != null)
+                        if (t is ConstantExpression && ((ConstantExpression)t).Value is IEnumerable<DirectoryControl> controls)
                         {
                             _controls.AddRange(controls);
                         }
@@ -474,6 +478,7 @@ namespace LinqToLdap.Visitors
                         }
                     }
                     break;
+
                 case "OrderByDescending":
                 case "ThenByDescending":
                     string descRule = null;
@@ -483,8 +488,7 @@ namespace LinqToLdap.Visitors
                     }
                     foreach (Expression t in m.Arguments)
                     {
-                        var lambda = StripQuotes(t) as LambdaExpression;
-                        if (lambda != null)
+                        if (StripQuotes(t) is LambdaExpression lambda)
                         {
                             var attribute = GetMemberName((MemberExpression)lambda.Body);
                             _sortingOptions.AddSort(attribute, true);
@@ -507,6 +511,7 @@ namespace LinqToLdap.Visitors
                     }
                     _sortingOptions.SetMatchingRule(descRule);
                     break;
+
                 case "OrderBy":
                 case "ThenBy":
                     if (_sortingOptions == null)
@@ -516,8 +521,7 @@ namespace LinqToLdap.Visitors
                     string ascRule = null;
                     foreach (Expression t in m.Arguments)
                     {
-                        var lambda = StripQuotes(t) as LambdaExpression;
-                        if (lambda != null)
+                        if (StripQuotes(t) is LambdaExpression lambda)
                         {
                             var attribute = GetMemberName((MemberExpression)lambda.Body);
                             _sortingOptions.AddSort(attribute, false);
@@ -540,6 +544,7 @@ namespace LinqToLdap.Visitors
                     }
                     _sortingOptions.SetMatchingRule(ascRule);
                     break;
+
                 case "IgnoreOC":
                     foreach (Expression t in m.Arguments)
                     {
@@ -553,6 +558,7 @@ namespace LinqToLdap.Visitors
                         }
                     }
                     break;
+
                 case "IncludeOC":
                     foreach (Expression t in m.Arguments)
                     {
@@ -579,12 +585,13 @@ namespace LinqToLdap.Visitors
                     _dnFilter = true;
                     Visit(m.Arguments[1]);
                     _sb.Append("~=");
-                    _shouldCleanFilter = (bool) ((ConstantExpression) m.Arguments.Last()).Value;
+                    _shouldCleanFilter = (bool)((ConstantExpression)m.Arguments.Last()).Value;
                     Visit(m.Arguments[2]);
                     _shouldCleanFilter = _dnFilter = false;
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "Equal":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -597,6 +604,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "MatchingRule":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -611,6 +619,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "EqualAnything":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -622,10 +631,10 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
-                case "EqualAny":
-                    var values = ((ConstantExpression)m.Arguments[2]).Value as IEnumerable<string>;
 
-                    if (values == null || !values.Any())
+                case "EqualAny":
+
+                    if (!(((ConstantExpression)m.Arguments[2]).Value is IEnumerable<string> values) || !values.Any())
                     {
                         throw new FilterException("Cannot create an EqualAny filter with null or empty values.");
                     }
@@ -652,6 +661,7 @@ namespace LinqToLdap.Visitors
                         _sb.Append(")");
                     }
                     break;
+
                 case "StartsWith":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -665,6 +675,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "EndsWith":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -678,6 +689,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "Like":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -692,6 +704,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "GreaterThanOrEqual":
                     _sb.Append("(");
                     _dnFilter = true;
@@ -702,6 +715,7 @@ namespace LinqToLdap.Visitors
                     _shouldCleanFilter = _dnFilter = false;
                     _sb.Append(")");
                     break;
+
                 case "GreaterThan":
                     if (_not)
                     {
@@ -733,6 +747,7 @@ namespace LinqToLdap.Visitors
                         _sb.Append(")))");
                     }
                     break;
+
                 case "LessThanOrEqual":
                     _sb.Append("(");
                     _dnFilter = true;
@@ -743,6 +758,7 @@ namespace LinqToLdap.Visitors
                     _shouldCleanFilter = _dnFilter = false;
                     _sb.Append(")");
                     break;
+
                 case "LessThan":
                     if (_not)
                     {
@@ -787,6 +803,7 @@ namespace LinqToLdap.Visitors
                 case "ToLowerInvariant":
                     Visit(m.Object);
                     break;
+
                 case "Contains":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -797,6 +814,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "StartsWith":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -807,6 +825,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "EndsWith":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -816,6 +835,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 case "Equals":
                     _sb.Append("(");
                     if (_not) _sb.Append("!(");
@@ -825,6 +845,7 @@ namespace LinqToLdap.Visitors
                     if (_not) _sb.Append(")");
                     _sb.Append(")");
                     break;
+
                 default:
                     throw new NotSupportedException("String method " + m.Method.Name + " is not supported.");
             }
@@ -915,12 +936,15 @@ namespace LinqToLdap.Visitors
                     Visit(u.Operand);
                     _not = false;
                     break;
+
                 case ExpressionType.Quote:
                     Visit(!_dnFilter ? StripQuotes(u) : u.Operand);
                     break;
+
                 case ExpressionType.Convert:
                     Visit(u.Operand);
                     break;
+
                 default:
                     throw new NotSupportedException(string.Format("The unary operator '{0}' is not supported",
                                                                   u.NodeType));
@@ -942,6 +966,7 @@ namespace LinqToLdap.Visitors
                     _expressionStack.Pop();
                     if (_expressionStack.Count == 0 || _expressionStack.Peek() != ExpressionType.AndAlso) _sb.Append(")");
                     break;
+
                 case ExpressionType.OrElse:
                     if (_expressionStack.Count == 0 || _expressionStack.Peek() != ExpressionType.OrElse) _sb.Append("(|");
                     _expressionStack.Push(ExpressionType.OrElse);
@@ -950,6 +975,7 @@ namespace LinqToLdap.Visitors
                     _expressionStack.Pop();
                     if (_expressionStack.Count == 0 || _expressionStack.Peek() != ExpressionType.OrElse) _sb.Append(")");
                     break;
+
                 case ExpressionType.Equal:
                     _sb.Append("(");
                     if (rightIsNull)
@@ -973,6 +999,7 @@ namespace LinqToLdap.Visitors
                     }
                     _sb.Append(")");
                     break;
+
                 case ExpressionType.NotEqual:
                     _sb.Append("(");
                     if (rightIsNull)
@@ -996,6 +1023,7 @@ namespace LinqToLdap.Visitors
                     }
                     _sb.Append(")");
                     break;
+
                 case ExpressionType.GreaterThanOrEqual:
                     _sb.Append("(");
                     Visit(b.Left);
@@ -1003,11 +1031,13 @@ namespace LinqToLdap.Visitors
                     Visit(b.Right);
                     _sb.Append(")");
                     break;
+
                 case ExpressionType.GreaterThan:
                     Expression greaterThanLeft = Expression.GreaterThanOrEqual(b.Left, b.Right);
                     Expression greaterThanRight = Expression.Not(Expression.Equal(b.Left, b.Right));
                     Visit(Expression.AndAlso(greaterThanLeft, greaterThanRight));
                     break;
+
                 case ExpressionType.LessThanOrEqual:
                     _sb.Append("(");
                     Visit(b.Left);
@@ -1015,11 +1045,13 @@ namespace LinqToLdap.Visitors
                     Visit(b.Right);
                     _sb.Append(")");
                     break;
+
                 case ExpressionType.LessThan:
                     Expression lessThanLeft = Expression.LessThanOrEqual(b.Left, b.Right);
                     Expression lessThanRight = Expression.Not(Expression.Equal(b.Left, b.Right));
                     Visit(Expression.AndAlso(lessThanLeft, lessThanRight));
                     break;
+
                 default:
                     throw new NotSupportedException($"The binary operator '{b.NodeType}' is not supported");
             }

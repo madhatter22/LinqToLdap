@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,7 +6,7 @@ using System.Linq;
 namespace LinqToLdap.Collections
 {
     /// <summary>
-    /// Represents a collection 
+    /// Represents a collection
     /// </summary>
     [Serializable]
     public class OriginalValuesCollection : Collection<SerializableKeyValuePair<string, object>>
@@ -24,7 +14,7 @@ namespace LinqToLdap.Collections
         /// <summary>
         /// Default constructor
         /// </summary>
-        public OriginalValuesCollection() : base(new List<SerializableKeyValuePair<string, object>>()){}
+        public OriginalValuesCollection() : base(new List<SerializableKeyValuePair<string, object>>()) { }
 
         /// <summary>
         /// Constructor that takes list of values.

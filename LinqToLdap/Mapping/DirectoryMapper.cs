@@ -1,19 +1,8 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -22,8 +11,8 @@ namespace LinqToLdap.Mapping
     /// </summary>
     public class DirectoryMapper : IDirectoryMapper
     {
-#if NET35
-        private readonly SafeDictionary<Type, IObjectMapping> _mappings = new SafeDictionary<Type, IObjectMapping>();
+#if (NET35 || NET40)
+        private readonly LinqToLdap.Collections.SafeDictionary<Type, IObjectMapping> _mappings = new LinqToLdap.Collections.SafeDictionary<Type, IObjectMapping>();
 #else
         private readonly System.Collections.Concurrent.ConcurrentDictionary<Type, IObjectMapping> _mappings = new System.Collections.Concurrent.ConcurrentDictionary<Type, IObjectMapping>();
 #endif
@@ -34,14 +23,19 @@ namespace LinqToLdap.Mapping
         /// Returns all mappings tracked by this object.
         /// </summary>
         /// <returns></returns>
-        public ReadOnlyDictionary<Type, IObjectMapping> GetMappings()
+#if (NET35 || NET40)
+        public LinqToLdap.Collections.ReadOnlyDictionary<Type, IObjectMapping> GetMappings()
         {
-#if NET35
             return _mappings.ToReadOnly();
-#else
-            return new ReadOnlyDictionary<Type, IObjectMapping>(_mappings);
-#endif
         }
+#else
+
+        public System.Collections.ObjectModel.ReadOnlyDictionary<Type, IObjectMapping> GetMappings()
+        {
+            return new System.Collections.ObjectModel.ReadOnlyDictionary<Type, IObjectMapping>(_mappings);
+        }
+
+#endif
 
         /// <summary>
         /// Provide a delegate that takes an object type and returns the class map for it.
@@ -123,7 +117,7 @@ namespace LinqToLdap.Mapping
                         var classMapType = typeof(AttributeClassMap<>).MakeGenericType(type);
                         mapping = (IClassMap)Activator.CreateInstance(classMapType);
                     }
-                    
+
                     Map(mapping);
                 }
                 else
@@ -165,18 +159,18 @@ namespace LinqToLdap.Mapping
             if (classMap == null) throw new ArgumentNullException(nameof(classMap));
 
             return _mappings.GetOrAdd(classMap.Type, t =>
-                                                         {
-                                                             var mapped = classMap.PerformMapping(namingContext, objectCategory,
-                                                                                     includeObjectCategory,
-                                                                                     objectClasses, includeObjectClasses);
+            {
+                var mapped = classMap.PerformMapping(namingContext, objectCategory,
+                                        includeObjectCategory,
+                                        objectClasses, includeObjectClasses);
 
-                                                             mapped.Validate();
+                mapped.Validate();
 
-                                                             var objectMapping = mapped.ToObjectMapping();
-                                                             MapSubTypes(objectMapping);
+                var objectMapping = mapped.ToObjectMapping();
+                MapSubTypes(objectMapping);
 
-                                                             return objectMapping;
-                                                         });
+                return objectMapping;
+            });
         }
 
         /// <summary>
@@ -192,40 +186,40 @@ namespace LinqToLdap.Mapping
         /// <returns></returns>
         public IObjectMapping Map<T>(string namingContext = null, string objectClass = null, IEnumerable<string> objectClasses = null, string objectCategory = null) where T : class
         {
-            return _mappings.GetOrAdd(typeof (T), t =>
-                                              {
-                                                  IClassMap classMap;
-                                                  if (t.HasDirectorySchema())
-                                                  {
-                                                      classMap = !HasCustomAttributeMapping
-                                                        ? new AttributeClassMap<T>()
-                                                        : _attributeClassMapper.Invoke(typeof(T));
-                                                  }
-                                                  else
-                                                  {
-                                                      if (objectClass != null)
-                                                      {
-                                                          if (objectClasses != null)
-                                                              throw new ArgumentException("objectClass and objectClasses cannot both have a value.");
+            return _mappings.GetOrAdd(typeof(T), t =>
+            {
+                IClassMap classMap;
+                if (t.HasDirectorySchema())
+                {
+                    classMap = !HasCustomAttributeMapping
+                      ? new AttributeClassMap<T>()
+                      : _attributeClassMapper.Invoke(typeof(T));
+                }
+                else
+                {
+                    if (objectClass != null)
+                    {
+                        if (objectClasses != null)
+                            throw new ArgumentException("objectClass and objectClasses cannot both have a value.");
 
-                                                          objectClasses = new[] {objectClass};
-                                                      }
-                                                      classMap = !HasCustomAutoMapping
-                                                          ? new AutoClassMap<T>()
-                                                          : _autoClassMapper.Invoke(typeof(T));
-                                                  }
+                        objectClasses = new[] { objectClass };
+                    }
+                    classMap = !HasCustomAutoMapping
+                        ? new AutoClassMap<T>()
+                        : _autoClassMapper.Invoke(typeof(T));
+                }
 
-                                                  var mapped = classMap.PerformMapping(namingContext,
-                                                                                       objectCategory: objectCategory,
-                                                                                       objectClasses: objectClasses);
+                var mapped = classMap.PerformMapping(namingContext,
+                                                     objectCategory: objectCategory,
+                                                     objectClasses: objectClasses);
 
-                                                  mapped.Validate();
+                mapped.Validate();
 
-                                                  var objectMapping = mapped.ToObjectMapping();
-                                                  MapSubTypes(objectMapping);
+                var objectMapping = mapped.ToObjectMapping();
+                MapSubTypes(objectMapping);
 
-                                                  return objectMapping;
-                                              });
+                return objectMapping;
+            });
         }
 
         /// <summary>
@@ -238,7 +232,7 @@ namespace LinqToLdap.Mapping
         /// <returns></returns>
         public IObjectMapping GetMapping<T>() where T : class
         {
-            return GetMapping(typeof (T));
+            return GetMapping(typeof(T));
         }
 
         /// <summary>
@@ -251,27 +245,27 @@ namespace LinqToLdap.Mapping
         public IObjectMapping GetMapping(Type type)
         {
             return _mappings.GetOrAdd(type, t =>
-                                         {
-                                             if (t.HasDirectorySchema())
-                                             {
-                                                 var classMap = (IClassMap) (!HasCustomAttributeMapping 
-                                                        ? Activator.CreateInstance(typeof(AttributeClassMap<>).MakeGenericType(t))
-                                                        : _attributeClassMapper.Invoke(t));
-                                                 var mapped = classMap.PerformMapping();
-                                                 mapped.Validate();
+            {
+                if (t.HasDirectorySchema())
+                {
+                    var classMap = (IClassMap)(!HasCustomAttributeMapping
+                           ? Activator.CreateInstance(typeof(AttributeClassMap<>).MakeGenericType(t))
+                           : _attributeClassMapper.Invoke(t));
+                    var mapped = classMap.PerformMapping();
+                    mapped.Validate();
 
-                                                 var objectMapping = mapped.ToObjectMapping();
-                                                 MapSubTypes(objectMapping);
-                                                 return objectMapping;
-                                             }
+                    var objectMapping = mapped.ToObjectMapping();
+                    MapSubTypes(objectMapping);
+                    return objectMapping;
+                }
 
-                                             throw new MappingException($"Mapping not found for '{type.FullName}'");
-                                         });
+                throw new MappingException($"Mapping not found for '{type.FullName}'");
+            });
         }
 
         private void MapSubTypes(IObjectMapping mapping)
         {
-#if NET35
+#if (NET35 || NET40)
             var mappings = _mappings.ToReadOnly();
             foreach (var objectMapping in mappings)
 #else
@@ -308,7 +302,7 @@ namespace LinqToLdap.Mapping
 
         internal static void ValidateObjectClasses(IObjectMapping baseTypeMapping, IObjectMapping subTypeMapping)
         {
-            if (!(baseTypeMapping.ObjectClasses ??  new string[0]).Any())
+            if (!(baseTypeMapping.ObjectClasses ?? new string[0]).Any())
             {
                 throw new InvalidOperationException(
                     $"In order to use subclass mapping {baseTypeMapping.Type.Name} must be mapped with objectClasses");
@@ -320,9 +314,9 @@ namespace LinqToLdap.Mapping
             }
 
             var currentMappings =
-                new[] {baseTypeMapping}.Union(baseTypeMapping.HasSubTypeMappings
+                new[] { baseTypeMapping }.Union(baseTypeMapping.HasSubTypeMappings
                     ? baseTypeMapping.SubTypeMappings
-                    : (IList<IObjectMapping>) new List<IObjectMapping>());
+                    : (IList<IObjectMapping>)new List<IObjectMapping>());
 
             if (currentMappings.Any(objectMapping => objectMapping.ObjectClasses.OrderBy(x => x)
                 .SequenceEqual(subTypeMapping.ObjectClasses.OrderBy(x => x),

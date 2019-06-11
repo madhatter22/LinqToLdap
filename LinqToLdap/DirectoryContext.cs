@@ -1,24 +1,14 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
-using System.Collections.Generic;
-using System.DirectoryServices.Protocols;
-using System.IO;
-using System.Linq;
-using LinqToLdap.Collections;
+﻿using LinqToLdap.Collections;
 using LinqToLdap.EventListeners;
 using LinqToLdap.Exceptions;
 using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.Transformers;
+using System;
+using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
+using System.IO;
+using System.Linq;
 
 namespace LinqToLdap
 {
@@ -32,9 +22,9 @@ namespace LinqToLdap
         private readonly bool _connectionIsFromFactory;
         private LdapConnection _connection;
         private ILdapConfiguration _configuration;
-        
+
         /// <summary>
-        /// Creates an instance and uses the specified <paramref name="connection"/> for querying.  
+        /// Creates an instance and uses the specified <paramref name="connection"/> for querying.
         /// The connection will not be disposed of when this instance is disposed.
         /// </summary>
         /// <param name="connection">Connection to use</param>
@@ -43,8 +33,6 @@ namespace LinqToLdap
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="connection"/> is null</exception>
         public DirectoryContext(LdapConnection connection, bool disposeOfConnection = false, ILdapConfiguration configuration = null)
         {
-            if (connection == null) throw new ArgumentNullException("connection");
-
             if (configuration == null)
             {
                 configuration = LdapConfiguration.Configuration ?? new LdapConfiguration();
@@ -53,7 +41,7 @@ namespace LinqToLdap
             _configuration = configuration;
             Logger = _configuration.Log;
             _disposeOfConnection = disposeOfConnection;
-            _connection = connection;
+            _connection = connection ?? throw new ArgumentNullException("connection");
         }
 
         /// <summary>
@@ -67,7 +55,7 @@ namespace LinqToLdap
         /// <param name="configuration">The configuration.</param>
         public DirectoryContext(ILdapConfiguration configuration)
         {
-            if (configuration == null ||  configuration.ConnectionFactory == null)
+            if (configuration == null || configuration.ConnectionFactory == null)
                 throw new MappingException("configuration cannot be null and must be associated with a connection factory.");
 
             _configuration = configuration;
@@ -113,7 +101,7 @@ namespace LinqToLdap
                 }
             }
         }
-        
+
         #region Query Methods
 
         /// <summary>
@@ -136,11 +124,11 @@ namespace LinqToLdap
                 if (_disposed) throw new ObjectDisposedException(GetType().FullName);
                 var mapping = _configuration.Mapper.Map<T>(namingContext, objectClass, objectClasses, objectCategory);
                 var provider = new DirectoryQueryProvider(_connection, scope, mapping, _configuration.PagingEnabled)
-                                   {
-                                       Log = Logger, 
-                                       MaxPageSize = _configuration.ServerMaxPageSize, 
-                                       NamingContext = namingContext
-                                   };
+                {
+                    Log = Logger,
+                    MaxPageSize = _configuration.ServerMaxPageSize,
+                    NamingContext = namingContext
+                };
                 var directoryQuery = new DirectoryQuery<T>(provider);
                 return directoryQuery;
             }
@@ -166,7 +154,7 @@ namespace LinqToLdap
         {
             return PrivateQuery<T>(SearchScope.Subtree, namingContext, objectClass, objectClasses, objectCategory);
         }
-        
+
         /// <summary>
         /// Creates a query against the directory.
         /// </summary>
@@ -266,7 +254,7 @@ namespace LinqToLdap
                 var attributes = mapping.HasCatchAllMapping
                     ? new string[0]
                     : (mapping.HasSubTypeMappings
-                        ? mapping.Properties.Values.Union(new[] {"objectClass"}, StringComparer.OrdinalIgnoreCase)
+                        ? mapping.Properties.Values.Union(new[] { "objectClass" }, StringComparer.OrdinalIgnoreCase)
                         : mapping.Properties.Values);
 
                 foreach (var property in attributes)
@@ -309,7 +297,7 @@ namespace LinqToLdap
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if object class or object category have not been mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
@@ -335,7 +323,7 @@ namespace LinqToLdap
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if object class or object category have not been mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
@@ -365,7 +353,7 @@ namespace LinqToLdap
                 else
                 {
                     throw new MappingException(
-                        $"Cannot add an entry without mapping objectClass for {typeof (T).FullName}.");
+                        $"Cannot add an entry without mapping objectClass for {typeof(T).FullName}.");
                 }
 
                 distinguishedName = GetDistinguishedName(distinguishedName, objectMapping, entry);
@@ -554,7 +542,7 @@ namespace LinqToLdap
 
             return _connection.AddAndGet(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>());
         }
-        
+
         /// <summary>
         /// Deletes an entry from the directory.
         /// </summary>
@@ -581,7 +569,7 @@ namespace LinqToLdap
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if object class or object category have not been mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
@@ -606,7 +594,7 @@ namespace LinqToLdap
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
         /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
@@ -640,9 +628,8 @@ namespace LinqToLdap
                 }
 
                 var modifications = new List<DirectoryAttributeModification>();
-                var directoryObject = entry as IDirectoryObject;
 
-                if (directoryObject == null)
+                if (!(entry is IDirectoryObject directoryObject))
                 {
                     modifications.AddRange(objectMapping.GetUpdateablePropertyMappings()
                         .Select(mapping => mapping.GetDirectoryAttributeModification(entry)));
@@ -653,10 +640,7 @@ namespace LinqToLdap
                     modifications.AddRange(changes);
                 }
 
-                var catchAll =
-                    objectMapping.GetCatchAllMapping()?.GetValue(entry) as IDirectoryAttributes;
-
-                if (catchAll != null)
+                if (objectMapping.GetCatchAllMapping()?.GetValue(entry) is IDirectoryAttributes catchAll)
                 {
                     modifications.AddRange(catchAll.GetChangedAttributes());
                 }
@@ -790,7 +774,7 @@ namespace LinqToLdap
         public void Update(DirectoryAttributes entry)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            
+
             _connection.Update(entry, Logger, listeners: _configuration.GetListeners<IUpdateEventListener>());
         }
 
@@ -933,7 +917,7 @@ namespace LinqToLdap
 
             return _connection.SendRequest(request);
         }
-        
+
         /// <summary>
         /// Finalizer that disposes of this class.
         /// </summary>

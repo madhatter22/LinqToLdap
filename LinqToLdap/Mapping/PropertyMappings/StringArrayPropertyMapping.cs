@@ -1,17 +1,6 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.DirectoryServices.Protocols;
 using System.Linq;
-using LinqToLdap.Collections;
 
 namespace LinqToLdap.Mapping.PropertyMappings
 {
@@ -59,7 +48,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
         {
             if (value != null)
             {
-                string[] strings = Array.ConvertAll(value.GetValues(typeof(string)), obj => (string) obj);
+                string[] strings = Array.ConvertAll(value.GetValues(typeof(string)), obj => (string)obj);
 
                 return strings;
             }

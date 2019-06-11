@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,12 +32,11 @@ namespace LinqToLdap.Collections
         /// <param name="entry">The <see cref="SearchResultEntry"/> to wrap.</param>
         internal DirectoryAttributes(SearchResultEntry entry)
         {
-            if (entry == null) throw new ArgumentNullException(nameof(entry));
-            _entry = entry;
+            _entry = entry ?? throw new ArgumentNullException(nameof(entry));
         }
 
         /// <summary>
-        /// Instantiates this class without a reference to a <see cref="SearchResultEntry"/>.  
+        /// Instantiates this class without a reference to a <see cref="SearchResultEntry"/>.
         /// It can be used to set attributes for the directory.
         /// </summary>
         /// <param name="distinguishedName">
@@ -78,10 +67,10 @@ namespace LinqToLdap.Collections
         /// All of the attributes present for the entry.
         /// </summary>
         public ReadOnlyCollection<string> AttributeNames => _attributeNames ??
-                                                            (_entry != null 
-// ReSharper disable AssignNullToNotNullAttribute
-                                                                ? _attributeNames = new ReadOnlyCollection<string>(_entry.Attributes.AttributeNames.Cast<string>().ToList()) 
-// ReSharper restore AssignNullToNotNullAttribute
+                                                            (_entry != null
+                                                                // ReSharper disable AssignNullToNotNullAttribute
+                                                                ? _attributeNames = new ReadOnlyCollection<string>(_entry.Attributes.AttributeNames.Cast<string>().ToList())
+                                                                // ReSharper restore AssignNullToNotNullAttribute
                                                                 : new ReadOnlyCollection<string>(new List<string>()));
 
         /// <summary>
@@ -90,7 +79,7 @@ namespace LinqToLdap.Collections
         /// <param name="modification">The <see cref="DirectoryAttributeModification"/> for the entry.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="modification"/> is null.</exception>
         /// <exception cref="ArgumentException">
-        /// Thrown if the modification is for "distinguishedname" or "entrydn".  
+        /// Thrown if the modification is for "distinguishedname" or "entrydn".
         /// Also thrown <paramref name="modification"/> does not have a valid name.
         /// </exception>
         /// <exception cref="InvalidOperationException">Thrown if a modification with the same name and operation has already been added.</exception>
@@ -127,8 +116,8 @@ namespace LinqToLdap.Collections
         /// <summary>
         /// Gets the Distinguished Name
         /// </summary>
-        public string DistinguishedName => _entry != null 
-            ? _entry.DistinguishedName 
+        public string DistinguishedName => _entry != null
+            ? _entry.DistinguishedName
             : (_distinguishedName.IsNullOrEmpty() ? string.Empty : _distinguishedName);
 
         /// <summary>
@@ -166,7 +155,7 @@ namespace LinqToLdap.Collections
         {
             return GetEnumerator();
         }
-        
+
         /// <summary>
         /// Gets the <see cref="DirectoryAttribute"/> if available.
         /// </summary>
@@ -244,7 +233,7 @@ namespace LinqToLdap.Collections
         public byte[] GetBytes(string attribute)
         {
             byte[] value = null;
-            var type = typeof (byte[]);
+            var type = typeof(byte[]);
 
             var directoryAttribute = Get(attribute);
 
@@ -258,7 +247,7 @@ namespace LinqToLdap.Collections
                                    ? null
                                    : valueArray[0];
                     value = rawValue == null
-                        ? default(byte[])
+                        ? default
                         : (byte[])rawValue;
                 }
                 catch (Exception ex)
@@ -292,7 +281,7 @@ namespace LinqToLdap.Collections
                                    ? null
                                    : valueArray[0];
                     value = rawValue == null
-                        ? default(X509Certificate2)
+                        ? default
                         : new X509Certificate2((byte[])rawValue);
                 }
                 catch (Exception ex)
@@ -365,7 +354,7 @@ namespace LinqToLdap.Collections
                                    ? null
                                    : valueArray[0];
                     value = rawValue == null
-                        ? default(string)
+                        ? default
                         : (string)rawValue;
                 }
                 catch (Exception ex)
@@ -433,7 +422,7 @@ namespace LinqToLdap.Collections
         /// <param name="attribute">The name of the attribute</param>
         /// <returns></returns>
         /// <exception cref="LinqToLdap.Exceptions.MappingException">
-        /// Thrown if the value cannot be 
+        /// Thrown if the value cannot be
         /// </exception>
         public byte? GetByte(string attribute)
         {
@@ -850,7 +839,7 @@ namespace LinqToLdap.Collections
             return _changedAttributes ?? new List<DirectoryAttributeModification>();
         }
 
-        private T? GetValueType<T>(string attribute) where T : struct 
+        private T? GetValueType<T>(string attribute) where T : struct
         {
             T? value = null;
             var type = typeof(T);

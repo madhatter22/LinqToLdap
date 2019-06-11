@@ -33,11 +33,8 @@ namespace LinqToLdap.TestSupport
 
         internal MockQuery(MockQueryProvider provider, Expression expression)
         {
-            if (provider == null) throw new ArgumentNullException("provider");
-            if (expression == null) throw new ArgumentNullException("expression");
-
-            _provider = provider;
-            _expression = expression;
+            _provider = provider ?? throw new ArgumentNullException("provider");
+            _expression = expression ?? throw new ArgumentNullException("expression");
         }
 
         /// <summary>
@@ -93,7 +90,7 @@ namespace LinqToLdap.TestSupport
         /// <filterpriority>1</filterpriority>
         public IEnumerator<T> GetEnumerator()
         {
-            var enumerable = (IEnumerable<T>) _provider.Execute(_expression);
+            var enumerable = (IEnumerable<T>)_provider.Execute(_expression);
             return enumerable != null ? enumerable.GetEnumerator() : new List<T>().GetEnumerator();
         }
 

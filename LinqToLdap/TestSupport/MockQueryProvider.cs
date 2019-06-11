@@ -1,9 +1,9 @@
-﻿using System;
+﻿using LinqToLdap.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using LinqToLdap.Helpers;
 
 namespace LinqToLdap.TestSupport
 {
@@ -49,10 +49,10 @@ namespace LinqToLdap.TestSupport
             CurrentExpression = expression;
             var elementType = TypeSystem.GetElementType(expression.Type);
 
-            var constructor = typeof (MockQuery<>)
+            var constructor = typeof(MockQuery<>)
                 .MakeGenericType(elementType)
                 .GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null,
-                    new[] {typeof (MockQueryProvider), typeof (Expression)}, null);
+                    new[] { typeof(MockQueryProvider), typeof(Expression) }, null);
 
             return (IQueryable)constructor.Invoke(new object[] { this, expression });
         }
@@ -93,9 +93,9 @@ namespace LinqToLdap.TestSupport
         {
             CurrentExpression = expression;
             ExecutedExpressions.Add(expression);
-            return ResultsToReturn.Count == 0 
-                ? default(TResult) 
-                : (TResult) ResultsToReturn[_executionCount++];
+            return ResultsToReturn.Count == 0
+                ? default
+                : (TResult)ResultsToReturn[_executionCount++];
         }
     }
 }

@@ -1,22 +1,12 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.EventListeners;
+using LinqToLdap.Exceptions;
+using LinqToLdap.Logging;
+using LinqToLdap.Mapping;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Reflection;
-using LinqToLdap.EventListeners;
-using LinqToLdap.Exceptions;
-using LinqToLdap.Logging;
-using LinqToLdap.Mapping;
 
 namespace LinqToLdap
 {
@@ -50,9 +40,9 @@ namespace LinqToLdap
             Log = null;
             Mapper = null;
         }
-        
+
         /// <summary>
-        /// The configured connection factory to be used for all 
+        /// The configured connection factory to be used for all
         /// <see cref="DirectoryContext"/>s that don't explicitly get an <see cref="LdapConnection"/>.
         /// </summary>
         public ILdapConnectionFactory ConnectionFactory { get; private set; }
@@ -141,7 +131,7 @@ namespace LinqToLdap
             _pagingEnabled = false;
             return this;
         }
-        
+
         /// <summary>
         /// Adds the mapping.
         /// </summary>
@@ -157,7 +147,7 @@ namespace LinqToLdap
         public LdapConfiguration AddMapping(IClassMap classMap, string namingContext = null, IEnumerable<string> objectClasses = null, bool includeObjectClasses = true, string objectCategory = null, bool includeObjectCategory = true)
         {
             Mapper.Map(classMap, namingContext, objectClasses, includeObjectClasses, objectCategory, includeObjectCategory);
-            
+
             return this;
         }
 
@@ -224,7 +214,7 @@ namespace LinqToLdap
             if (ConnectionFactory != null)
                 throw new MappingException("A connection factory has already been configured.");
 
-            var factory = new PooledLdapConnectionFactory(serverName){Logger = Log};
+            var factory = new PooledLdapConnectionFactory(serverName) { Logger = Log };
 
             ConnectionFactory = factory;
 
@@ -239,11 +229,11 @@ namespace LinqToLdap
         /// <returns></returns>
         public T ConfigureCustomFactory<T>(T customFactory) where T : ILdapConnectionFactory
         {
-            if (ConnectionFactory != null) 
+            if (ConnectionFactory != null)
                 throw new MappingException("A connection factory has already been configured.");
 
             ConnectionFactory = customFactory;
-            
+
             return customFactory;
         }
 
@@ -280,7 +270,7 @@ namespace LinqToLdap
         public LdapConfiguration LogTo(ILinqToLdapLogger log)
         {
             Log = log;
-            
+
             if (ConnectionFactory is ConnectionFactoryBase)
             {
                 (ConnectionFactory as ConnectionFactoryBase).Logger = Log;

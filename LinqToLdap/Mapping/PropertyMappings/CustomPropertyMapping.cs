@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LinqToLdap.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping.PropertyMappings
 {
@@ -26,7 +26,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
             if (_convertFrom == null)
                 throw new MappingException(
                     string.Format("No from directory converter defined for mapped property '{0}' on '{1}'", PropertyName,
-                                  typeof (T).FullName));
+                                  typeof(T).FullName));
 
             try
             {
@@ -94,7 +94,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
         public override object GetValueForDirectory(object instance)
         {
             var value = GetValue(instance);
-            return _convertTo((TProperty) value);
+            return _convertTo((TProperty)value);
         }
 
         public override bool IsEqual(object instance, object value, out DirectoryAttributeModification modification)
@@ -109,7 +109,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
 
             if (_isEqual == null) return base.IsEqual(instance, value, out modification);
 
-            var isEqual = _isEqual((TProperty) propertyValue, (TProperty) value);
+            var isEqual = _isEqual((TProperty)propertyValue, (TProperty)value);
             modification = !isEqual ? GetDirectoryAttributeModification(instance) : null;
             return isEqual;
         }

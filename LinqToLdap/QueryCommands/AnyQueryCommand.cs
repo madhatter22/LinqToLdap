@@ -1,21 +1,11 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
-using System.DirectoryServices.Protocols;
-using LinqToLdap.Logging;
+﻿using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands.Options;
+using System;
+using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.QueryCommands
-{   
+{
     internal class AnyQueryCommand : QueryCommand
     {
         public AnyQueryCommand(IQueryCommandOptions options, IObjectMapping mapping)
@@ -37,7 +27,7 @@ namespace LinqToLdap.QueryCommands
             {
                 SearchRequest.Controls.Add(new PageResultRequestControl(1));
             }
-            
+
             SearchRequest.TypesOnly = true;
             SearchRequest.Attributes.Add("cn");
 

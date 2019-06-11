@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -46,8 +36,8 @@ namespace LinqToLdap.Visitors
             {
                 return null;
             }
-            return _candidates.Contains(exp) 
-                ? Evaluate(exp) 
+            return _candidates.Contains(exp)
+                ? Evaluate(exp)
                 : base.Visit(exp);
         }
 
@@ -64,41 +54,33 @@ namespace LinqToLdap.Visitors
                 case ExpressionType.Constant:
                     canBeReduced = true;
                     return e;
+
                 case ExpressionType.Lambda:
                     var lamda = e as LambdaExpression;
-// ReSharper disable PossibleNullReferenceException
+
                     if (lamda.Body.NodeType == ExpressionType.Conditional)
-// ReSharper restore PossibleNullReferenceException
+
                     {
                         return ReduceToBool(lamda.Body, out canBeReduced);
                     }
                     canBeReduced = false;
                     return e;
+
                 case ExpressionType.Quote:
                     return ReduceToBool(StripQuotes(e), out canBeReduced);
+
                 case ExpressionType.ArrayLength:
                     canBeReduced = true;
                     return e;
+
                 case ExpressionType.Not:
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Convert:
                 case ExpressionType.ConvertChecked:
                 case ExpressionType.TypeAs:
-// ReSharper disable PossibleNullReferenceException
+
                     ReduceToBool((e as UnaryExpression).Operand, out canBeReduced);
-// ReSharper restore PossibleNullReferenceException
-                    if (canBeReduced)
-                    {
-                        LambdaExpression lambda = Expression.Lambda(e);
-                        Delegate fn = lambda.Compile();
-                        return Expression.Constant(fn.DynamicInvoke(null), e.Type);
-                    }
-                    break;
-                case ExpressionType.TypeIs:
-// ReSharper disable PossibleNullReferenceException
-                    ReduceToBool((e as TypeBinaryExpression).Expression, out canBeReduced);
-// ReSharper restore PossibleNullReferenceException
 
                     if (canBeReduced)
                     {
@@ -107,6 +89,19 @@ namespace LinqToLdap.Visitors
                         return Expression.Constant(fn.DynamicInvoke(null), e.Type);
                     }
                     break;
+
+                case ExpressionType.TypeIs:
+
+                    ReduceToBool((e as TypeBinaryExpression).Expression, out canBeReduced);
+
+                    if (canBeReduced)
+                    {
+                        LambdaExpression lambda = Expression.Lambda(e);
+                        Delegate fn = lambda.Compile();
+                        return Expression.Constant(fn.DynamicInvoke(null), e.Type);
+                    }
+                    break;
+
                 case ExpressionType.Add:
                 case ExpressionType.AddChecked:
                 case ExpressionType.Subtract:
@@ -132,9 +127,8 @@ namespace LinqToLdap.Visitors
                 case ExpressionType.ExclusiveOr:
                     var binary = e as BinaryExpression;
                     bool left;
-// ReSharper disable PossibleNullReferenceException
+
                     ReduceToBool(binary.Left, out left);
-// ReSharper restore PossibleNullReferenceException
 
                     if (left)
                     {
@@ -149,12 +143,13 @@ namespace LinqToLdap.Visitors
                         }
                     }
                     break;
+
                 case ExpressionType.Conditional:
                     var conditional = e as ConditionalExpression;
                     bool test;
-// ReSharper disable PossibleNullReferenceException
+
                     var constant = ReduceToBool(conditional.Test, out test) as ConstantExpression;
-// ReSharper restore PossibleNullReferenceException
+
                     if (test && constant != null)
                     {
                         if (true.Equals(constant.Value))
@@ -167,14 +162,16 @@ namespace LinqToLdap.Visitors
                         }
                     }
                     break;
+
                 case ExpressionType.Call:
                     canBeReduced = true;
                     return Expression.Constant(Expression.Lambda(e).Compile().DynamicInvoke(null), e.Type);
+
                 case ExpressionType.MemberAccess:
                     var member = e as MemberExpression;
-// ReSharper disable PossibleNullReferenceException
+
                     bool isNullable = member.Member.DeclaringType.Name != "Nullable`1";
-// ReSharper restore PossibleNullReferenceException
+
                     if (member.Type == typeof(bool) && ((isNullable && member.Member.Name == "HasValue") || (!isNullable)))
                     {
                         canBeReduced = true;

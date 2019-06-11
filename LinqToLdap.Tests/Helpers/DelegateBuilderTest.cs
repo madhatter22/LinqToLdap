@@ -1,9 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using LinqToLdap.Helpers;
+﻿using LinqToLdap.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpTestsEx;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace LinqToLdap.Tests.Helpers
 {
@@ -69,7 +71,7 @@ namespace LinqToLdap.Tests.Helpers
 
         private static CtorWithParams<T> GetCtorWithParams<T>(T exmaple)
         {
-            return DelegateBuilder.BuildCtorWithParams<T>(typeof (T).GetConstructors().First());
+            return DelegateBuilder.BuildCtorWithParams<T>(typeof(T).GetConstructors().First());
         }
 
         [TestMethod]
@@ -142,7 +144,7 @@ namespace LinqToLdap.Tests.Helpers
             propertySetter6(this, SomeEnum.Value1);
             var propertySetter7 = DelegateBuilder.BuildSetter<DelegateBuilderTest>(GetType().GetProperty("Property7", flags));
             propertySetter7(this, SomeEnum.Value2);
-            
+
             Property1.Should().Be.EqualTo(1);
             Property2.Should().Be.EqualTo(2);
             Property3.Should().Be.EqualTo(now);
@@ -162,7 +164,7 @@ namespace LinqToLdap.Tests.Helpers
 
             getter(anon).Should().Be.EqualTo(now);
         }
-        
+
         private static Func<T, object> GetGetter<T>(T example, PropertyInfo propertyInfo)
         {
             return DelegateBuilder.BuildGetter<T>(propertyInfo);

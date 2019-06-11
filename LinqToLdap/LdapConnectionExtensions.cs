@@ -1,23 +1,13 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
-using System.Collections.Generic;
-using System.DirectoryServices.Protocols;
-using System.Linq;
-using LinqToLdap.Collections;
+﻿using LinqToLdap.Collections;
 using LinqToLdap.EventListeners;
 using LinqToLdap.Helpers;
 using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.Transformers;
+using System;
+using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
+using System.Linq;
 
 namespace LinqToLdap
 {
@@ -44,7 +34,7 @@ namespace LinqToLdap
         ///         .Where(da => Filter.Equal(da, "", ""))
         /// }
         /// </example>
-        public static IQueryable<IDirectoryAttributes> Query(this LdapConnection connection, string namingContext, 
+        public static IQueryable<IDirectoryAttributes> Query(this LdapConnection connection, string namingContext,
             SearchScope scope = SearchScope.Subtree, ILinqToLdapLogger log = null, int maxPageSize = 500, bool withPaging = true)
         {
             if (connection == null) throw new ArgumentNullException("connection");
@@ -71,7 +61,7 @@ namespace LinqToLdap
         /// </exception>
         /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
         /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        public static void Add(this LdapConnection connection, IDirectoryAttributes entry, ILinqToLdapLogger log = null, 
+        public static void Add(this LdapConnection connection, IDirectoryAttributes entry, ILinqToLdapLogger log = null,
             DirectoryControl[] controls = null, IEnumerable<IAddEventListener> listeners = null)
         {
             string distinguishedName = null;
@@ -82,7 +72,7 @@ namespace LinqToLdap
                 distinguishedName = entry.DistinguishedName;
 
                 if (distinguishedName.IsNullOrEmpty()) throw new ArgumentException("entry.DistinguishedName is invalid.");
-                
+
                 var request = new AddRequest(distinguishedName, entry.GetChangedAttributes().Where(da => da.Count > 0).ToArray());
                 if (controls != null)
                 {
@@ -132,7 +122,7 @@ namespace LinqToLdap
         /// </exception>
         /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
         /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        public static IDirectoryAttributes AddAndGet(this LdapConnection connection, IDirectoryAttributes entry, 
+        public static IDirectoryAttributes AddAndGet(this LdapConnection connection, IDirectoryAttributes entry,
             ILinqToLdapLogger log = null, DirectoryControl[] controls = null, IEnumerable<IAddEventListener> listeners = null)
         {
             Add(connection, entry, log, controls, listeners);
@@ -209,7 +199,7 @@ namespace LinqToLdap
         /// </exception>
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
         /// <exception cref="LdapException">Thrown if the operation fails</exception>
-        public static void Update(this LdapConnection connection, IDirectoryAttributes entry, 
+        public static void Update(this LdapConnection connection, IDirectoryAttributes entry,
             ILinqToLdapLogger log = null, DirectoryControl[] controls = null, IEnumerable<IUpdateEventListener> listeners = null)
         {
             string distinguishedName = null;
@@ -220,7 +210,7 @@ namespace LinqToLdap
 
                 distinguishedName = entry.DistinguishedName;
                 if (distinguishedName.IsNullOrEmpty()) throw new ArgumentException("entry.DistinguishedName is invalid.");
-                
+
                 var changes = entry.GetChangedAttributes();
 
                 if (changes.Any())
@@ -302,7 +292,8 @@ namespace LinqToLdap
             {
                 if (connection == null) throw new ArgumentNullException("connection");
                 using (var provider = new DirectoryQueryProvider(
-                    connection, SearchScope.Base, new ServerObjectMapping(), false) { Log = log, IsDynamic = true })
+                    connection, SearchScope.Base, new ServerObjectMapping(), false)
+                { Log = log, IsDynamic = true })
                 {
                     var directoryQuery = new DirectoryQuery<IDirectoryAttributes>(provider);
 
@@ -353,9 +344,7 @@ namespace LinqToLdap
 
                 response.AssertSuccess();
 
-                // ReSharper disable PossibleNullReferenceException
                 return (response.Entries.Count == 0
-                    // ReSharper restore PossibleNullReferenceException
                         ? transformer.Default()
                         : transformer.Transform(response.Entries[0])) as IDirectoryAttributes;
             }
@@ -524,22 +513,18 @@ namespace LinqToLdap
                     var response = connection.SendRequest(request) as SearchResponse;
                     response.AssertSuccess();
 
-// ReSharper disable PossibleNullReferenceException
                     if (response.Entries.Count != 1) break;
-// ReSharper restore PossibleNullReferenceException
 
                     SearchResultEntry entry = response.Entries[0];
 
-// ReSharper disable PossibleNullReferenceException
                     foreach (string attrib in entry.Attributes.AttributeNames)
-// ReSharper restore PossibleNullReferenceException
                     {
                         currentRange = attrib;
                         lastSearch = currentRange.IndexOf("*", 0, StringComparison.Ordinal) > 0;
                         step = entry.Attributes[currentRange].Count;
                     }
 
-                    foreach (TValue member in entry.Attributes[currentRange].GetValues(typeof (TValue)))
+                    foreach (TValue member in entry.Attributes[currentRange].GetValues(typeof(TValue)))
                     {
                         list.Add(member);
                         idx++;

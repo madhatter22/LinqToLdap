@@ -1,20 +1,10 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
-using System.DirectoryServices.Protocols;
-using System.Linq.Expressions;
-using LinqToLdap.Logging;
+﻿using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands;
 using LinqToLdap.Visitors;
+using System;
+using System.DirectoryServices.Protocols;
+using System.Linq.Expressions;
 
 namespace LinqToLdap
 {
@@ -23,8 +13,8 @@ namespace LinqToLdap
         private bool _disposed;
         private IObjectMapping _mapping;
         private readonly SearchScope _scope;
-#if !NET45
-        private WeakReference _connection;
+#if (NET35 || NET40)
+            private WeakReference _connection;
 #else
         private WeakReference<LdapConnection> _connection;
 #endif
@@ -36,12 +26,12 @@ namespace LinqToLdap
             if (connection == null) throw new ArgumentNullException("connection");
 
             _scope = scope;
-#if !NET45
-        _connection = new WeakReference(connection);
+#if (NET35 || NET40)
+                _connection = new WeakReference(connection);
 #else
-        _connection = new WeakReference<LdapConnection>(connection);
+            _connection = new WeakReference<LdapConnection>(connection);
 #endif
-            
+
             _mapping = mapping;
             _pagingEnabled = pagingEnabled;
         }
@@ -58,7 +48,7 @@ namespace LinqToLdap
         {
             if (Log != null && Log.TraceEnabled) Log.Trace("Expression: " + expression);
 
-            var translator = new QueryTranslator(_mapping) {IsDynamic = IsDynamic};
+            var translator = new QueryTranslator(_mapping) { IsDynamic = IsDynamic };
             return translator.Translate(expression);
         }
 
@@ -78,11 +68,11 @@ namespace LinqToLdap
                 var command = TranslateExpression(expression);
 
                 LdapConnection connection;
-#if !NET45
-                if (!_connection.IsAlive || (connection = _connection.Target as LdapConnection) == null)
-                {
-                    throw new ObjectDisposedException("_connection", "The LdapConnection associated with this provider has been disposed.");
-                }
+#if (NET35 || NET40)
+                    if (!_connection.IsAlive || (connection = _connection.Target as LdapConnection) == null)
+                    {
+                        throw new ObjectDisposedException("_connection", "The LdapConnection associated with this provider has been disposed.");
+                    }
 #else
                 if (!_connection.TryGetTarget(out connection))
                 {

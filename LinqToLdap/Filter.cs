@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -28,7 +18,7 @@ namespace LinqToLdap
         /// <param name="shouldCleanValue">Indicates if <paramref name="attributeValue"/> should be cleaned</param>
         /// <returns></returns>
         public static bool Equal<T>(T t, string attributeName, string attributeValue, bool shouldCleanValue)
-        { 
+        {
             return true;
         }
 

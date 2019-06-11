@@ -1,18 +1,8 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System.Collections.Generic;
-using System.DirectoryServices.Protocols;
-using LinqToLdap.EventListeners;
+﻿using LinqToLdap.EventListeners;
 using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
+using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap
 {
@@ -22,7 +12,7 @@ namespace LinqToLdap
     public interface ILdapConfiguration
     {
         /// <summary>
-        /// The configured connection factory to be used for all 
+        /// The configured connection factory to be used for all
         /// <see cref="DirectoryContext"/>s that don't explicitly get an <see cref="LdapConnection"/>.
         /// </summary>
         ILdapConnectionFactory ConnectionFactory { get; }
@@ -47,7 +37,7 @@ namespace LinqToLdap
         /// </summary>
         ///<returns></returns>
         IDirectoryContext CreateContext();
-        
+
         /// <summary>
         /// Class responsible for mapping objects to directory entries.
         /// </summary>

@@ -91,8 +91,8 @@ namespace LinqToLdap.Collections
         /// </summary>
         /// <param name="key">The key of the value to get.</param>
         /// <param name="value">
-        /// When this method returns, contains the value associated with the specified key, 
-        /// if the key is found; otherwise, the default value for the type of the value parameter. 
+        /// When this method returns, contains the value associated with the specified key,
+        /// if the key is found; otherwise, the default value for the type of the value parameter.
         /// This parameter is passed uninitialized.
         /// </param>
         /// <returns></returns>
@@ -133,7 +133,7 @@ namespace LinqToLdap.Collections
             }
         }
 
-        #endregion
+        #endregion IDictionary<TKey,TValue> Members
 
         #region ICollection<KeyValuePair<TKey,TValue>> Members
 
@@ -164,11 +164,11 @@ namespace LinqToLdap.Collections
         }
 
         /// <summary>
-        /// Copies the elements of the <see cref="IDictionary{TKey,TValue}"/> to an array, 
+        /// Copies the elements of the <see cref="IDictionary{TKey,TValue}"/> to an array,
         /// starting at the specified array index.
         /// </summary>
         /// <param name="array">
-        /// The one-dimensional array that is the destination of the elements 
+        /// The one-dimensional array that is the destination of the elements
         /// copied from <see cref="IDictionary{TKey,TValue}"/>. The array must have zero-based indexing.
         /// </param>
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
@@ -201,12 +201,12 @@ namespace LinqToLdap.Collections
             throw new NotSupportedException();
         }
 
-        #endregion
+        #endregion ICollection<KeyValuePair<TKey,TValue>> Members
 
         #region IEnumerable<KeyValuePair<TKey,TValue>> Members
 
         /// <summary>
-        /// Returns an enumerator that iterates through the collection. 
+        /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns></returns>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -214,7 +214,7 @@ namespace LinqToLdap.Collections
             return _dictionary.GetEnumerator();
         }
 
-        #endregion
+        #endregion IEnumerable<KeyValuePair<TKey,TValue>> Members
 
         #region IEnumerable Members
 
@@ -223,6 +223,6 @@ namespace LinqToLdap.Collections
             return GetEnumerator();
         }
 
-        #endregion
+        #endregion IEnumerable Members
     }
 }

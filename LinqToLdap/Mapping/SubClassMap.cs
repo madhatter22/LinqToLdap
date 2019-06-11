@@ -1,17 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -40,7 +30,7 @@ namespace LinqToLdap.Mapping
         /// <param name="parentMapping"></param>
         protected SubClassMap(ClassMap<TSuper> parentMapping)
         {
-            var mapping = (ClassMap<TSuper>) parentMapping.PerformMapping();
+            var mapping = (ClassMap<TSuper>)parentMapping.PerformMapping();
             foreach (var property in mapping.PropertyMappings)
             {
                 PropertyMappings.Add(property);

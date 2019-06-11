@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 
 namespace LinqToLdap.Mapping
 {
@@ -25,7 +15,7 @@ namespace LinqToLdap.Mapping
         IPropertyMapperGeneric<TProperty> Named(string attributeName);
 
         /// <summary>
-        /// Specify the format of the DateTime in the directory.  Use null if the DateTime is stored in file time.  
+        /// Specify the format of the DateTime in the directory.  Use null if the DateTime is stored in file time.
         /// Default format is yyyyMMddHHmmss.0Z.  If the property is not a <see cref="DateTime"/> then this setting will be ignored.
         /// </summary>
         /// <example>
@@ -42,7 +32,7 @@ namespace LinqToLdap.Mapping
         IPropertyMapperGeneric<TProperty> DateTimeFormat(string format);
 
         /// <summary>
-        /// Speicfy that a <see cref="Enum"/> is stored as an int.  The default is string.
+        /// Specify that a <see cref="Enum"/> is stored as an int.  The default is string.
         /// If the property is not a <see cref="Enum"/> then this setting will be ignored.
         /// </summary>
         /// <returns></returns>
@@ -74,7 +64,7 @@ namespace LinqToLdap.Mapping
         IPropertyMapper Named(string attributeName);
 
         /// <summary>
-        /// Specify the format of the DateTime in the directory.  Use null if the DateTime is stored in file time.  
+        /// Specify the format of the DateTime in the directory.  Use null if the DateTime is stored in file time.
         /// Default format is yyyyMMddHHmmss.0Z.  If the property is not a <see cref="DateTime"/> then this setting will be ignored.
         /// </summary>
         /// <example>

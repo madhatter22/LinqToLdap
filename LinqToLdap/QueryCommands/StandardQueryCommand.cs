@@ -1,20 +1,10 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
-using System.Collections.Generic;
-using System.DirectoryServices.Protocols;
-using LinqToLdap.Collections;
+﻿using LinqToLdap.Collections;
 using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands.Options;
+using System;
+using System.Collections.Generic;
+using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.QueryCommands
 {
@@ -57,7 +47,7 @@ namespace LinqToLdap.QueryCommands
         public virtual object HandleStandardRequest(DirectoryConnection connection, ILinqToLdapLogger log, int maxSize, bool pagingEnabled)
         {
             if (Options.YieldNoResults)
-                return Activator.CreateInstance(typeof (List<>).MakeGenericType(Options.GetEnumeratorReturnType()));
+                return Activator.CreateInstance(typeof(List<>).MakeGenericType(Options.GetEnumeratorReturnType()));
 
             int pageSize = 0;
             int index = 0;
@@ -74,7 +64,7 @@ namespace LinqToLdap.QueryCommands
             response.AssertSuccess();
 
             var list = new List<SearchResultEntry>();
-            
+
             list.AddRange(response.Entries.GetRange());
 
             if (pagingEnabled)
@@ -135,7 +125,7 @@ namespace LinqToLdap.QueryCommands
 
                 SearchRequest.Controls.Add(pageRequest);
             }
-            
+
             if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
             var response = connection.SendRequest(SearchRequest) as SearchResponse;
 
@@ -147,7 +137,7 @@ namespace LinqToLdap.QueryCommands
             var parameters = new[]
                                  {
                                      pageRequest.PageSize,
-                                     nextPage != null ? nextPage.Cookie : null,
+                                     nextPage?.Cookie,
                                      Options.GetEnumerator(response.Entries),
                                      Options.Filter
                                  };

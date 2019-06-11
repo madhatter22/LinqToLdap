@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
@@ -19,13 +9,14 @@ namespace LinqToLdap.Mapping.PropertyMappings
     internal class X509Certificate2CollectionPropertyMapping<T> : PropertyMappingGeneric<T> where T : class
     {
         private readonly bool _isX5092;
+
         public X509Certificate2CollectionPropertyMapping(PropertyMappingArguments<T> arguments)
             : base(arguments)
         {
             var genericArguments = PropertyType.GetGenericArguments();
             _isX5092 = genericArguments.Length == 1 && genericArguments[0] == typeof(X509Certificate2);
         }
-            
+
         public override string FormatValueToFilter(object value)
         {
             if (!(value is X509Certificate))
@@ -83,16 +74,15 @@ namespace LinqToLdap.Mapping.PropertyMappings
             var value = GetValue(instance);
             return value;
         }
-        
+
         public override object FormatValueFromDirectory(DirectoryAttribute value, string dn)
         {
             if (value != null)
             {
                 if (_isX5092)
                 {
-
-                    var certs = value.GetValues(typeof (byte[]))
-                        .Select(c => new X509Certificate2((byte[]) c));
+                    var certs = value.GetValues(typeof(byte[]))
+                        .Select(c => new X509Certificate2((byte[])c));
                     return new System.Collections.ObjectModel.Collection<X509Certificate2>(certs.ToList());
                 }
                 else

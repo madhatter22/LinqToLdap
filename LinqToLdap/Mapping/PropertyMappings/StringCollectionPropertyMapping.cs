@@ -11,7 +11,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
             : base(arguments)
         {
         }
-        
+
         public override string FormatValueToFilter(object value)
         {
             if (!(value is string))
@@ -49,10 +49,10 @@ namespace LinqToLdap.Mapping.PropertyMappings
         {
             if (value != null)
             {
-                var list = value.GetValues(typeof (string))
-                    .Select(o => (string) o);
-                return 
-                    
+                var list = value.GetValues(typeof(string))
+                    .Select(o => (string)o);
+                return
+
                     new System.Collections.ObjectModel.Collection<string>(list.ToList());
             }
 

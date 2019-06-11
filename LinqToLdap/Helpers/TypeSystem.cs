@@ -26,7 +26,7 @@ namespace LinqToLdap.Helpers
             if (seqType.IsGenericType)
             {
                 foreach (Type ienum in
-                    seqType.GetGenericArguments().Select(arg => typeof (IEnumerable<>).MakeGenericType(arg)).Where(ienum => ienum.IsAssignableFrom(seqType)))
+                    seqType.GetGenericArguments().Select(arg => typeof(IEnumerable<>).MakeGenericType(arg)).Where(ienum => ienum.IsAssignableFrom(seqType)))
                 {
                     return ienum;
                 }
@@ -39,7 +39,7 @@ namespace LinqToLdap.Helpers
                 {
                     return ienum;
                 }
-            }   
+            }
 
             if (seqType.BaseType != null && seqType.BaseType != typeof(object))
             {

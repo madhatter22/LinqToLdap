@@ -1,17 +1,6 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
 using System;
-using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
-using LinqToLdap.Collections;
 
 namespace LinqToLdap.Mapping.PropertyMappings
 {
@@ -24,14 +13,13 @@ namespace LinqToLdap.Mapping.PropertyMappings
             : base(arguments)
         {
             _isFileTimeFormat = dateFormat == null;
-            
+
             _dateFormat = dateFormat;
         }
 
         public override object FormatValueFromDirectory(DirectoryAttribute value, string dn)
         {
-            string str;
-            if (value != null && value.Count > 0 && (str = value[0] as string) != null && !str.IsNullOrEmpty())
+            if (value != null && value.Count > 0 && value[0] is string str && !str.IsNullOrEmpty())
             {
                 try
                 {
@@ -63,9 +51,9 @@ namespace LinqToLdap.Mapping.PropertyMappings
 
         public override string FormatValueToFilter(object value)
         {
-            var date = (DateTime) value;
+            var date = (DateTime)value;
 
-            return _isFileTimeFormat 
+            return _isFileTimeFormat
                 ? date.ToFileTime().ToString()
                 : date.FormatLdapDateTime(_dateFormat);
         }

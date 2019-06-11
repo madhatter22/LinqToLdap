@@ -1,29 +1,21 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToLdap.Helpers;
 
 namespace LinqToLdap.Mapping
 {
-    internal class StandardObjectMapping<T> : ObjectMapping where T : class 
+    internal class StandardObjectMapping<T> : ObjectMapping where T : class
     {
         private readonly Ctor<T> _constructor;
 
 #if NET35
         private readonly LinqToLdap.Collections.SafeDictionary<string, IObjectMapping> _fullObjectClassMappings = new LinqToLdap.Collections.SafeDictionary<string, IObjectMapping>();
 #else
+
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, IObjectMapping> _fullObjectClassMappings =
             new System.Collections.Concurrent.ConcurrentDictionary<string, IObjectMapping>(StringComparer.OrdinalIgnoreCase);
+
 #endif
 
         public StandardObjectMapping(string namingContext,
@@ -40,20 +32,18 @@ namespace LinqToLdap.Mapping
         {
             if (HasSubTypeMappings && objectClasses != null)
             {
-                IObjectMapping mapping;
-
 #if NET35
                 string joinedObjectClasses = string.Join(" ", objectClasses.Cast<string>().ToArray());
 #else
                 string joinedObjectClasses = string.Join(" ", objectClasses);
 #endif
 
-                if (_fullObjectClassMappings.TryGetValue(joinedObjectClasses, out mapping))
+                if (_fullObjectClassMappings.TryGetValue(joinedObjectClasses, out IObjectMapping mapping))
                 {
                     return mapping.Create();
                 }
-                //Reverse the object classes in order of most specific to least specific. 
-                //AD and openLDAP seem to retreive the classes in order of least to most specific so I assume it's the standard.
+                //Reverse the object classes in order of most specific to least specific.
+                //AD and openLDAP seem to retrieve the classes in order of least to most specific so I assume it's the standard.
                 if (objectClasses.Cast<string>().Reverse().Any(objectClass => SubTypeMappingsObjectClassDictionary.TryGetValue(objectClass, out mapping)))
                 {
                     _fullObjectClassMappings.TryAdd(joinedObjectClasses, mapping);

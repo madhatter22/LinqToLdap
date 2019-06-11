@@ -1,18 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -74,7 +63,13 @@ namespace LinqToLdap.Mapping
         /// Returns all mappings tracked by this object.
         /// </summary>
         /// <returns></returns>
-        ReadOnlyDictionary<Type, IObjectMapping> GetMappings();
+#if (!NET35 && !NET40)
+
+        System.Collections.ObjectModel.ReadOnlyDictionary<Type, IObjectMapping> GetMappings();
+
+#else
+        LinqToLdap.Collections.ReadOnlyDictionary<Type, IObjectMapping> GetMappings();
+#endif
 
         /// <summary>
         /// Indicates if a custom AutoMapping delegate has been provided

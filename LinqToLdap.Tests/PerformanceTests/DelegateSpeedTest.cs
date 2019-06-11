@@ -1,12 +1,12 @@
-﻿using System;
+﻿using LinqToLdap.Helpers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SharpTestsEx;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using LinqToLdap.Helpers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
 
 namespace LinqToLdap.Tests.PerformanceTests
 {
@@ -137,7 +137,7 @@ namespace LinqToLdap.Tests.PerformanceTests
             long seven = 7;
             double eight = 8;
             float nine = 9;
-            var prop1Setter = DelegateBuilder.BuildSetter<Speed>(typeof (Speed).GetProperty("Property1"));
+            var prop1Setter = DelegateBuilder.BuildSetter<Speed>(typeof(Speed).GetProperty("Property1"));
             var prop2Setter = DelegateBuilder.BuildSetter<Speed>(typeof(Speed).GetProperty("Property2"));
             var prop3Setter = DelegateBuilder.BuildSetter<Speed>(typeof(Speed).GetProperty("Property3"));
             var prop4Setter = DelegateBuilder.BuildSetter<Speed>(typeof(Speed).GetProperty("Property4"));
@@ -161,6 +161,109 @@ namespace LinqToLdap.Tests.PerformanceTests
                 prop8Setter(inst, eight);
                 prop9Setter(inst, nine);
                 prop10Setter(inst, Speed.SpeedEnum.None);
+            }
+            watch.Stop();
+            inst.Property1.Should().Be.EqualTo("1");
+            inst.Property2.Should().Be.EqualTo(2);
+            inst.Property3.Should().Be.EqualTo(3m);
+            inst.Property4.Should().Not.Be.Null();
+            inst.Property5.Should().Be.EqualTo("5");
+            inst.Property6.Should().Be.EqualTo(6);
+            inst.Property7.Should().Be.EqualTo(7);
+            inst.Property8.Should().Be.EqualTo(8);
+            inst.Property9.Should().Be.EqualTo(9);
+            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            Trace.WriteLine(watch.ElapsedMilliseconds);
+        }
+
+        [TestMethod]
+        public void Property_DirectGetter_Speed()
+        {
+            Speed inst = new Speed();
+            long seven = 7;
+            double eight = 8;
+            float nine = 9;
+            var watch = Stopwatch.StartNew();
+
+            inst.Property1 = "1";
+            inst.Property2 = 2;
+            inst.Property3 = 3m;
+            inst.Property4 = new byte[0];
+            inst.Property5 = "5";
+            inst.Property6 = 6;
+            inst.Property7 = seven;
+            inst.Property8 = eight;
+            inst.Property9 = nine;
+            inst.Property10 = Speed.SpeedEnum.None;
+
+            for (int i = 0; i < Iterations; i++)
+            {
+                var a = inst.Property1;
+                var b = inst.Property2;
+                var c = inst.Property3;
+                var d = inst.Property4;
+                var e = inst.Property5;
+                var f = inst.Property6;
+                var g = inst.Property7;
+                var h = inst.Property8;
+                var j = inst.Property9;
+                var k = inst.Property10;
+            }
+            watch.Stop();
+            inst.Property1.Should().Be.EqualTo("1");
+            inst.Property2.Should().Be.EqualTo(2);
+            inst.Property3.Should().Be.EqualTo(3m);
+            inst.Property4.Should().Not.Be.Null();
+            inst.Property5.Should().Be.EqualTo("5");
+            inst.Property6.Should().Be.EqualTo(6);
+            inst.Property7.Should().Be.EqualTo(7);
+            inst.Property8.Should().Be.EqualTo(8);
+            inst.Property9.Should().Be.EqualTo(9);
+            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            Trace.WriteLine(watch.ElapsedMilliseconds);
+        }
+
+        [TestMethod]
+        public void DelegateBuilder_PropertyGetter_Speed()
+        {
+            Speed inst = new Speed();
+            long seven = 7;
+            double eight = 8;
+            float nine = 9;
+            var prop1Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property1"));
+            var prop2Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property2"));
+            var prop3Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property3"));
+            var prop4Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property4"));
+            var prop5Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property5"));
+            var prop6Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property6"));
+            var prop7Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property7"));
+            var prop8Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property8"));
+            var prop9Getter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property9"));
+            var prop10GGetter = DelegateBuilder.BuildGetter<Speed>(typeof(Speed).GetProperty("Property10"));
+            inst.Property1 = "1";
+            inst.Property2 = 2;
+            inst.Property3 = 3m;
+            inst.Property4 = new byte[0];
+            inst.Property5 = "5";
+            inst.Property6 = 6;
+            inst.Property7 = seven;
+            inst.Property8 = eight;
+            inst.Property9 = nine;
+            inst.Property10 = Speed.SpeedEnum.None;
+            var watch = Stopwatch.StartNew();
+
+            for (int i = 0; i < Iterations; i++)
+            {
+                var a = prop1Getter(inst);
+                var b = prop2Getter(inst);
+                var c = prop3Getter(inst);
+                var d = prop4Getter(inst);
+                var e = prop5Getter(inst);
+                var f = prop6Getter(inst);
+                var g = prop7Getter(inst);
+                var h = prop8Getter(inst);
+                var j = prop9Getter(inst);
+                var k = prop10GGetter(inst);
             }
             watch.Stop();
             inst.Property1.Should().Be.EqualTo("1");

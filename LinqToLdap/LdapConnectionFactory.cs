@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.DirectoryServices.Protocols;
 using System.Net;
 
@@ -78,7 +68,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// If this option is called, the server name is a fully-qualified DNS host name. 
+        /// If this option is called, the server name is a fully-qualified DNS host name.
         /// Otherwise the server name can be an IP address, a DNS domain or host name.
         /// </summary>
         /// <returns></returns>
@@ -99,8 +89,8 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Allows you to specify an authentication method for the 
-        /// connection.  If this method is not called,  the authentication method 
+        /// Allows you to specify an authentication method for the
+        /// connection.  If this method is not called,  the authentication method
         /// will be resolved by the <see cref="LdapConnection"/>.
         /// </summary>
         /// <param name="authType">
@@ -114,8 +104,8 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Allows you to specify credentials for the connection to use.  
-        /// If this method is not called,  then the <see cref="LdapConnection"/> 
+        /// Allows you to specify credentials for the connection to use.
+        /// If this method is not called,  then the <see cref="LdapConnection"/>
         /// will use the credentials of the current user.
         /// </summary>
         /// <param name="credentials">

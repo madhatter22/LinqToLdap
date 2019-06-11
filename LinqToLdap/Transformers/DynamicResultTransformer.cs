@@ -1,22 +1,13 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
 using System;
 using System.DirectoryServices.Protocols;
-using LinqToLdap.Collections;
 
 namespace LinqToLdap.Transformers
 {
     internal class DynamicResultTransformer : IResultTransformer
     {
         private readonly SelectProjection _projection;
+
         public DynamicResultTransformer(SelectProjection projection = null)
         {
             _projection = projection;

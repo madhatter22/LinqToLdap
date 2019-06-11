@@ -1,7 +1,7 @@
-﻿using System;
+﻿using LinqToLdap.Logging;
+using System;
 using System.DirectoryServices.Protocols;
 using System.Net;
-using LinqToLdap.Logging;
 
 namespace LinqToLdap
 {
@@ -54,6 +54,7 @@ namespace LinqToLdap
                     case 1:
                         serverName = preServerInfo[0];
                         break;
+
                     case 2:
                         throw new ArgumentException(
                             string.Format(
@@ -70,6 +71,7 @@ namespace LinqToLdap
                 case 1:
                     ServerName = serverInfo[0];
                     break;
+
                 case 2:
                     {
                         int port;
@@ -80,17 +82,21 @@ namespace LinqToLdap
                             {
                                 case DefaultPort:
                                     break;
+
                                 case SslPort:
                                     UsesSsl = true;
                                     Port = port;
                                     break;
+
                                 case GlobalCatalogPort:
                                     Port = port;
                                     break;
+
                                 case GlobalCatalogSslPort:
                                     UsesSsl = true;
                                     Port = port;
                                     break;
+
                                 default:
                                     Port = port;
                                     break;
@@ -102,6 +108,7 @@ namespace LinqToLdap
                         }
                     }
                     break;
+
                 default:
                     ServerName = serverName;
                     break;
@@ -141,7 +148,6 @@ namespace LinqToLdap
 
                 throw;
             }
-            
         }
 
         /// <summary>
@@ -175,7 +181,7 @@ namespace LinqToLdap
         protected TimeSpan Timeout { get; set; }
 
         /// <summary>
-        /// If this option is called, the server name is a fully-qualified DNS host name. 
+        /// If this option is called, the server name is a fully-qualified DNS host name.
         /// Otherwise the server name can be an IP address, a DNS domain or host name.
         /// </summary>
         /// <returns></returns>

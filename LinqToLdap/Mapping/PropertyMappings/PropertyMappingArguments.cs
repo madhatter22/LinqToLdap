@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace LinqToLdap.Mapping.PropertyMappings
@@ -23,7 +13,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
         public Action<T, object> Setter { get; set; }
         public bool IsDistinguishedName { get; set; }
         public bool IsReadOnly { get; set; }
-        public Dictionary<string, object> DirectoryMappings { get; set;}
+        public Dictionary<string, object> DirectoryMappings { get; set; }
         public Dictionary<object, string> InstanceMappings { get; set; }
     }
 }

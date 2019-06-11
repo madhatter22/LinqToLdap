@@ -1,13 +1,5 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Logging;
+using LinqToLdap.Mapping;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,9 +10,6 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
-using LinqToLdap.Collections;
-using LinqToLdap.Logging;
-using LinqToLdap.Mapping;
 
 namespace LinqToLdap
 {
@@ -51,12 +40,12 @@ namespace LinqToLdap
 #else
             return @"\" + string.Join(@"\", bytes.Select(b => b.ToString("x2")));
 #endif
-
         }
 
         #region DateTime Extensions
 
         internal const string LdapFormat = "yyyyMMddHHmmss.0Z";
+
         internal static DateTime FormatLdapDateTime(this object obj, string format)
         {
             var value = DateTimeOffset.ParseExact(obj.ToString(), format, DateTimeFormatInfo.InvariantInfo).DateTime;
@@ -64,7 +53,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Convets a date time to a string..
+        /// Converts a date time to a string..
         /// </summary>
         /// <param name="dateTime">The original date</param>
         /// <param name="format">The format of the date</param>
@@ -82,26 +71,35 @@ namespace LinqToLdap
 
         #endregion DateTime Extensions
 
+#if (!NET35 && !NET40)
+
         /// <summary>
-        /// Converts a dictionary to a <see cref="ReadOnlyDictionary{K,V}"/>
+        /// Converts a dictionary to a <see cref="System.Collections.ObjectModel.ReadOnlyDictionary{K,V}"/>
         /// </summary>
         /// <typeparam name="TKey">Key type</typeparam>
         /// <typeparam name="TValue">Value type</typeparam>
         /// <param name="dictionary">The original dictionary</param>
         /// <returns></returns>
-#if NET45
         public static System.Collections.ObjectModel.ReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
         {
             return new System.Collections.ObjectModel.ReadOnlyDictionary<TKey, TValue>(dictionary);
         }
+
 #else
+        /// <summary>
+        /// Converts a dictionary to a <see cref="LinqToLdap.Collections.ReadOnlyDictionary{K,V}"/>
+        /// </summary>
+        /// <typeparam name="TKey">Key type</typeparam>
+        /// <typeparam name="TValue">Value type</typeparam>
+        /// <param name="dictionary">The original dictionary</param>
+        /// <returns></returns>
         public static LinqToLdap.Collections.ReadOnlyDictionary<TKey, TValue> ToReadOnlyDictionary<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
         {
             return new LinqToLdap.Collections.ReadOnlyDictionary<TKey, TValue>(dictionary);
         }
 
         /// <summary>
-        /// Converts a dictionary to a <see cref="ReadOnlyDictionary{K,V}"/>
+        /// Converts a dictionary to a <see cref="LinqToLdap.Collections.ReadOnlyDictionary{K,V}"/>
         /// </summary>
         /// <typeparam name="TKey">Key type</typeparam>
         /// <typeparam name="TValue">Value type</typeparam>
@@ -111,6 +109,7 @@ namespace LinqToLdap
         {
             return new LinqToLdap.Collections.ReadOnlyDictionary<TKey, TValue>(dictionary);
         }
+
 #endif
 
         /// <summary>
@@ -120,7 +119,7 @@ namespace LinqToLdap
         /// <returns></returns>
         public static bool IsAnonymous(this Type type)
         {
-            var isAnonymousType = type.Name.Contains("AnonymousType") && 
+            var isAnonymousType = type.Name.Contains("AnonymousType") &&
                 type.GetCustomAttributes(typeof(CompilerGeneratedAttribute), false).Any() &&
                 type.IsSealed;
 
@@ -129,7 +128,7 @@ namespace LinqToLdap
 
         internal static bool HasDirectorySchema(this Type type)
         {
-            var attributes = type.GetCustomAttributes(typeof (DirectorySchemaAttribute), true);
+            var attributes = type.GetCustomAttributes(typeof(DirectorySchemaAttribute), true);
             return attributes != null && attributes.Length > 0;
         }
 
@@ -153,7 +152,7 @@ namespace LinqToLdap
                 throw new LdapException(response.ToLogString());
             }
         }
-        
+
         /// <summary>
         /// Cleans special characters for an LDAP filter.  This method cannot clean a distinguished name.
         /// </summary>
@@ -169,33 +168,43 @@ namespace LinqToLdap
                     case '\\':
                         sb.Append("\\5c");
                         break;
+
                     case '*':
                         sb.Append("\\2a");
                         break;
+
                     case '(':
                         sb.Append("\\28");
                         break;
+
                     case ')':
                         sb.Append("\\29");
                         break;
+
                     case '&':
                         sb.Append("\\26");
                         break;
+
                     case ':':
                         sb.Append("\\3a");
                         break;
+
                     case '|':
                         sb.Append("\\7c");
                         break;
+
                     case '~':
                         sb.Append("\\7e");
                         break;
+
                     case '!':
                         sb.Append("\\21");
                         break;
+
                     case '\u0000':
                         sb.Append("\\00");
                         break;
+
                     default:
                         sb.Append(curChar);
                         break;
@@ -205,7 +214,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Attempts to convert the object from a .Net type to an LDAP string or byte[].  
+        /// Attempts to convert the object from a .Net type to an LDAP string or byte[].
         /// If <paramref name="obj"/> is null or <see cref="String.Empty"/> then no value is added to the <see cref="DirectoryAttributeModification"/>.
         /// </summary>
         /// <param name="obj">The value to convert.</param>
@@ -217,7 +226,7 @@ namespace LinqToLdap
             var modification = new DirectoryAttributeModification { Name = attributeName, Operation = operation };
 
             if (obj == null || string.Empty.Equals(obj)) return modification;
-            
+
             if (obj is string)
             {
                 modification.Add(obj as string);
@@ -285,10 +294,8 @@ namespace LinqToLdap
                 modification.Add(((Guid)obj).ToByteArray());
                 return modification;
             }
-            if (obj is bool)
+            if (obj is bool boolean)
             {
-                var boolean = (bool)obj;
-
                 modification.Add(boolean ? "TRUE" : "FALSE");
 
                 return modification;

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Mapping.PropertyMappingBuilders;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
-using LinqToLdap.Collections;
-using LinqToLdap.Mapping.PropertyMappingBuilders;
 
 namespace LinqToLdap.Mapping
 {

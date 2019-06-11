@@ -1,13 +1,11 @@
-﻿using System;
-using System.DirectoryServices.Protocols;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
-using LinqToLdap.Collections;
+﻿using LinqToLdap.Collections;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpTestsEx;
+using System;
+using System.DirectoryServices.Protocols;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 
 namespace LinqToLdap.Tests.Collections
 {

@@ -43,16 +43,12 @@ namespace LinqToLdap.Visitors
             return expression.NodeType != ExpressionType.Parameter;
         }
 
-        #region Nested type: Nominator
-
-        #endregion
-
         #region Nested type: SubtreeEvaluator
 
         /// <summary>
         /// Evaluates and replaces sub-trees when first candidate is reached (top-down)
         /// </summary>
-        
+
         private class SubtreeEvaluator : ExpressionVisitor
         {
             private readonly HashSet<Expression> _candidates;
@@ -94,6 +90,6 @@ namespace LinqToLdap.Visitors
             }
         }
 
-        #endregion
+        #endregion Nested type: SubtreeEvaluator
     }
 }

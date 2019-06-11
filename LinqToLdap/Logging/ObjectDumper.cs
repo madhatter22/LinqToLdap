@@ -2,8 +2,8 @@
 using System.Collections;
 using System.DirectoryServices.Protocols;
 using System.IO;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 
 namespace LinqToLdap.Logging
 {
@@ -26,7 +26,7 @@ namespace LinqToLdap.Logging
 
         public static void Write(object element, int depth, TextWriter log)
         {
-            var dumper = new ObjectDumper(depth) {_writer = log};
+            var dumper = new ObjectDumper(depth) { _writer = log };
             dumper.WriteObject(null, element);
         }
 
@@ -71,8 +71,7 @@ namespace LinqToLdap.Logging
             }
             else
             {
-                var enumerableElement = element as IEnumerable;
-                if (enumerableElement != null)
+                if (element is IEnumerable enumerableElement)
                 {
                     foreach (object item in enumerableElement)
                     {
@@ -124,15 +123,13 @@ namespace LinqToLdap.Logging
                         }
                         else if (typeof(DirectoryResponse).IsAssignableFrom(t))
                         {
-                            var value = (f != null ? f.GetValue(element) : p.GetValue(element, null)) as DirectoryResponse;
-
-                            if (value != null)
+                            if ((f != null ? f.GetValue(element) : p.GetValue(element, null)) is DirectoryResponse value)
                             {
-                                Write(string.Format("[ ErrorMessage: {0}, MatchedDN: {1}, ResultCode: {2}, RequestId: {3}, Controls: {4}, Referrals: {5} ]", 
+                                Write(string.Format("[ ErrorMessage: {0}, MatchedDN: {1}, ResultCode: {2}, RequestId: {3}, Controls: {4}, Referrals: {5} ]",
                                     value.ErrorMessage,
-                                    value.MatchedDN, 
+                                    value.MatchedDN,
                                     value.ResultCode,
-                                    value.RequestId, 
+                                    value.RequestId,
 #if NET35
                                     string.Join(" | ", value.Controls.Select(c => c.Type).ToArray()), string.Join(" | ", value.Referral.Select(u => u.ToString()).ToArray())));
 #else
@@ -142,7 +139,7 @@ namespace LinqToLdap.Logging
                         }
                         else
                         {
-                            Write(typeof (IEnumerable).IsAssignableFrom(t) ? "..." : "{ }");
+                            Write(typeof(IEnumerable).IsAssignableFrom(t) ? "..." : "{ }");
                         }
                     }
                     if (propWritten) WriteLine();
@@ -155,7 +152,7 @@ namespace LinqToLdap.Logging
                             if (f == null && p == null) continue;
 
                             Type t = f != null ? f.FieldType : p.PropertyType;
-                            if ((t.IsValueType || t == typeof (string))) continue;
+                            if ((t.IsValueType || t == typeof(string))) continue;
 
                             object value = f != null ? f.GetValue(element) : p.GetValue(element, null);
                             if (value == null) continue;

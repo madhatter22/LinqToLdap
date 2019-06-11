@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.Mapping.PropertyMappings
@@ -16,6 +6,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
     internal class EnumPropertyMapping<T> : PropertyMappingGeneric<T> where T : class
     {
         private readonly bool _isStoredAsInt;
+
         public EnumPropertyMapping(PropertyMappingArguments<T> arguments, bool isStoredAsInt) : base(arguments)
         {
             _isStoredAsInt = isStoredAsInt;
@@ -47,7 +38,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
         {
             if (_isStoredAsInt)
             {
-                return ((int) value).ToString();
+                return ((int)value).ToString();
             }
             if (value is int)
             {

@@ -22,7 +22,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
             var binary = new byte[identifier.BinaryLength];
 
             identifier.GetBinaryForm(binary, 0);
-            
+
             return binary.ToStringOctet();
         }
 

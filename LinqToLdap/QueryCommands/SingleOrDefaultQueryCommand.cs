@@ -1,18 +1,8 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
-using System.DirectoryServices.Protocols;
-using LinqToLdap.Logging;
+﻿using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands.Options;
+using System;
+using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.QueryCommands
 {
@@ -52,15 +42,15 @@ namespace LinqToLdap.QueryCommands
             var response = connection.SendRequest(SearchRequest) as SearchResponse;
 
             response.AssertSuccess();
-            
+
             if (response.Entries.Count > 1)
             {
                 throw new InvalidOperationException(string.Format("SingleOrDefault returned {0} results for {1}",
                                                                   response.Entries.Count, SearchRequest.Filter));
             }
 
-            return response.Entries.Count == 1 
-                ? Options.GetTransformer().Transform(response.Entries[0]) 
+            return response.Entries.Count == 1
+                ? Options.GetTransformer().Transform(response.Entries[0])
                 : Options.GetTransformer().Default();
         }
     }

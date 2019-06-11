@@ -1,25 +1,16 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Helpers
 {
     internal delegate T CtorWithParams<out T>(params object[] args);
+
     internal delegate T Ctor<out T>();
-    
+
     internal static class DelegateBuilder
     {
         internal static Action<T, object> BuildSetter<T>(PropertyInfo propertyInfo)
@@ -30,9 +21,9 @@ namespace LinqToLdap.Helpers
                 instance,
                 propertyInfo.GetSetMethod(true),
                 Expression.Convert(argument, propertyInfo.PropertyType));
-            var setter = (Action<T, object>)Expression.Lambda(setterCall, instance, argument)
-                                                            .Compile();
-            return setter;
+            var setter = Expression.Lambda(setterCall, instance, argument);
+
+            return (Action<T, object>)setter.Compile();
         }
 
         internal static Func<T, object> BuildGetter<T>(PropertyInfo propertyInfo)
@@ -42,10 +33,11 @@ namespace LinqToLdap.Helpers
                 instance,
                 propertyInfo.GetGetMethod(true));
             var conversion = Expression.Convert(getterCall, typeof(object));
-            var getter = (Func<T, object>)Expression.Lambda(conversion, instance).Compile();
-            return getter;
+            var getter = Expression.Lambda(conversion, instance);
+
+            return (Func<T, object>)getter.Compile();
         }
-        
+
         private static Type GetConcreteType(Type type)
         {
             if (type.IsInterface)
@@ -105,7 +97,7 @@ namespace LinqToLdap.Helpers
             {
                 Expression index = Expression.Constant(i);
                 Type paramType = paramsInfo[i].ParameterType;
-                
+
                 Expression paramAccessorExp = Expression.ArrayIndex(param, index);
                 Expression paramCastExp = Expression.Convert(paramAccessorExp, paramType);
 
@@ -115,8 +107,7 @@ namespace LinqToLdap.Helpers
             var newExp = Expression.New(ctor, argsExp);
             var lambda = Expression.Lambda(typeof(CtorWithParams<T>), newExp, param);
 
-            var compiled = (CtorWithParams<T>)lambda.Compile();
-            return compiled;
+            return (CtorWithParams<T>)lambda.Compile();
         }
     }
 }

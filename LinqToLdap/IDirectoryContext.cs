@@ -1,20 +1,10 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Exceptions;
+using LinqToLdap.Mapping;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
-using LinqToLdap.Mapping;
 
 namespace LinqToLdap
 {
@@ -87,7 +77,7 @@ namespace LinqToLdap
         /// <returns></returns>
         IQueryable<T> Query<T>(T example, SearchScope scope, string namingContext, string objectClass = null, IEnumerable<string> objectClasses = null,
                                string objectCategory = null) where T : class;
-        
+
         /// <summary>
         /// List server information from RootDSE.
         /// </summary>
@@ -106,7 +96,7 @@ namespace LinqToLdap
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if object class or object category have not been mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
@@ -172,7 +162,7 @@ namespace LinqToLdap
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if object class or object category have not been mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
@@ -247,7 +237,7 @@ namespace LinqToLdap
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>
         /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
@@ -300,7 +290,7 @@ namespace LinqToLdap
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
         /// <exception cref="MappingException">
-        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.  
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
         /// Thrown if object class or object category have not been mapped.
         /// Thrown if <typeparamref name="T"/> has not been mapped.
         /// </exception>

@@ -1,18 +1,8 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Mapping;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
-using LinqToLdap.Collections;
-using LinqToLdap.Mapping;
 
 namespace LinqToLdap.Transformers
 {
@@ -34,7 +24,7 @@ namespace LinqToLdap.Transformers
             object instance;
             if (!ObjectMapping.IsForAnonymousType)
             {
-                instance = ObjectMapping.HasSubTypeMappings 
+                instance = ObjectMapping.HasSubTypeMappings
                     ? ObjectMapping.Create(null, entry.Attributes["objectClass"]?.GetValues(typeof(string)))
                     : ObjectMapping.Create();
                 bool isDirectoryObject = instance is IDirectoryObject;
@@ -51,7 +41,7 @@ namespace LinqToLdap.Transformers
 
                 foreach (var queriedProperty in enumeration)
                 {
-                    var property = ObjectMapping.HasCatchAllMapping 
+                    var property = ObjectMapping.HasCatchAllMapping
                         ? ObjectMapping.GetPropertyMappingByAttribute(queriedProperty.Key, instance.GetType())
                         : ObjectMapping.GetPropertyMapping(queriedProperty.Key, instance.GetType());
 
@@ -79,9 +69,7 @@ namespace LinqToLdap.Transformers
 
                 if (originalValues != null)
                 {
-// ReSharper disable PossibleNullReferenceException
                     (instance as IDirectoryObject).OriginalValues = new OriginalValuesCollection(originalValues);
-// ReSharper restore PossibleNullReferenceException
                 }
             }
             else
@@ -101,7 +89,7 @@ namespace LinqToLdap.Transformers
                                     ? GetValue(entry, property)
                                     : property.Default();
                     }
-                    
+
                     parameters[count++] = value;
                 }
                 instance = ObjectMapping.Create(parameters);

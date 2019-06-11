@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System.DirectoryServices.Protocols;
+﻿using System.DirectoryServices.Protocols;
 using System.Net;
 
 namespace LinqToLdap
@@ -19,8 +9,8 @@ namespace LinqToLdap
     public interface ILdapConnectionFactoryConfiguration
     {
         /// <summary>
-        /// Allows you to specify an authentication method for the 
-        /// connection.  If this method is not called,  the authentication method 
+        /// Allows you to specify an authentication method for the
+        /// connection.  If this method is not called,  the authentication method
         /// will be resolved by the <see cref="LdapConnection"/>.
         /// </summary>
         /// <param name="authType">
@@ -30,8 +20,8 @@ namespace LinqToLdap
         ILdapConnectionFactoryConfiguration AuthenticateBy(AuthType authType);
 
         /// <summary>
-        /// Allows you to specify credentials for the connection to use.  
-        /// If this method is not called,  then the <see cref="LdapConnection"/> 
+        /// Allows you to specify credentials for the connection to use.
+        /// If this method is not called,  then the <see cref="LdapConnection"/>
         /// will use the credentials of the current user.
         /// </summary>
         /// <param name="credentials">
@@ -65,14 +55,14 @@ namespace LinqToLdap
         ILdapConnectionFactoryConfiguration ConnectionTimeoutIn(double seconds);
 
         /// <summary>
-        /// Tuorns on SSL and optionally you can set the SSL port.  Default is 636.
+        /// Turns on SSL and optionally you can set the SSL port.  Default is 636.
         /// </summary>
         /// <param name="port">The optional port to use.</param>
         /// <returns></returns>
         ILdapConnectionFactoryConfiguration UseSsl(int port = ConnectionFactoryBase.SslPort);
 
         /// <summary>
-        /// If this option is called, the server name is a fully-qualified DNS host name. 
+        /// If this option is called, the server name is a fully-qualified DNS host name.
         /// Otherwise the server name can be an IP address, a DNS domain or host name.
         /// </summary>
         /// <returns></returns>

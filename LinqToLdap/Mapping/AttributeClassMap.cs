@@ -1,18 +1,8 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -20,7 +10,7 @@ namespace LinqToLdap.Mapping
     /// Uses attributes to map a class
     /// </summary>
     /// <typeparam name="T">The class to map</typeparam>
-    public class AttributeClassMap<T> : ClassMap<T> where T : class 
+    public class AttributeClassMap<T> : ClassMap<T> where T : class
     {
         /// <summary>
         /// Maps class information for <typeparamref name="T"/>.
@@ -48,7 +38,7 @@ namespace LinqToLdap.Mapping
             {
                 ObjectCategory(schemaAttribute.ObjectCategory, schemaAttribute.IncludeObjectCategory);
             }
-            
+
             if (objectClasses != null)
             {
                 ObjectClasses(objectClasses, includeObjectClasses);
@@ -96,7 +86,7 @@ namespace LinqToLdap.Mapping
 #else
                 .Select(p => new System.Tuple<PropertyInfo, DistinguishedNameAttribute>(p,
 #endif
-                
+
                     p.GetCustomAttributes(typeof(DistinguishedNameAttribute), true).Cast<DistinguishedNameAttribute>().First()))
                 .FirstOrDefault();
 

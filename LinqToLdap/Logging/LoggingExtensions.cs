@@ -1,15 +1,6 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System.DirectoryServices.Protocols;
-using System.Text;
+﻿using System.DirectoryServices.Protocols;
 using System.Linq;
+using System.Text;
 
 namespace LinqToLdap.Logging
 {
@@ -176,6 +167,7 @@ namespace LinqToLdap.Logging
         }
 
         private const string AttributeFormat = "{{ {0}: {1} }}";
+
         private static string FormatDirectoryAttribute(DirectoryAttribute directoryAttribute)
         {
             if (directoryAttribute != null)
@@ -225,7 +217,7 @@ namespace LinqToLdap.Logging
             {
                 string name = directoryAttribute.Name;
                 string value = null;
-                
+
                 if (directoryAttribute.Count > 1)
                 {
                     var type = directoryAttribute[0].GetType();
@@ -260,8 +252,8 @@ namespace LinqToLdap.Logging
                     }
                 }
 
-                return directoryAttribute.Operation == DirectoryAttributeOperation.Delete 
-                    ? string.Format("{{ {0} {1} }}", "Delete", name) 
+                return directoryAttribute.Operation == DirectoryAttributeOperation.Delete
+                    ? string.Format("{{ {0} {1} }}", "Delete", name)
                     : string.Format("{{ {0} {1}: {2} }}", directoryAttribute.Operation, name, value);
             }
 

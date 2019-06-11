@@ -1,33 +1,22 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Exceptions;
+using LinqToLdap.Helpers;
+using LinqToLdap.Mapping.PropertyMappings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
-using LinqToLdap.Helpers;
-using LinqToLdap.Mapping.PropertyMappings;
 
 namespace LinqToLdap.Mapping
 {
-    internal class PropertyMappingBuilder<T, TProperty> : IPropertyMapperGeneric<TProperty>, IPropertyMappingBuilder, IPropertyMapper where T : class 
+    internal class PropertyMappingBuilder<T, TProperty> : IPropertyMapperGeneric<TProperty>, IPropertyMappingBuilder, IPropertyMapper where T : class
     {
         public PropertyMappingBuilder(PropertyInfo propertyInfo, bool isDistinguishedName, bool isReadyOnly)
         {
             IsDistinguishedName = isDistinguishedName;
-            if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
-            PropertyInfo = propertyInfo;
+            PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
             IsReadOnly = isReadyOnly;
         }
 
@@ -46,22 +35,22 @@ namespace LinqToLdap.Mapping
         {
             IPropertyMapping mapping;
 
-            var type = typeof (T);
+            var type = typeof(T);
             var arguments = new PropertyMappingArguments<T>
-                                {
-                                    PropertyName = PropertyInfo.Name,
-                                    PropertyType = PropertyInfo.PropertyType,
-                                    AttributeName = AttributeName ?? PropertyInfo.Name.Replace('_', '-'),
-                                    Getter = DelegateBuilder.BuildGetter<T>(PropertyInfo),
-                                    Setter = !type.IsAnonymous()
+            {
+                PropertyName = PropertyInfo.Name,
+                PropertyType = PropertyInfo.PropertyType,
+                AttributeName = AttributeName ?? PropertyInfo.Name.Replace('_', '-'),
+                Getter = DelegateBuilder.BuildGetter<T>(PropertyInfo),
+                Setter = !type.IsAnonymous()
                                                  ? DelegateBuilder.BuildSetter<T>(PropertyInfo)
                                                  : null,
-                                    IsStoreGenerated = IsStoreGenerated,
-                                    IsDistinguishedName = IsDistinguishedName,
-                                    IsReadOnly = IsReadOnly,
-                                    DirectoryMappings = null,
-                                    InstanceMappings = null
-                                };
+                IsStoreGenerated = IsStoreGenerated,
+                IsDistinguishedName = IsDistinguishedName,
+                IsReadOnly = IsReadOnly,
+                DirectoryMappings = null,
+                InstanceMappings = null
+            };
 
             if (PropertyInfo.PropertyType == typeof(DateTime) || PropertyInfo.PropertyType == typeof(DateTime?))
             {
@@ -142,7 +131,7 @@ namespace LinqToLdap.Mapping
             {
                 mapping = new NumericPropertyMapping<T>(arguments);
             }
-            else if (typeof (IDirectoryAttributes).IsAssignableFrom(PropertyInfo.PropertyType))
+            else if (typeof(IDirectoryAttributes).IsAssignableFrom(PropertyInfo.PropertyType))
             {
                 mapping = new CatchAllPropertyMapping<T>(arguments);
             }
@@ -150,7 +139,7 @@ namespace LinqToLdap.Mapping
             {
                 throw new MappingException(string.Format("Type '{0}' could not be mapped.", PropertyInfo.PropertyType.FullName));
             }
-            
+
             return mapping;
         }
 
@@ -198,7 +187,7 @@ namespace LinqToLdap.Mapping
 
         IPropertyMapper IPropertyMapper.DateTimeFormat(string format)
         {
-           DateTimeFormat = format;
+            DateTimeFormat = format;
             return this;
         }
 

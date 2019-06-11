@@ -1,17 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using LinqToLdap.Collections;
 
 namespace LinqToLdap.Mapping
 {
@@ -48,13 +38,14 @@ namespace LinqToLdap.Mapping
         public bool HasCatchAllMapping => false;
         public bool IncludeObjectClasses => true;
 
-#if NET45
+#if (!NET35 && !NET40)
         private System.Collections.ObjectModel.ReadOnlyDictionary<string, string> _properties;
         public System.Collections.ObjectModel.ReadOnlyDictionary<string, string> Properties => _properties ?? (_properties = new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(new Dictionary<string, string>()));
 #else
         private Collections.ReadOnlyDictionary<string, string> _properties;
         public Collections.ReadOnlyDictionary<string, string> Properties => _properties ?? (_properties = new Collections.ReadOnlyDictionary<string, string>(new Dictionary<string, string>()));
 #endif
+
         public IEnumerable<IPropertyMapping> GetPropertyMappings()
         {
             throw new NotSupportedException("Properties are not mapped for DirectoryAttributes.");
@@ -89,7 +80,7 @@ namespace LinqToLdap.Mapping
         {
             throw new NotSupportedException();
         }
-        
+
         public ReadOnlyCollection<IObjectMapping> SubTypeMappings => null;
 
         public void AddSubTypeMapping(IObjectMapping mapping)

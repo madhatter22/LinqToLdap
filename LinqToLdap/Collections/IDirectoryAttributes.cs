@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.DirectoryServices.Protocols;
@@ -52,14 +42,13 @@ namespace LinqToLdap.Collections
         /// <returns></returns>
         object this[string attribute] { get; }
 
-
         /// <summary>
         /// Gets the <see cref="DirectoryAttribute"/> if available.
         /// </summary>
         /// <param name="attribute">The name of the attribute</param>
         /// <returns></returns>
         DirectoryAttribute Get(string attribute);
-        
+
         /// <summary>
         /// Gets the byte array value for the specified attribute if available.
         /// </summary>
@@ -87,7 +76,7 @@ namespace LinqToLdap.Collections
         /// <param name="attribute">The name of the attribute</param>
         /// <returns></returns>
         /// <exception cref="LinqToLdap.Exceptions.MappingException">
-        /// Thrown if the value cannot be 
+        /// Thrown if the value cannot be
         /// </exception>
         byte? GetByte(string attribute);
 
@@ -176,7 +165,7 @@ namespace LinqToLdap.Collections
         /// <param name="attribute">The name of the attribute</param>
         /// <returns></returns>
         X509Certificate GetX509Certificate(string attribute);
-        
+
         /// <summary>
         /// Gets the <see cref="X509Certificate2"/> value for the specified attribute if available.
         /// </summary>
@@ -198,7 +187,8 @@ namespace LinqToLdap.Collections
         /// <returns></returns>
 // ReSharper disable InconsistentNaming
         IEnumerable<X509Certificate2> GetX509Certificate2s(string attribute);
-// ReSharper restore InconsistentNaming
+
+        // ReSharper restore InconsistentNaming
 
         /// <summary>
         /// Gets the <see cref="SecurityIdentifier"/> value for the specified attribute if available.
@@ -345,7 +335,7 @@ namespace LinqToLdap.Collections
         /// <param name="modification">The <see cref="DirectoryAttributeModification"/> for the entry.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="modification"/> is null.</exception>
         /// <exception cref="ArgumentException">
-        /// Thrown if the modification is for "distinguishedname", "cn", "ou", or "entrydn".  
+        /// Thrown if the modification is for "distinguishedname", "cn", "ou", or "entrydn".
         /// Also thrown <paramref name="modification"/> does not have a valid name.
         /// </exception>
         /// <exception cref="InvalidOperationException">Thrown if a modification with the same name and operation has already been added.</exception>

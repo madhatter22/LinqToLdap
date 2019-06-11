@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Linq;
 
 namespace LinqToLdap.Mapping
@@ -19,9 +9,6 @@ namespace LinqToLdap.Mapping
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class DirectorySchemaAttribute : Attribute
     {
-        private bool _includeObjectCategory = true;
-        private bool _includeObjectClasses = true;
-
         /// <summary>
         /// Maps the object to the naming context
         /// </summary>
@@ -41,7 +28,7 @@ namespace LinqToLdap.Mapping
         /// </summary>
         public string ObjectClass
         {
-            get { return ObjectClasses != null ? ObjectClasses.FirstOrDefault() : null; }
+            get { return ObjectClasses?.FirstOrDefault(); }
             set
             {
                 if (!value.IsNullOrEmpty())
@@ -64,19 +51,11 @@ namespace LinqToLdap.Mapping
         /// <summary>
         /// Indicates if the object category should be included in filters.
         /// </summary>
-        public bool IncludeObjectCategory
-        {
-            get { return _includeObjectCategory; }
-            set { _includeObjectCategory = value; }
-        }
+        public bool IncludeObjectCategory { get; set; } = true;
 
         /// <summary>
         /// Indicates if the object classes should be included in filters.
         /// </summary>
-        public bool IncludeObjectClasses
-        {
-            get { return _includeObjectClasses; }
-            set { _includeObjectClasses = value; }
-        }
+        public bool IncludeObjectClasses { get; set; } = true;
     }
 }

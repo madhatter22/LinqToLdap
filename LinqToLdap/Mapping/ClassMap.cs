@@ -1,20 +1,11 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Exceptions;
+using LinqToLdap.Mapping.PropertyMappingBuilders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -34,7 +25,7 @@ namespace LinqToLdap.Mapping
     /// }
     /// </example>
     /// <typeparam name="T">Type to map</typeparam>
-    public abstract partial class ClassMap<T> : IClassMap where T : class 
+    public abstract partial class ClassMap<T> : IClassMap where T : class
     {
         private string _namingContext;
         private string _objectCategory;
@@ -131,7 +122,7 @@ namespace LinqToLdap.Mapping
         }
 
         /// <summary>
-        /// Produces a final mapping used for object contruction from the directory
+        /// Produces a final mapping used for object construction from the directory
         /// </summary>
         /// <returns></returns>
         public virtual IObjectMapping ToObjectMapping()
@@ -168,7 +159,7 @@ namespace LinqToLdap.Mapping
         /// <param name="includeObjectClasses">Indicates if the object classes should be included in filters.</param>
         protected void ObjectClasses(IEnumerable<string> objectClass, bool includeObjectClasses = true)
         {
-            _objectClass = objectClass != null && objectClass.Any() 
+            _objectClass = objectClass != null && objectClass.Any()
                 ? objectClass
                 : null;
             IncludeObjectClasses = _objectClass != null && _objectClass.Any() && includeObjectClasses;
@@ -220,13 +211,13 @@ namespace LinqToLdap.Mapping
 
             if (PropertyMappings.Any(p => p.PropertyName == member.Name))
             {
-                throw new MappingException($"{member.Name} is already mapped for {typeof (T).FullName}");
+                throw new MappingException($"{member.Name} is already mapped for {typeof(T).FullName}");
             }
 
             var propertyInfo = typeof(T).GetProperty(member.Name, Flags);
             if (propertyInfo == null)
             {
-                throw new MappingException($"Property named {member.Name} not found for type {typeof (T).FullName}");
+                throw new MappingException($"Property named {member.Name} not found for type {typeof(T).FullName}");
             }
             if (propertyInfo.GetSetMethod(true) == null || propertyInfo.GetGetMethod(true) == null)
             {
@@ -290,7 +281,7 @@ namespace LinqToLdap.Mapping
 
             if (PropertyMappings.Any(p => p.PropertyName == propertyInfo.Name))
             {
-                throw new MappingException($"{propertyInfo.Name} is already mapped for {typeof (T).FullName}");
+                throw new MappingException($"{propertyInfo.Name} is already mapped for {typeof(T).FullName}");
             }
 
             if (!IsForAnonymousType && (propertyInfo.GetSetMethod(true) == null || propertyInfo.GetGetMethod(true) == null))
@@ -298,9 +289,9 @@ namespace LinqToLdap.Mapping
                 throw new MappingException("Cannot map a property without a getter and setter.");
             }
 
-            var type = typeof (PropertyMappingBuilder<,>).MakeGenericType(typeof (T), propertyInfo.PropertyType);
+            var type = typeof(PropertyMappingBuilder<,>).MakeGenericType(typeof(T), propertyInfo.PropertyType);
 
-            var mapping = Activator.CreateInstance(type, new object[] {propertyInfo, isDistinguishedName, isReadOnly}) as IPropertyMappingBuilder;
+            var mapping = Activator.CreateInstance(type, new object[] { propertyInfo, isDistinguishedName, isReadOnly }) as IPropertyMappingBuilder;
 
             PropertyMappings.Add(mapping);
 

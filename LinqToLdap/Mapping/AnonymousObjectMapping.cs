@@ -1,17 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqToLdap.Helpers;
 
 namespace LinqToLdap.Mapping
 {
@@ -23,7 +13,6 @@ namespace LinqToLdap.Mapping
             IEnumerable<IPropertyMapping> propertyMappings, string objectCategory, bool includeObjectCategory, IEnumerable<string> objectClass, bool includeObjectClasses)
             : base(namingContext, propertyMappings, objectCategory, includeObjectCategory, objectClass, includeObjectClasses)
         {
-            
             _constructor = DelegateBuilder.BuildCtorWithParams<T>(typeof(T).GetConstructors().First());
         }
 

@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,19 +13,14 @@ namespace LinqToLdap
 
         public DirectoryQuery(QueryProvider provider)
         {
-            if (provider == null) throw new ArgumentNullException("provider");
-
-            _provider = provider;
+            _provider = provider ?? throw new ArgumentNullException("provider");
             _expression = Expression.Constant(this);
         }
 
         public DirectoryQuery(QueryProvider provider, Expression expression)
         {
-            if (provider == null) throw new ArgumentNullException("provider");
-            if (expression == null) throw new ArgumentNullException("expression");
-
-            _provider = provider;
-            _expression = expression;
+            _provider = provider ?? throw new ArgumentNullException("provider");
+            _expression = expression ?? throw new ArgumentNullException("expression");
         }
 
         /// <summary>

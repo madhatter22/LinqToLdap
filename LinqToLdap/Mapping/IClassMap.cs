@@ -1,16 +1,6 @@
-/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -44,7 +34,7 @@ namespace LinqToLdap.Mapping
         void Validate();
 
         /// <summary>
-        /// Produces a final mapping used for object contruction from the directory
+        /// Produces a final mapping used for object construction from the directory
         /// </summary>
         /// <returns></returns>
         IObjectMapping ToObjectMapping();

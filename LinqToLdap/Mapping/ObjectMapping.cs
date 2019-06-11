@@ -1,26 +1,15 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
     internal abstract class ObjectMapping : IObjectMapping
     {
-
-#if NET45
+#if (!NET35 && !NET40)
         private readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappings;
         private readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, IPropertyMapping> _attributePropertyMappings;
         private System.Collections.ObjectModel.ReadOnlyDictionary<string, string> _propertyNames;
@@ -59,7 +48,7 @@ namespace LinqToLdap.Mapping
             _distinguishedName = localPropertyMappings.FirstOrDefault(p => p.IsDistinguishedName);
 
             _catchAll =
-                localPropertyMappings.FirstOrDefault(p => typeof (IDirectoryAttributes).IsAssignableFrom(p.PropertyType));
+                localPropertyMappings.FirstOrDefault(p => typeof(IDirectoryAttributes).IsAssignableFrom(p.PropertyType));
 
             _updateablePropertyMappings =
                 new ReadOnlyCollection<IPropertyMapping>(
@@ -72,6 +61,7 @@ namespace LinqToLdap.Mapping
 
         public IDictionary<string, IObjectMapping> SubTypeMappingsObjectClassDictionary { get; } =
             new Dictionary<string, IObjectMapping>(StringComparer.OrdinalIgnoreCase);
+
         public IDictionary<Type, IObjectMapping> SubTypeMappingsTypeDictionary { get; } =
             new Dictionary<Type, IObjectMapping>();
 
@@ -86,7 +76,7 @@ namespace LinqToLdap.Mapping
         public bool IncludeObjectClasses { get; }
         public bool HasSubTypeMappings => SubTypeMappings != null && SubTypeMappings.Count > 0;
 
-#if NET45
+#if (!NET35 && !NET40)
         public System.Collections.ObjectModel.ReadOnlyDictionary<string, string> Properties => _propertyNames ?? (_propertyNames = InitializePropertyNames());
 #else
         public Collections.ReadOnlyDictionary<string, string> Properties => _propertyNames ?? (_propertyNames = InitializePropertyNames());
@@ -109,8 +99,7 @@ namespace LinqToLdap.Mapping
         {
             if (owningType == null || owningType == Type)
             {
-                IPropertyMapping mapping;
-                if (_propertyMappings.TryGetValue(name, out mapping))
+                if (_propertyMappings.TryGetValue(name, out IPropertyMapping mapping))
                 {
                     return mapping;
                 }
@@ -121,8 +110,7 @@ namespace LinqToLdap.Mapping
             }
             else if (HasSubTypeMappings)
             {
-                IObjectMapping subTypeMapping;
-                if (SubTypeMappingsTypeDictionary.TryGetValue(owningType, out subTypeMapping))
+                if (SubTypeMappingsTypeDictionary.TryGetValue(owningType, out IObjectMapping subTypeMapping))
                 {
                     return subTypeMapping.GetPropertyMapping(name);
                 }
@@ -135,16 +123,14 @@ namespace LinqToLdap.Mapping
         {
             if (owningType == null || owningType == Type)
             {
-                IPropertyMapping mapping;
-                if (_attributePropertyMappings.TryGetValue(name, out mapping))
+                if (_attributePropertyMappings.TryGetValue(name, out IPropertyMapping mapping))
                 {
                     return mapping;
                 }
             }
             else if (HasSubTypeMappings)
             {
-                IObjectMapping subTypeMapping;
-                if (SubTypeMappingsTypeDictionary.TryGetValue(owningType, out subTypeMapping))
+                if (SubTypeMappingsTypeDictionary.TryGetValue(owningType, out IObjectMapping subTypeMapping))
                 {
                     return subTypeMapping.GetPropertyMappingByAttribute(name);
                 }
@@ -169,11 +155,11 @@ namespace LinqToLdap.Mapping
         {
             if (SubTypeMappingsObjectClassDictionary.Values.Contains(mapping)) return;
 
-            var currentMappings = SortByInheritanceDescending(SubTypeMappingsObjectClassDictionary.Values.Union(new[] {mapping}));
+            var currentMappings = SortByInheritanceDescending(SubTypeMappingsObjectClassDictionary.Values.Union(new[] { mapping }));
 
             SubTypeMappingsObjectClassDictionary.Clear();
             SubTypeMappingsTypeDictionary.Clear();
-            
+
             foreach (var currentMapping in currentMappings)
             {
                 var objectClasses = currentMapping.ObjectClasses.ToList();
@@ -197,7 +183,8 @@ namespace LinqToLdap.Mapping
             _propertyNames = InitializePropertyNames();
         }
 
-#if NET45
+#if (!NET35 && !NET40)
+
         private System.Collections.ObjectModel.ReadOnlyDictionary<string, string> InitializePropertyNames()
 #else
         private Collections.ReadOnlyDictionary<string, string> InitializePropertyNames()
@@ -219,10 +206,10 @@ namespace LinqToLdap.Mapping
                 }
             }
 
-#if NET45
-        return new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(properties);
+#if (!NET35 && !NET40)
+            return new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(properties);
 #else
-        return new Collections.ReadOnlyDictionary<string, string>(properties);
+            return new Collections.ReadOnlyDictionary<string, string>(properties);
 #endif
         }
 
@@ -240,14 +227,13 @@ namespace LinqToLdap.Mapping
                     baseType = baseType.BaseType;
                 }
 
-                List<IObjectMapping> list;
-                if (hiearchy.TryGetValue(count, out list))
+                if (hiearchy.TryGetValue(count, out List<IObjectMapping> list))
                 {
                     list.Add(objectMapping);
                 }
                 else
                 {
-                    hiearchy[count] = new List<IObjectMapping> {objectMapping};
+                    hiearchy[count] = new List<IObjectMapping> { objectMapping };
                 }
             }
 

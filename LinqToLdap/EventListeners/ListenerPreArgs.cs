@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.EventListeners
@@ -20,7 +10,7 @@ namespace LinqToLdap.EventListeners
     /// <typeparam name="TRequest">The partially populated request to be sent to the directory.</typeparam>
     public class ListenerPreArgs<TObject, TRequest> where TRequest : DirectoryRequest where TObject : class
     {
-#if !NET45
+#if (NET35 || NET40)
         private readonly WeakReference _connection;
         private readonly WeakReference _entry;
 #else
@@ -30,7 +20,7 @@ namespace LinqToLdap.EventListeners
 
         internal ListenerPreArgs(TObject entry, TRequest request, LdapConnection connection)
         {
-#if !NET45
+#if (NET35 || NET40)
             _entry = new WeakReference(entry);
             _connection = new WeakReference(connection);
 #else
@@ -43,13 +33,12 @@ namespace LinqToLdap.EventListeners
         /// <summary>
         /// The entry.
         /// </summary>
-        /// 
+        ///
         public TObject Entry
         {
             get
             {
-                
-#if !NET45
+#if (NET35 || NET40)
                 return _entry.Target as TObject;
 #else
                 TObject target;
@@ -70,7 +59,7 @@ namespace LinqToLdap.EventListeners
         {
             get
             {
-#if !NET45
+#if (NET35 || NET40)
                 return _connection.Target as LdapConnection;
 #else
                 LdapConnection target;

@@ -1,18 +1,8 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Transformers;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
-using LinqToLdap.Collections;
-using LinqToLdap.Transformers;
 
 namespace LinqToLdap.QueryCommands.Options
 {
@@ -72,6 +62,7 @@ namespace LinqToLdap.QueryCommands.Options
         }
 
         public abstract Type GetEnumeratorReturnType();
+
         public abstract IResultTransformer GetTransformer();
     }
 }

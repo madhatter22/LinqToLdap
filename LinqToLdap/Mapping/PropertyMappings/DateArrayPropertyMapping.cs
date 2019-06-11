@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.DirectoryServices.Protocols;
 using System.Linq;
 
@@ -24,7 +14,7 @@ namespace LinqToLdap.Mapping.PropertyMappings
             : base(arguments)
         {
             _isFileTimeFormat = dateFormat == null;
-            
+
             _dateFormat = dateFormat;
 
             var elementType = PropertyType.GetElementType();
@@ -71,7 +61,6 @@ namespace LinqToLdap.Mapping.PropertyMappings
 
                         return dates;
                     }
-                    
                 }
                 catch (Exception ex)
                 {
@@ -99,9 +88,9 @@ namespace LinqToLdap.Mapping.PropertyMappings
                 }
             }
 
-            var date = (DateTime) value;
+            var date = (DateTime)value;
 
-            return _isFileTimeFormat 
+            return _isFileTimeFormat
                 ? date.ToFileTime().ToString()
                 : date.FormatLdapDateTime(_dateFormat);
         }

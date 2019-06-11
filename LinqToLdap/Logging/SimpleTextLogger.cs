@@ -1,15 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace LinqToLdap.Logging
 {
@@ -18,21 +10,22 @@ namespace LinqToLdap.Logging
     /// </summary>
     public class SimpleTextLogger : ILinqToLdapLogger
     {
-#if !NET45
+#if (NET35 || NET40)
         private readonly WeakReference _textWriter;
 #else
         private readonly WeakReference<TextWriter> _textWriter;
 #endif
+
         /// <summary>
         /// Creates a new logger from a <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="textWriter">The log destination</param>
         public SimpleTextLogger(TextWriter textWriter)
         {
-#if !NET45
-        _textWriter = new WeakReference(textWriter);
+#if (NET35 || NET40)
+            _textWriter = new WeakReference(textWriter);
 #else
-        _textWriter = new WeakReference<TextWriter>(textWriter);
+            _textWriter = new WeakReference<TextWriter>(textWriter);
 #endif
             TraceEnabled = true;
         }
@@ -42,7 +35,7 @@ namespace LinqToLdap.Logging
         /// </summary>
         public SimpleTextLogger()
         {
-#if !NET45
+#if (NET35 || NET40)
             _textWriter = new WeakReference(TraceTextWriter.Instance);
 #else
             _textWriter = new WeakReference<TextWriter>(TraceTextWriter.Instance);
@@ -63,7 +56,7 @@ namespace LinqToLdap.Logging
         {
             try
             {
-#if !NET45
+#if (NET35 || NET40)
                 try
                 {
                     if (!_textWriter.IsAlive) return;
@@ -73,9 +66,8 @@ namespace LinqToLdap.Logging
                 {
                 }
 #else
-            TextWriter target;
-            if (!_textWriter.TryGetTarget(out target)) return;
-            target.WriteLine(message);
+                if (!_textWriter.TryGetTarget(out TextWriter target)) return;
+                target.WriteLine(message);
 #endif
             }
             catch (Exception ex)
@@ -93,7 +85,7 @@ namespace LinqToLdap.Logging
         {
             try
             {
-#if !NET45
+#if (NET35 || NET40)
                 try
                 {
                     if (!_textWriter.IsAlive) return;
@@ -105,18 +97,16 @@ namespace LinqToLdap.Logging
                 {
                 }
 #else
-            TextWriter target;
-            if (!_textWriter.TryGetTarget(out target)) return;
+                if (!_textWriter.TryGetTarget(out TextWriter target)) return;
 
-            if (message != null) target.WriteLine(message);
-            ObjectDumper.Write(ex, 0, target);
+                if (message != null) target.WriteLine(message);
+                ObjectDumper.Write(ex, 0, target);
 #endif
             }
             catch
             {
                 throw new Exception("Unable to log exception", ex);
             }
-
         }
     }
 }

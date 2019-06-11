@@ -1,21 +1,10 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Visitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Helpers;
-using LinqToLdap.Visitors;
 
 namespace LinqToLdap
 {
@@ -34,8 +23,7 @@ namespace LinqToLdap
         /// <exception cref="ArgumentException">Thrown if <paramref name="property"/> is not a valid member expression.</exception>
         public static string GetPropertyName<T, TProperty>(this Expression<Func<T, TProperty>> property)
         {
-            var member = new MemberVisitor().GetMember(property) as MemberExpression;
-            if (member == null) throw new ArgumentException("Could not get MemberExpression", "property");
+            if (!(new MemberVisitor().GetMember(property) is MemberExpression member)) throw new ArgumentException("Could not get MemberExpression", "property");
 
             return member.Member.Name;
         }
@@ -50,13 +38,13 @@ namespace LinqToLdap
         {
             if (propertyName.IsNullOrEmpty()) throw new ArgumentNullException("propertyName");
 
-            var member = typeof (T).GetMember(propertyName).FirstOrDefault();
+            var member = typeof(T).GetMember(propertyName).FirstOrDefault();
             if (member == null) throw new ArgumentException(
-                    string.Format("Member {0} not found for Type {1}", propertyName, typeof (T).FullName));
+                    string.Format("Member {0} not found for Type {1}", propertyName, typeof(T).FullName));
 
             var instance = Expression.Parameter(typeof(T), "i");
             var memberAccess = Expression.MakeMemberAccess(instance, member);
-            var convert = Expression.Convert(memberAccess, typeof (object));
+            var convert = Expression.Convert(memberAccess, typeof(object));
             var getter = (Expression<Func<T, object>>)Expression.Lambda(convert, instance);
             return getter;
         }
@@ -67,18 +55,18 @@ namespace LinqToLdap
         //}
 
         /// <summary>
-        /// Allows for easy inline expression creation.  The returned expression is null.  
+        /// Allows for easy inline expression creation.  The returned expression is null.
         /// This method only serves as a quick starting point for building predicates.
         /// </summary>
         /// <typeparam name="T">Expression parameter</typeparam>
         /// <returns></returns>
         public static Expression<Func<T, bool>> Create<T>()
         {
-            return default(Expression<Func<T, bool>>);
+            return default;
         }
 
         /// <summary>
-        /// Allows for easy inline expression creation.  The returned expression is null.  
+        /// Allows for easy inline expression creation.  The returned expression is null.
         /// This method only serves as a quick starting point for building predicates.
         /// </summary>
         /// <typeparam name="T">Expression parameter</typeparam>
@@ -86,14 +74,14 @@ namespace LinqToLdap
         /// <param name="example">Anonymous object to use for <typeparamref name="T"/></param>
         /// <param name="expression">Expression to return</param>
         /// <returns></returns>
-        public static Expression<Func<T, TResult>> CreateExpression<T, TResult>(this T example, 
+        public static Expression<Func<T, TResult>> CreateExpression<T, TResult>(this T example,
             Expression<Func<T, TResult>> expression)
         {
             return expression;
         }
 
         /// <summary>
-        /// Allows for dynamic Or chaining of expressions.  <paramref name="appendExpression"/> 
+        /// Allows for dynamic Or chaining of expressions.  <paramref name="appendExpression"/>
         /// is returned if <paramref name="sourceExpression"/> is null.
         /// </summary>
         /// <typeparam name="T">Expression parameter</typeparam>
@@ -117,7 +105,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Allows for dynamic And chaining of expressions.  <paramref name="appendExpression"/> 
+        /// Allows for dynamic And chaining of expressions.  <paramref name="appendExpression"/>
         /// is returned if <paramref name="sourceExpression"/> is null.
         /// </summary>
         /// <typeparam name="T">Expression parameter</typeparam>
@@ -144,7 +132,7 @@ namespace LinqToLdap
         #region OrderBy //pulled from stackoverflow
 
         /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key. 
+        /// Sorts the elements of a sequence in ascending order according to a key.
         /// </summary>
         /// <param name="source">Query source</param>
         /// <param name="propertyName">The name of the property to sort by</param>
@@ -167,7 +155,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key. 
+        /// Sorts the elements of a sequence in descending order according to a key.
         /// </summary>
         /// <param name="source">Query source</param>
         /// <param name="propertyName">The name of the property to sort by</param>
@@ -204,7 +192,7 @@ namespace LinqToLdap
             return (IOrderedQueryable<T>)result;
         }
 
-        #endregion OrderBy
+        #endregion OrderBy //pulled from stackoverflow
 
         #region Support methods
 
@@ -248,9 +236,11 @@ namespace LinqToLdap
 
             return constant;
         }
+
 #if NET35
-        private static ThreeTuple<ParameterExpression, Type, Expression> GetParameterExpression(
+        private static LinqToLdap.Helpers.ThreeTuple<ParameterExpression, Type, Expression> GetParameterExpression(
 #else
+
         private static Tuple<ParameterExpression, Type, Expression> GetParameterExpression(
 #endif
             Type type, string propertyName)
@@ -266,13 +256,13 @@ namespace LinqToLdap
                 propertyType = pi.PropertyType;
             }
 #if NET35
-            return new ThreeTuple<ParameterExpression, Type, Expression>(arg, propertyType, expr);
+            return new LinqToLdap.Helpers.ThreeTuple<ParameterExpression, Type, Expression>(arg, propertyType, expr);
 #else
             return new Tuple<ParameterExpression, Type, Expression>(arg, propertyType, expr);
 #endif
         }
 
-        #endregion Support Methods
+        #endregion Support methods
 
         #region Where Expressions
 
@@ -429,6 +419,7 @@ namespace LinqToLdap
         //}
 
         private enum MatchMode { Contains, StartsWith, EndsWith }
+
         private static Expression<Func<T, Boolean>> GetLikeExpression<T>(string propertyName, string propertyValue,
             MatchMode mode, Boolean not)
         {
@@ -440,19 +431,22 @@ namespace LinqToLdap
                 case MatchMode.Contains:
                     info = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                     break;
+
                 case MatchMode.EndsWith:
                     info = typeof(string).GetMethod("StartsWith", new[] { typeof(string) });
                     break;
+
                 case MatchMode.StartsWith:
                     info = typeof(string).GetMethod("EndsWith", new[] { typeof(string) });
                     break;
+
                 default:
                     throw new ArgumentException(string.Format("'{0}' is not supported.", mode), "mode");
             }
 
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
+            // ReSharper disable PossiblyMistakenUseOfParamsMethod
             Expression e = Expression.Call(pair.Item3, info, con);
-// ReSharper restore PossiblyMistakenUseOfParamsMethod
+            // ReSharper restore PossiblyMistakenUseOfParamsMethod
             return Expression.Lambda<Func<T, Boolean>>(not ? Expression.Not(e) : e, pair.Item1);
         }
 
@@ -607,7 +601,5 @@ namespace LinqToLdap
         }
 
         #endregion Where Expressions
-
-        
     }
 }

@@ -1,26 +1,15 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using LinqToLdap.Collections;
 
 namespace LinqToLdap.Mapping
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// Generates a class map via convention.  Property names will map directly to their attribute names.
     /// </summary>
     /// <typeparam name="T">Class to map</typeparam>
-    public class AutoClassMap<T> : ClassMap<T> where T : class 
+    public class AutoClassMap<T> : ClassMap<T> where T : class
     {
         /// <summary>
         /// Maps the schema and property information.

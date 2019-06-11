@@ -1,14 +1,4 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
@@ -246,7 +236,7 @@ namespace LinqToLdap
                 }
             }
         }
-        
+
         public LdapConnection GetConnection()
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
@@ -318,7 +308,7 @@ namespace LinqToLdap
                     }
 
                     ScavengeConnections(e.SignalTime);
-                    
+
                     if (Logger != null && Logger.TraceEnabled) Logger.Trace("Available Connections After Scavenge: " + _availableConnections.Count);
                 }
                 catch (Exception ex)
@@ -363,8 +353,8 @@ namespace LinqToLdap
                     if (Logger != null && Logger.TraceEnabled) Logger.Trace("Scavenge Timer Stopped.");
                 }
                 if (Logger != null && Logger.TraceEnabled) Logger.Trace("Initializing Connection Pool.");
-                
-                //LdapConnection has a finalizer so once the connections fall out of scope or 
+
+                //LdapConnection has a finalizer so once the connections fall out of scope or
                 //DirectoryContext explicitly calls ReleaseConnection, they will be cleaned up.
                 _inUseConnections.Clear();
 

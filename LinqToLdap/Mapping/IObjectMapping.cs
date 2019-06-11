@@ -1,19 +1,7 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography.X509Certificates;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
 
 namespace LinqToLdap.Mapping
 {
@@ -28,7 +16,7 @@ namespace LinqToLdap.Mapping
         Type Type { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         bool IsForAnonymousType { get; }
 
@@ -70,12 +58,12 @@ namespace LinqToLdap.Mapping
         /// <summary>
         /// Dictionary for properties mapped to attribute names
         /// </summary>
-#if NET45
+#if (!NET35 && !NET40)
         System.Collections.ObjectModel.ReadOnlyDictionary<string, string> Properties { get; }
 #else
         LinqToLdap.Collections.ReadOnlyDictionary<string, string> Properties { get; }
 #endif
-        
+
         /// <summary>
         /// All mapped properties
         /// </summary>

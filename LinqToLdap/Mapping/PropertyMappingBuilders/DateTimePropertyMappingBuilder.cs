@@ -1,25 +1,14 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Helpers;
+using LinqToLdap.Mapping.PropertyMappings;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Helpers;
-using LinqToLdap.Mapping.PropertyMappings;
 
 namespace LinqToLdap.Mapping.PropertyMappingBuilders
 {
-    internal class DateTimePropertyMappingBuilder<T, TProperty> : IDateTimePropertyMappingBuilder<T, TProperty>, 
-        IPropertyMappingBuilder where T : class 
+    internal class DateTimePropertyMappingBuilder<T, TProperty> : IDateTimePropertyMappingBuilder<T, TProperty>,
+        IPropertyMappingBuilder where T : class
     {
         private string _dateTimeFormat = "yyyyMMddHHmmss.0Z";
         private Dictionary<string, object> _directoryMappings;
@@ -29,8 +18,7 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
 
         public DateTimePropertyMappingBuilder(PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
-            PropertyInfo = propertyInfo;
+            PropertyInfo = propertyInfo ?? throw new ArgumentNullException("propertyInfo");
 
             IsDistinguishedName = false;
         }

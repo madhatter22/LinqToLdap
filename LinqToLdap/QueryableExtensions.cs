@@ -1,22 +1,12 @@
-﻿/*
- * LINQ to LDAP
- * http://linqtoldap.codeplex.com/
- * 
- * Copyright Alan Hatter (C) 2010-2014
- 
- * 
- * This project is subject to licensing restrictions. Visit http://linqtoldap.codeplex.com/license for more information.
- */
-
+﻿using LinqToLdap.Collections;
+using LinqToLdap.Exceptions;
+using LinqToLdap.TestSupport;
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using LinqToLdap.Collections;
-using LinqToLdap.Exceptions;
-using LinqToLdap.TestSupport;
 
 namespace LinqToLdap
 {
@@ -65,7 +55,7 @@ namespace LinqToLdap
         /// <returns></returns>
         public static IQueryable<TSource> ScopedToAttribute<TSource>(this IQueryable<TSource> source, string attributeName)
         {
-            return source.WithControls(new[] {new AsqRequestControl(attributeName)});
+            return source.WithControls(new[] { new AsqRequestControl(attributeName) });
         }
 
         /// <summary>
@@ -79,7 +69,7 @@ namespace LinqToLdap
         {
             return source.WithControls(new[] { new SearchOptionsControl(option) });
         }
-        
+
         /// <summary>
         /// Lists found attributes for all entries returned by the query.
         /// </summary>
@@ -92,9 +82,9 @@ namespace LinqToLdap
         {
             return source.Provider.Execute<IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, object>>>>>(
                 Expression.Call(null,
-                                ((MethodInfo) MethodBase.GetCurrentMethod())
-                                    .MakeGenericMethod(new[] {typeof (TSource)}),
-                                new[] {source.Expression, Expression.Constant(attributes)}));
+                                ((MethodInfo)MethodBase.GetCurrentMethod())
+                                    .MakeGenericMethod(new[] { typeof(TSource) }),
+                                new[] { source.Expression, Expression.Constant(attributes) }));
         }
 
         /// <summary>
@@ -124,9 +114,9 @@ namespace LinqToLdap
             return
                 source.Provider.CreateQuery<TSource>(
                     Expression.Call(null,
-                                    ((MethodInfo) MethodBase.GetCurrentMethod())
-                                        .MakeGenericMethod(new[] {typeof (TSource)}),
-                                    new[] {source.Expression, Expression.Constant(filter)}));
+                                    ((MethodInfo)MethodBase.GetCurrentMethod())
+                                        .MakeGenericMethod(new[] { typeof(TSource) }),
+                                    new[] { source.Expression, Expression.Constant(filter) }));
         }
 
         /// <summary>
@@ -206,7 +196,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in descending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="keySelector">The property to sort by</param>
@@ -217,7 +207,7 @@ namespace LinqToLdap
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="source"/>, <paramref name="matchingRule"/>, or <paramref name="keySelector"/> are null
         /// </exception>
-        public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey>(this IQueryable<TSource> source, 
+        public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey>(this IQueryable<TSource> source,
             Expression<Func<TSource, TKey>> keySelector, string matchingRule)
         {
             if (source == null) throw new ArgumentNullException("source");
@@ -235,7 +225,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in ascending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="keySelector">The property to sort by</param>
@@ -264,7 +254,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in descending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="attribute">The attribute by which to order.</param>
@@ -291,10 +281,10 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in ascending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
-        /// <param name="attribute">The attrbiute by which to sort.</param>
+        /// <param name="attribute">The attribute by which to sort.</param>
         /// <param name="matchingRule">The LDAP matching rule to use for the query</param>
         /// <typeparam name="TSource">The type to query against</typeparam>
         /// <returns></returns>
@@ -319,7 +309,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in descending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="keySelector">The property to sort by</param>
@@ -348,7 +338,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in ascending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="keySelector">The property to sort by</param>
@@ -377,7 +367,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in descending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="attribute">The attribute by which to order.</param>
@@ -404,10 +394,10 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in ascending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
-        /// <param name="attribute">The attrbiute by which to sort.</param>
+        /// <param name="attribute">The attribute by which to sort.</param>
         /// <param name="matchingRule">The LDAP matching rule to use for the query</param>
         /// <typeparam name="TSource">The type to query against</typeparam>
         /// <returns></returns>
@@ -432,7 +422,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in descending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in descending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
         /// <param name="attribute">The attribute by which to order.</param>
@@ -456,10 +446,10 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key and mathcing rule.
+        /// Sorts the elements of a sequence in ascending order according to a key and matching rule.
         /// </summary>
         /// <param name="source">The query</param>
-        /// <param name="attribute">The attrbiute by which to sort.</param>
+        /// <param name="attribute">The attribute by which to sort.</param>
         /// <typeparam name="TSource">The type to query against</typeparam>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">
@@ -501,9 +491,9 @@ namespace LinqToLdap
             return
                 source.Provider.Execute<ILdapPage<TSource>>(
                     Expression.Call(null,
-                                    ((MethodInfo) MethodBase.GetCurrentMethod())
-                                        .MakeGenericMethod(new[] {typeof (TSource)}),
-                                    new[] {source.Expression, Expression.Constant(pageSize)}));
+                                    ((MethodInfo)MethodBase.GetCurrentMethod())
+                                        .MakeGenericMethod(new[] { typeof(TSource) }),
+                                    new[] { source.Expression, Expression.Constant(pageSize) }));
         }
 
         /// <summary>
@@ -534,8 +524,8 @@ namespace LinqToLdap
             return
                 source.Provider.Execute<ILdapPage<TSource>>(
                     Expression.Call(null,
-                                    ((MethodInfo) MethodBase.GetCurrentMethod())
-                                        .MakeGenericMethod(new[] {typeof (TSource)}),
+                                    ((MethodInfo)MethodBase.GetCurrentMethod())
+                                        .MakeGenericMethod(new[] { typeof(TSource) }),
                                     new[]
                                         {
                                             source.Expression, Expression.Constant(pageSize), Expression.Constant(nextPage)
@@ -599,7 +589,7 @@ namespace LinqToLdap
                                     (MethodInfo)MethodBase.GetCurrentMethod(),
                                     new[] { source.Expression, Expression.Constant(attributes) }));
         }
-        
+
         /// <summary>
         /// Pages through all the results and returns them in a <see cref="List{T}"/>.
         /// </summary>
@@ -615,7 +605,7 @@ namespace LinqToLdap
         {
             if (source == null) throw new ArgumentNullException("source");
             if (pageSize < 1) throw new ArgumentException("pageSize must be greater than 0");
-            
+
             return
                 source.Provider.Execute<List<TSource>>(
                     Expression.Call(null,
@@ -629,8 +619,8 @@ namespace LinqToLdap
         /// </summary>
         /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
         /// <param name="source">The <see cref="IQueryable{T}"/> from which to create a <see cref="System.Collections.Generic.List{T}"/>.</param>
-        /// <returns>A <see cref="System.Collections.Generic.List{T}"/> that contains elements from the input sequence.  
-        /// If this method is used with LINQ to LDAP then an <see cref="LdapPage{T}"/> may be created if <see cref="WithControls{T}"/> is used with a 
+        /// <returns>A <see cref="System.Collections.Generic.List{T}"/> that contains elements from the input sequence.
+        /// If this method is used with LINQ to LDAP then an <see cref="LdapPage{T}"/> may be created if <see cref="WithControls{T}"/> is used with a
         /// <see cref="PageResultRequestControl"/>.
         /// </returns>
         public static List<TSource> ToList<TSource>(this IQueryable<TSource> source)
@@ -662,9 +652,9 @@ namespace LinqToLdap
 
             return source.Provider.Execute<SearchRequest>(
                 Expression.Call(null,
-                                ((MethodInfo) MethodBase.GetCurrentMethod())
-                                    .MakeGenericMethod(new[] {typeof (TSource)}),
-                                new[] {source.Expression}));
+                                ((MethodInfo)MethodBase.GetCurrentMethod())
+                                    .MakeGenericMethod(new[] { typeof(TSource) }),
+                                new[] { source.Expression }));
         }
 
         /// <summary>
