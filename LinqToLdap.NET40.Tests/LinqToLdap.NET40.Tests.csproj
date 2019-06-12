@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -38,11 +38,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="SharpTestsEx, Version=1.2.1.0, Culture=neutral, PublicKeyToken=8c60d8070630b1c1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpTestsEx.1.2.1\lib\SharpTestsEx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,11 +55,191 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\LinqToLdap.Tests\Collections\DirectoryAttributesTest_Read.cs">
+      <Link>Collections\DirectoryAttributesTest_Read.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\Collections\SearchResponseEnumeratorIntegrationTest.cs">
+      <Link>Collections\SearchResponseEnumeratorIntegrationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\ConnectionFactoryTest.cs">
+      <Link>ConnectionFactoryTest.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\DirectoryContextTests.cs">
+      <Link>DirectoryContextTests.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\extensions\CleanFilterValueTest.cs">
+      <Link>Extensions\CleanFilterValueTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\extensions\ToDirectoryAttributeTest.cs">
+      <Link>Extensions\ToDirectoryAttributeTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\extensions\ToDirectoryModificationTest.cs">
+      <Link>Extensions\ToDirectoryModificationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\extensions\TypeExtensionsTest.cs">
+      <Link>Extensions\TypeExtensionsTest.cs</Link>
+    </Compile>
     <Compile Include="..\LinqToLdap.Tests\Helpers\DelegateBuilderTest.cs">
       <Link>Helpers\DelegateBuilderTest.cs</Link>
     </Compile>
+    <Compile Include="..\LinqToLdap.Tests\IntegrationTests.cs">
+      <Link>IntegrationTests.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\AttributeClassMapTest.cs">
+      <Link>Mapping\AttributeClassMapTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\AutoClassMapTest.cs">
+      <Link>Mapping\AutoClassMapTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\ClassMapTest.cs">
+      <Link>Mapping\ClassMapTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\DirectoryMapperTest.cs">
+      <Link>Mapping\DirectoryMapperTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\LdapConfigurationTest.cs">
+      <Link>Mapping\LdapConfigurationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\ObjectMappingTests.cs">
+      <Link>Mapping\ObjectMappingTests.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\PropertyMappingBuilderTest.cs">
+      <Link>Mapping\PropertyMappingBuilderTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\BooleanPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\BooleanPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\ByteArrayArrayPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\ByteArrayArrayPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\ByteArrayCollectionPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\ByteArrayCollectionPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\ByteArrayPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\ByteArrayPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\CustomPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\CustomPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\DateArrayPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\DateArrayPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\DateCollectionPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\DateCollectionPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\DatePropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\DatePropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\EnumPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\EnumPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\GuidPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\GuidPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\NumericPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\NumericPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\SecurityIdentifierArrayPropertyMappingTest - Copy.cs">
+      <Link>Mapping\PropertyMappings\SecurityIdentifierArrayPropertyMappingTest - Copy.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\SecurityIdentifierArrayPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\SecurityIdentifierArrayPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\SecurityIdentifierPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\SecurityIdentifierPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\StringArrayPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\StringArrayPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\StringCollectionPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\StringCollectionPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\StringPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\StringPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\X509Certificate2ArrayPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\X509Certificate2ArrayPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\X509Certificate2CollectionPropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\X509Certificate2CollectionPropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\propertymappings\X509Certificate2PropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappings\X509Certificate2PropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\PropertyMappingTest.cs">
+      <Link>Mapping\PropertyMappingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\StandardObjectMappingTests.cs">
+      <Link>Mapping\StandardObjectMappingTests.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\mapping\SubClassMapTest.cs">
+      <Link>Mapping\SubClassMapTest.cs</Link>
+    </Compile>
     <Compile Include="..\LinqToLdap.Tests\PerformanceTests\DelegateSpeedTest.cs">
       <Link>PerformanceTests\DelegateSpeedTest.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\PooledConnectionFactoryTest.cs">
+      <Link>PooledConnectionFactoryTest.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\PredicateBuilderTest.cs">
+      <Link>PredicateBuilderTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\querycommands\AnyQueryCommandTest.cs">
+      <Link>QueryCommands\AnyQueryCommandTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\querycommands\GetRequestCommandTest.cs">
+      <Link>QueryCommands\GetRequestCommandTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\querycommands\ListEntriesQueryCommand.cs">
+      <Link>QueryCommands\ListEntriesQueryCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\querycommands\StandardQueryCommandTest.cs">
+      <Link>QueryCommands\StandardQueryCommandTest.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\QueryTranslatorTestClass.cs">
+      <Link>QueryTranslatorTestClass.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\DirectoryControlFactory.cs">
+      <Link>TestSupport\DirectoryControlFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\ExtensionMethods\ObjectExtensions.cs">
+      <Link>TestSupport\ExtensionMethods\ObjectExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\ExtensionMethods\TypeExtensions.cs">
+      <Link>TestSupport\ExtensionMethods\TypeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\MockLdapConnection.cs">
+      <Link>TestSupport\MockLdapConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\MockQueryCommandFactory.cs">
+      <Link>TestSupport\MockQueryCommandFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\MockQueryContext.cs">
+      <Link>TestSupport\MockQueryContext.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\MockQueryTest.cs">
+      <Link>TestSupport\MockQueryTest.cs</Link>
+    </Compile>
+    <Compile Include="..\LinqToLdap.Tests\TestSupport\QueryCommands\MockStandardQueryCommand.cs">
+      <Link>TestSupport\QueryCommands\MockStandardQueryCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\transformers\ResultTransformerTest.cs">
+      <Link>Transformers\ResultTransformerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\visitors\BooleanReducerTest.cs">
+      <Link>Visitors\BooleanReducerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\visitors\BooleanRewriterTest.cs">
+      <Link>Visitors\BooleanRewriterTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\visitors\QueryTranslatorFilterTest.cs">
+      <Link>Visitors\QueryTranslatorFilterTest.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\visitors\QueryTranslatorQueryMethodTests.cs">
+      <Link>Visitors\QueryTranslatorQueryMethodTests.cs</Link>
+    </Compile>
+    <Compile Include="..\linqtoldap.tests\visitors\SelectProjectorTest.cs">
+      <Link>Visitors\SelectProjectorTest.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -73,16 +257,16 @@
     <None Include="Resources\cert2.cer" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinqToLdap.Tests.ClassMapAssembly\LinqToLdap.Tests.ClassMapAssembly.csproj">
+      <Project>{c7372f5a-9ee5-4501-8c34-92a588a02565}</Project>
+      <Name>LinqToLdap.Tests.ClassMapAssembly</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinqToLdap\LinqToLdap.csproj">
       <Project>{9711F230-9087-4E55-A6EF-529F1D609739}</Project>
       <Name>LinqToLdap</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Collections\" />
-    <Folder Include="TestSupport\ExtensionMethods\" />
-    <Folder Include="TestSupport\QueryCommands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

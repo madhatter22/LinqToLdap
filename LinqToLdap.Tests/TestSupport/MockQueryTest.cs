@@ -18,7 +18,7 @@ namespace LinqToLdap.Tests.TestSupport
             //arrange
             var list = new List<string>();
             var context = new Mock<IDirectoryContext>();
-            var query = new MockQuery<IDirectoryAttributes>(new List<object>{list});
+            var query = new MockQuery<IDirectoryAttributes>(new List<object> { list });
             context.Setup(x => x.Query("test", SearchScope.Subtree, null, null, null))
                 .Returns(query);
 
@@ -37,10 +37,10 @@ namespace LinqToLdap.Tests.TestSupport
         public void MultipleExecutions_Query_Returns_Result()
         {
             //arrange
-            var array = new[]{"one"};
+            var array = new[] { "one" };
             var item = "two";
             var context = new Mock<IDirectoryContext>();
-            var query = new MockQuery<IDirectoryAttributes>(new List<object>{array, item});
+            var query = new MockQuery<IDirectoryAttributes>(new List<object> { array, item });
             context.Setup(x => x.Query("test", SearchScope.Subtree, null, null, null))
                 .Returns(query);
 
@@ -53,7 +53,7 @@ namespace LinqToLdap.Tests.TestSupport
             var result2 = context.Object.Query("test")
                 .Select(x => x.GetString("whatever"))
                 .FirstOrDefault();
-            
+
             query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(2);
             query.MockProvider.ExecutedExpressions[0].ToString()
                 .Should().Contain("Where")
@@ -87,11 +87,7 @@ namespace LinqToLdap.Tests.TestSupport
             query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(1);
             query.MockProvider.ExecutedExpressions[0].ToString()
                 .Should().Contain("Equal(x, \"x\", \"y\", False)")
-#if NET35
-                .And.Contain(" || ")
-#else
                 .And.Contain("OrElse")
-#endif
                 .And.Contain("Equal(x, \"a\", \"b\", True)")
                 .And.Contain("x => x.GetString(\"whatever\")");
 

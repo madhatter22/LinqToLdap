@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net35;net40;net45</TargetFrameworks>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>C:\Users\alanh\Code\local\LinqToLdap\LinqToLdap.Tests\linqtoldap_tests.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LinqToLdap.Tests\linqtoldap_tests.snk" Link="linqtoldap_tests.snk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LinqToLdap\LinqToLdap.csproj" />
+  </ItemGroup>
+</Project>

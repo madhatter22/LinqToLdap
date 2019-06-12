@@ -6,6 +6,22 @@ using System;
 using System.DirectoryServices.Protocols;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
+using System.Linq;
+
+#if NET35
+            using LinqToLdap.NET35.Tests.Properties;
+#endif
+#if NET40
+            using LinqToLdap.NET40.Tests.Properties;
+#endif
+#if NET45
+            using LinqToLdap.NET45.Tests.Properties;
+#endif
+#if (!NET35 && !NET40 && !NET45)
+
+using LinqToLdap.Tests.Properties;
+
+#endif
 
 namespace LinqToLdap.Tests.Collections
 {
@@ -50,7 +66,7 @@ namespace LinqToLdap.Tests.Collections
             _collection
                 .Call("Add", new object[] { "Property10", new DirectoryAttribute("Property10", _byteArrays) });
             _collection
-                .Call("Add", new object[] { "Property11", new DirectoryAttribute("Property10", Properties.Resources.cert) });
+                .Call("Add", new object[] { "Property11", new DirectoryAttribute("Property10", Resources.cert) });
 
             _entry =
                 typeof(SearchResultEntry).Create<SearchResultEntry>(
@@ -340,7 +356,7 @@ namespace LinqToLdap.Tests.Collections
         public void GetGuid_ExistsAndWrongType_ThrowsFormatException()
         {
 #if NET35
-            var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1").Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
+            var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1").Select(b => b.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray());
 #else
             var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1"));
 #endif
@@ -366,7 +382,7 @@ namespace LinqToLdap.Tests.Collections
         public void GetSecurityIdentifier_ExistsAndWrongType_ThrowsFormatException()
         {
 #if NET35
-            var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1").Select(b => b.ToString(CultureInfo.InvariantCulture)).ToArray());
+            var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1").Select(b => b.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray());
 #else
             var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1"));
 #endif
@@ -397,7 +413,7 @@ namespace LinqToLdap.Tests.Collections
         [TestMethod]
         public void GetX509Certificate_ExistsAndCorrectType_ReturnsX509Certificate()
         {
-            _attributes.GetX509Certificate("property11").Should().Be.EqualTo(new X509Certificate(Properties.Resources.cert));
+            _attributes.GetX509Certificate("property11").Should().Be.EqualTo(new X509Certificate(Resources.cert));
         }
 
         [TestMethod]
@@ -409,7 +425,7 @@ namespace LinqToLdap.Tests.Collections
         [TestMethod]
         public void GetX509Certificate2_ExistsAndCorrectType_ReturnsX509Certificate2()
         {
-            _attributes.GetX509Certificate2("property11").Should().Be.EqualTo(new X509Certificate2(Properties.Resources.cert));
+            _attributes.GetX509Certificate2("property11").Should().Be.EqualTo(new X509Certificate2(Resources.cert));
         }
 
         [TestMethod]
@@ -421,7 +437,7 @@ namespace LinqToLdap.Tests.Collections
         [TestMethod]
         public void GetX509Certificates_ExistsAndCorrectType_ReturnsListOfX509Certificates()
         {
-            _attributes.GetX509Certificates("property11").Should().Have.SameSequenceAs(new[] { new X509Certificate(Properties.Resources.cert) });
+            _attributes.GetX509Certificates("property11").Should().Have.SameSequenceAs(new[] { new X509Certificate(Resources.cert) });
         }
 
         [TestMethod]
@@ -433,7 +449,7 @@ namespace LinqToLdap.Tests.Collections
         [TestMethod]
         public void GetX509Certificate2s_ExistsAndCorrectType_ReturnsListOfX509Certificates()
         {
-            _attributes.GetX509Certificate2s("property11").Should().Have.SameSequenceAs(new[] { new X509Certificate2(Properties.Resources.cert) });
+            _attributes.GetX509Certificate2s("property11").Should().Have.SameSequenceAs(new[] { new X509Certificate2(Resources.cert) });
         }
 
         [TestMethod]

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -17,10 +17,12 @@
     <PackageReference Include="Moq" Version="4.11.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="4.5.0" />
     <PackageReference Include="SharpTestsEx" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LinqToLdap.Tests.ClassMapAssembly\LinqToLdap.Tests.ClassMapAssembly.csproj" />
     <ProjectReference Include="..\LinqToLdap\LinqToLdap.csproj" />
   </ItemGroup>
 
@@ -38,5 +40,4 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
