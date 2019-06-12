@@ -563,6 +563,7 @@ namespace LinqToLdap.Tests
 
         [TestMethod]
         [TestCategory("Integration")]
+        [Ignore]
         public void Can_Reset_And_Change_Password()
         {
             var connectionFactory = new LdapConnectionFactory(ServerName);
