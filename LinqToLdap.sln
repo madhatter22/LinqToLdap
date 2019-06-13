@@ -13,7 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqToLdap.NET35.Tests", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqToLdap.NET40.Tests", "LinqToLdap.NET40.Tests\LinqToLdap.NET40.Tests.csproj", "{CF5D7EBE-DB3B-4C67-B302-D656DFE32BA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqToLdap.Tests.ClassMapAssembly", "LinqToLdap.Tests.ClassMapAssembly\LinqToLdap.Tests.ClassMapAssembly.csproj", "{C7372F5A-9EE5-4501-8C34-92A588A02565}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqToLdap.Tests.ClassMapAssembly", "LinqToLdap.Tests.ClassMapAssembly\LinqToLdap.Tests.ClassMapAssembly.csproj", "{C7372F5A-9EE5-4501-8C34-92A588A02565}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqToLdap.Tests.PopulateDirectory", "LinqToLdap.Tests.PopulateDirectory\LinqToLdap.Tests.PopulateDirectory.csproj", "{18A78D59-FDD1-48B2-8F32-A794B30A10F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{C7372F5A-9EE5-4501-8C34-92A588A02565}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7372F5A-9EE5-4501-8C34-92A588A02565}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7372F5A-9EE5-4501-8C34-92A588A02565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18A78D59-FDD1-48B2-8F32-A794B30A10F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18A78D59-FDD1-48B2-8F32-A794B30A10F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18A78D59-FDD1-48B2-8F32-A794B30A10F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18A78D59-FDD1-48B2-8F32-A794B30A10F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
