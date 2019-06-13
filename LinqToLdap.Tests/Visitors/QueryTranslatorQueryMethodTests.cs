@@ -86,7 +86,7 @@ namespace LinqToLdap.Tests.Visitors
             Console.WriteLine(_mockFacotry.Filter + Environment.NewLine +
                 ((_mockFacotry.Options != null && _mockFacotry.Options.AttributesToLoad != null) ? "Attributes: " + string.Join(", ", _mockFacotry.Options.AttributesToLoad.Keys.ToArray()) : ""));
 #else
-            Console.WriteLine(_mockFacotry.Filter + Environment.NewLine + 
+            Console.WriteLine(_mockFacotry.Filter + Environment.NewLine +
                 ((_mockFacotry.Options != null && _mockFacotry.Options.AttributesToLoad != null) ? "Attributes: " + string.Join(", ", _mockFacotry.Options.AttributesToLoad.Keys) : ""));
 #endif
         }
@@ -498,7 +498,7 @@ namespace LinqToLdap.Tests.Visitors
         public void Translate_ListAttributesClauseWithCustomAttributes_ReturnsCorrectParameters()
         {
             //prepare
-            var attributes = new Dictionary<string, string> {{"one", "one"}, {"two", "two"}};
+            var attributes = new Dictionary<string, string> { { "one", "one" }, { "two", "two" } };
 #pragma warning disable 612,618
             _queryContext.Query<QueryTranslatorTestClass>().ListAttributes(attributes.Keys.ToArray());
 #pragma warning restore 612,618
@@ -833,7 +833,7 @@ namespace LinqToLdap.Tests.Visitors
                 .Returns(new List<string> { "cl", "c2" });
             _mapping.Setup(m => m.IncludeObjectClasses)
                 .Returns(true);
-            
+
             _queryContext.Query<QueryTranslatorTestClass>();
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
@@ -879,7 +879,7 @@ namespace LinqToLdap.Tests.Visitors
                 .Returns(new List<string> { "cl", "c2" });
             _mapping.Setup(m => m.IncludeObjectClasses)
                 .Returns(true);
-            
+
             _queryContext.Query<QueryTranslatorTestClass>()
                 .Where(t => t.Property1 == "some");
             var expression = _queryContext.ActiveProvider.CurrentExpression;
@@ -893,6 +893,34 @@ namespace LinqToLdap.Tests.Visitors
             _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
             _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
             _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(objectClass=cl)(objectClass=c2)(x=some))");
+        }
+
+        [TestMethod]
+        public void Translate_OrderByDynamic_DirectoryAttributes_ReturnsCorrectParameters()
+        {
+            //prepare
+            _queryContext.Query()
+                .OrderBy(x => x.Get("test"))
+                .ThenBy("other", "rule");
+            var expression = _queryContext.ActiveProvider.CurrentExpression;
+
+            //act
+            var command = _translator.Translate(expression);
+
+            //assert
+            command.Should().Be.SameInstanceAs(_command.Object);
+            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
+            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
+            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(2);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.False();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("test");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.Null();
+            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().Be.False();
+            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be.EqualTo("other");
+            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be.EqualTo("rule");
         }
 
         [TestMethod]
@@ -1160,7 +1188,7 @@ namespace LinqToLdap.Tests.Visitors
         public void Translate_ToPageWithPageSizeAndNextPage_ReturnsCorrectParameters()
         {
             //prepare
-            var cookie = new byte[] {1, 2, 3, 4};
+            var cookie = new byte[] { 1, 2, 3, 4 };
             _queryContext.Query<QueryTranslatorTestClass>()
                 .ToPage(10, cookie);
             var expression = _queryContext.ActiveProvider.CurrentExpression;
@@ -1323,7 +1351,7 @@ namespace LinqToLdap.Tests.Visitors
         public void Translate_DynamicQueryWithSelect_ReturnsCorrectParameters()
         {
             //prepare
-            var strings = new[] {"one", "two"};
+            var strings = new[] { "one", "two" };
             _queryContext.Query<IDirectoryAttributes>()
                 .Select(strings);
             var expression = _queryContext.ActiveProvider.CurrentExpression;
@@ -1373,15 +1401,15 @@ namespace LinqToLdap.Tests.Visitors
                          .FilterWith("some filter")
                          .Select(
                              da => new
-                                       {
-                                           What = da.GetBoolean("one"),
-                                           Huh = da.GetString("two").Length.CompareTo("test"),
-                                           Yeah = da.GetStrings("three").ToArray(),
-                                           Ok = da.Get("four"),
-                                           Ignore = da.Set("ignore", "ignore"),
-                                           Dn = da.DistinguishedName,
-                                           Entry = da.Entry
-                                       });
+                             {
+                                 What = da.GetBoolean("one"),
+                                 Huh = da.GetString("two").Length.CompareTo("test"),
+                                 Yeah = da.GetStrings("three").ToArray(),
+                                 Ok = da.Get("four"),
+                                 Ignore = da.Set("ignore", "ignore"),
+                                 Dn = da.DistinguishedName,
+                                 Entry = da.Entry
+                             });
             var expression = _queryContext.ActiveProvider.CurrentExpression;
             _translator.IsDynamic = true;
 
@@ -1425,7 +1453,7 @@ namespace LinqToLdap.Tests.Visitors
         {
             //prepare
             _queryContext.Query<QueryTranslatorTestClass>()
-                .Select(u => new {u.Property1})
+                .Select(u => new { u.Property1 })
                 .Select(u => u.Property1);
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
@@ -1549,7 +1577,7 @@ namespace LinqToLdap.Tests.Visitors
                 .Where(c => c.Property1 == "test");
 
             var expression = _queryContext.ActiveProvider.CurrentExpression;
-            
+
             //assert
             Executing.This(() => _translator.Translate(expression))
                 .Should().Throw<ArgumentException>()
@@ -1578,7 +1606,7 @@ namespace LinqToLdap.Tests.Visitors
             //prepare
             _queryContext.Query<QueryTranslatorTestClass>()
                 .Skip(1)
-                .WithControls(new[]{new PageResultRequestControl(1)});
+                .WithControls(new[] { new PageResultRequestControl(1) });
 
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
