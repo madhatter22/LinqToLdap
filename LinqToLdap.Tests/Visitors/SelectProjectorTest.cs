@@ -39,7 +39,7 @@ namespace LinqToLdap.Tests.Visitors
             var projection = _projector.ProjectProperties(expression);
 
             //assert
-            projection.ReturnType.Should().Be.EqualTo(typeof (QueryTranslatorTestClass));
+            projection.ReturnType.Should().Be.EqualTo(typeof(QueryTranslatorTestClass));
             projection.SelectedProperties.Should().Have.SameSequenceAs(_properties);
             projection.Projection.DynamicInvoke(instance).Should().Be.SameInstanceAs(instance);
         }
@@ -48,7 +48,7 @@ namespace LinqToLdap.Tests.Visitors
         public void ProjectProperties_ProjectNewInstance_ReturnsProjectedProperties()
         {
             //prepare
-            var instance = new QueryTranslatorTestClass {Property1 = "p1"};
+            var instance = new QueryTranslatorTestClass { Property1 = "p1" };
             var expression = instance.CreateExpression(t => new QueryTranslatorTestClass { Property1 = t.Property1 });
 
             //act
@@ -68,7 +68,7 @@ namespace LinqToLdap.Tests.Visitors
             //prepare
             var instance = new QueryTranslatorTestClass { Property1 = "p1" };
             var expression =
-                instance.CreateExpression(t => new {t.Property1, t.Property2, t.Property3, t.Property4, t.Property5});
+                instance.CreateExpression(t => new { t.Property1, t.Property2, t.Property3, t.Property4, t.Property5 });
 
             //act
             var projection = _projector.ProjectProperties(expression);

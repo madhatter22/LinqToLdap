@@ -9,7 +9,9 @@ namespace LinqToLdap
         public SelectProjection(IDictionary<string, string> selectedProperties, LambdaExpression projection)
         {
             SelectedProperties = selectedProperties;
+
             Projection = projection.Compile();
+
 #if NET35
             ReturnType = projection.Body.Type;
 #else
