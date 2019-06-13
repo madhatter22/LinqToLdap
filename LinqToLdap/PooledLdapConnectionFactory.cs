@@ -221,8 +221,19 @@ namespace LinqToLdap
 
         public void ReleaseConnection(LdapConnection connection)
         {
+            var lockObject = _connectionLockObject;
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            lock (_connectionLockObject)
+
+            if (lockObject == null)
+            {
+                //lock is null so this class is being finalized
+                connection.Dispose();
+                _inUseConnections?.Remove(connection);
+                if (Logger != null && Logger.TraceEnabled) Logger.Trace("Synchronization object lost. Disposing of connection.");
+                return;
+            }
+
+            lock (lockObject)
             {
                 if (_inUseConnections.Remove(connection))
                 {

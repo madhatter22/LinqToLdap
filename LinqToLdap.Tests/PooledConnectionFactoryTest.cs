@@ -94,6 +94,23 @@ namespace LinqToLdap.Tests
         }
 
         [TestMethod]
+        public void ReleaseConnection_Null_LockObject_Disposes_Of_Connection_And_Removes_It_From__InUseCollections()
+        {
+            //prepare
+            var connection = _factory.GetConnection();
+            _factory.FieldValueEx<List<LdapConnection>>("_inUseConnections")
+                .Should().Have.Count.EqualTo(1);
+            _factory.SetFieldValue<object>("_connectionLockObject", null);
+
+            //act
+            _factory.ReleaseConnection(connection);
+
+            //assert
+            _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_availableConnections")
+                .Should().Have.Count.EqualTo(0);
+        }
+
+        [TestMethod]
         public void ReInitializePool_Disposed_ThrowsException()
         {
             //prepare
