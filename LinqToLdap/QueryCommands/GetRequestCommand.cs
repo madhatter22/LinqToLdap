@@ -31,5 +31,14 @@ namespace LinqToLdap.QueryCommands
 
             return SearchRequest;
         }
+
+#if !NET35 && !NET40
+
+        public override System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
+        {
+            return System.Threading.Tasks.Task.FromResult(Execute(connection, scope, maxPageSize, pagingEnabled, log, namingContext));
+        }
+
+#endif
     }
 }

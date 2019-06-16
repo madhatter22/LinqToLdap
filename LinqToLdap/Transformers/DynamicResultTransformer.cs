@@ -1,4 +1,5 @@
 ﻿using LinqToLdap.Collections;
+using LinqToLdap.Helpers;
 using System;
 using System.DirectoryServices.Protocols;
 
@@ -25,7 +26,7 @@ namespace LinqToLdap.Transformers
             if (_projection != null)
             {
                 var type = _projection.ReturnType;
-                return type.IsValueType ? Activator.CreateInstance(type) : null;
+                return type.IsValueType ? ObjectActivator.CreateInstance(type) : null;
             }
 
             return null;

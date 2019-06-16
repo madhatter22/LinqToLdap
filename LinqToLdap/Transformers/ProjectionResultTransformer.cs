@@ -1,4 +1,5 @@
-﻿using LinqToLdap.Mapping;
+﻿using LinqToLdap.Helpers;
+using LinqToLdap.Mapping;
 using System;
 using System.Collections.Generic;
 
@@ -24,7 +25,7 @@ namespace LinqToLdap.Transformers
         public override object Default()
         {
             var type = _selectProjection.ReturnType;
-            return type.IsValueType ? Activator.CreateInstance(type) : null;
+            return type.IsValueType ? ObjectActivator.CreateInstance(type) : null;
         }
     }
 }

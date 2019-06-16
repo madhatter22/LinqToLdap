@@ -1,4 +1,5 @@
 ﻿using LinqToLdap.Collections;
+using LinqToLdap.Helpers;
 using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands.Options;
@@ -47,7 +48,7 @@ namespace LinqToLdap.QueryCommands
         public virtual object HandleStandardRequest(DirectoryConnection connection, ILinqToLdapLogger log, int maxSize, bool pagingEnabled)
         {
             if (Options.YieldNoResults)
-                return Activator.CreateInstance(typeof(List<>).MakeGenericType(Options.GetEnumeratorReturnType()));
+                return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType());
 
             int pageSize = 0;
             int index = 0;
@@ -97,8 +98,7 @@ namespace LinqToLdap.QueryCommands
 
             var enumerator = Options.GetEnumerator(list);
 
-            return Activator.CreateInstance(typeof(List<>).MakeGenericType(Options.GetEnumeratorReturnType()),
-                                            new[] { enumerator });
+            return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), new[] { enumerator });
         }
 
         public virtual object HandlePagedRequest(DirectoryConnection connection, PageResultRequestControl pageRequest, ILinqToLdapLogger log)
@@ -113,7 +113,7 @@ namespace LinqToLdap.QueryCommands
                                 null
                             };
 
-                return Activator.CreateInstance(typeof(LdapPage<>).MakeGenericType(Options.GetEnumeratorReturnType()), bindingAttr);
+                return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), bindingAttr);
             }
 
             if (pageRequest == null)
@@ -141,9 +141,7 @@ namespace LinqToLdap.QueryCommands
                                      Options.GetEnumerator(response.Entries),
                                      Options.Filter
                                  };
-            return Activator.CreateInstance(
-                typeof(LdapPage<>).MakeGenericType(Options.GetEnumeratorReturnType()),
-                parameters);
+            return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters);
         }
 
         public virtual object HandleVlvRequest(DirectoryConnection connection, int maxSize, ILinqToLdapLogger log)
@@ -156,7 +154,7 @@ namespace LinqToLdap.QueryCommands
                                 Options.GetEnumerator()
                             };
 
-                return Activator.CreateInstance(typeof(VirtualListView<>).MakeGenericType(Options.GetEnumeratorReturnType()), bindingAttr);
+                return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), bindingAttr);
             }
 
             if (GetControl<SortRequestControl>(SearchRequest.Controls) == null)
@@ -189,9 +187,8 @@ namespace LinqToLdap.QueryCommands
                                      vlvResponse.TargetPosition,
                                      Options.GetEnumerator(response.Entries)
                                  };
-            return Activator.CreateInstance(
-                typeof(VirtualListView<>).MakeGenericType(Options.GetEnumeratorReturnType()),
-                parameters);
+
+            return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters);
         }
 
         public void AssertSortSuccess(DirectoryControl[] controls)
@@ -204,5 +201,226 @@ namespace LinqToLdap.QueryCommands
                     string.Format("Sort request returned {0}", control.Result));
             }
         }
+
+#if !NET35 && !NET40
+
+        public override async System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
+        {
+            SetDistinguishedName(namingContext);
+            SearchRequest.Scope = scope;
+
+            if (Options.SortingOptions != null)
+            {
+                if (GetControl<SortRequestControl>(SearchRequest.Controls) != null)
+                    throw new InvalidOperationException("Only one sort request control can be sent to the server");
+
+                SearchRequest.Controls.Add(new SortRequestControl(Options.SortingOptions.Keys) { IsCritical = false });
+            }
+
+            PageResultRequestControl pageRequest;
+            if (Options.WithoutPaging || !pagingEnabled || (pageRequest = GetControl<PageResultRequestControl>(SearchRequest.Controls)) == null && Options.PagingOptions == null)
+            {
+                return await (Options.SkipSize.HasValue || GetControl<VlvRequestControl>(SearchRequest.Controls) != null
+                    ? HandleVlvRequestAsync(connection, maxPageSize, log)
+                    : HandleStandardRequestAsync(connection, log, maxPageSize,
+                        Options.WithoutPaging == false && pagingEnabled));
+            }
+
+            if (Options.PagingOptions != null && pageRequest != null)
+            {
+                throw new InvalidOperationException("Only one page request control can be sent to the server.");
+            }
+            return await HandlePagedRequestAsync(connection, pageRequest, log);
+        }
+
+        private async System.Threading.Tasks.Task<object> HandleStandardRequestAsync(LdapConnection connection, ILinqToLdapLogger log, int maxSize, bool pagingEnabled)
+        {
+            if (Options.YieldNoResults)
+                return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType());
+
+            int pageSize = 0;
+            int index = 0;
+            if (pagingEnabled)
+            {
+                int maxPageSize = Options.PageSize ?? maxSize;
+                pageSize = Options.TakeSize.HasValue ? Math.Min(Options.TakeSize.Value, maxPageSize) : maxPageSize;
+
+                index = SearchRequest.Controls.Add(new PageResultRequestControl(pageSize));
+            }
+
+            if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
+
+            var list = new List<SearchResultEntry>();
+            SearchResponse response = null;
+            await System.Threading.Tasks.Task.Factory.FromAsync(
+                (callback, state) =>
+                {
+                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                },
+                (asyncresult) =>
+                {
+                    response = (SearchResponse)connection.EndSendRequest(asyncresult);
+                    response.AssertSuccess();
+
+                    list.AddRange(response.Entries.GetRange());
+                },
+                null
+            );
+
+            if (pagingEnabled)
+            {
+                if (response.Entries.Count > 0)
+                {
+                    var pageResultResponseControl = GetControl<PageResultResponseControl>(response.Controls);
+                    bool hasMoreResults = pageResultResponseControl != null && pageResultResponseControl.Cookie.Length > 0 && (!Options.TakeSize.HasValue || list.Count < Options.TakeSize.Value);
+                    while (hasMoreResults)
+                    {
+                        SearchRequest.Controls[index] = new PageResultRequestControl(pageSize) { Cookie = pageResultResponseControl.Cookie };
+                        if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
+
+                        await System.Threading.Tasks.Task.Factory.FromAsync(
+                            (callback, state) =>
+                            {
+                                return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                            },
+                            (asyncresult) =>
+                            {
+                                response = (SearchResponse)connection.EndSendRequest(asyncresult);
+                                response.AssertSuccess();
+
+                                pageResultResponseControl = GetControl<PageResultResponseControl>(response.Controls);
+                                hasMoreResults = pageResultResponseControl != null && pageResultResponseControl.Cookie.Length > 0 && (!Options.TakeSize.HasValue || list.Count <= Options.TakeSize.Value);
+
+                                list.AddRange(response.Entries.GetRange());
+                            },
+                            null
+                        );
+                    }
+                }
+            }
+
+            AssertSortSuccess(response.Controls);
+
+            if (Options.TakeSize.HasValue && list.Count > Options.TakeSize.Value)
+            {
+                var size = Options.TakeSize.Value;
+                list.RemoveRange(size, list.Count - size);
+            }
+
+            var enumerator = Options.GetEnumerator(list);
+
+            return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), new[] { enumerator });
+        }
+
+        private async System.Threading.Tasks.Task<object> HandleVlvRequestAsync(LdapConnection connection, int maxSize, ILinqToLdapLogger log)
+        {
+            if (Options.YieldNoResults)
+            {
+                var bindingAttr = new[]
+                            {
+                                0,
+                                Options.GetEnumerator()
+                            };
+
+                return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), bindingAttr);
+            }
+
+            if (GetControl<SortRequestControl>(SearchRequest.Controls) == null)
+                throw new InvalidOperationException("Virtual List Views require a sort operation. Please include an OrderBy in your query.");
+
+            var skip = Options.SkipSize.GetValueOrDefault();
+            if (GetControl<VlvRequestControl>(SearchRequest.Controls) == null)
+            {
+                VlvRequestControl vlvRequest =
+                new VlvRequestControl(0, Options.TakeSize.GetValueOrDefault(maxSize) - 1, skip + 1) { IsCritical = false };
+
+                SearchRequest.Controls.Add(vlvRequest);
+            }
+
+            if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
+
+            return await System.Threading.Tasks.Task.Factory.FromAsync(
+                (callback, state) =>
+                {
+                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                },
+                (asyncresult) =>
+                {
+                    var response = (SearchResponse)connection.EndSendRequest(asyncresult);
+                    response.AssertSuccess();
+                    AssertSortSuccess(response.Controls);
+
+                    var vlvResponse = GetControl<VlvResponseControl>(response.Controls);
+
+                    if (vlvResponse == null)
+                        throw new InvalidOperationException("The server does not support Virtual List Views. Skip cannot be used. Please use standard paging.");
+                    var parameters = new[]
+                                         {
+                                     vlvResponse.ContentCount,
+                                     vlvResponse.ContextId,
+                                     vlvResponse.TargetPosition,
+                                     Options.GetEnumerator(response.Entries)
+                                 };
+
+                    return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters);
+                },
+                null
+            );
+        }
+
+        public virtual async System.Threading.Tasks.Task<object> HandlePagedRequestAsync(LdapConnection connection, PageResultRequestControl pageRequest, ILinqToLdapLogger log)
+        {
+            if (Options.YieldNoResults)
+            {
+                var bindingAttr = new[]
+                            {
+                                pageRequest.PageSize,
+                                null,
+                                Options.GetEnumerator(),
+                                null
+                            };
+
+                return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), bindingAttr);
+            }
+
+            if (pageRequest == null)
+            {
+                pageRequest = new PageResultRequestControl(Options.PagingOptions.PageSize)
+                {
+                    Cookie = Options.PagingOptions.NextPage
+                };
+
+                SearchRequest.Controls.Add(pageRequest);
+            }
+
+            if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
+
+            return await System.Threading.Tasks.Task.Factory.FromAsync(
+                (callback, state) =>
+                {
+                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                },
+                (asyncresult) =>
+                {
+                    var response = (SearchResponse)connection.EndSendRequest(asyncresult);
+                    response.AssertSuccess();
+                    AssertSortSuccess(response.Controls);
+
+                    var nextPage = GetControl<PageResultResponseControl>(response.Controls);
+                    var parameters = new[]
+                                         {
+                                     pageRequest.PageSize,
+                                     nextPage?.Cookie,
+                                     Options.GetEnumerator(response.Entries),
+                                     Options.Filter
+                                 };
+
+                    return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters);
+                },
+                null
+            );
+        }
+
+#endif
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LinqToLdap.Helpers;
+using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpTestsEx;
 using System;
@@ -67,6 +68,34 @@ namespace LinqToLdap.Tests.Helpers
             instance.Property5.Should().Be.EqualTo("str");
             instance.Property6.Should().Be.EqualTo(SomeEnum.Value1);
             instance.Property7.Should().Be.EqualTo(SomeEnum.Value2);
+        }
+
+        [TestMethod]
+        public void BuidUnkownCtorWithParams_CanBuildAnonymousConstructor_BuildsConstructorThatCanParseStringsToValueTypes()
+        {
+            var now = DateTime.Now;
+            var anon = new
+            {
+                Property1 = default(long?),
+                Property2 = default(long),
+                Property3 = default(DateTime?),
+                Property4 = default(DateTime),
+                Property5 = default(string),
+                Property6 = default(SomeEnum),
+                Property7 = default(SomeEnum?)
+            };
+
+            var ctor = DelegateBuilder.BuildUnknownCtorWithParams(anon.GetType().GetConstructors().First());
+
+            var instance = ctor((long?)1, (long)2, now, now, "str", SomeEnum.Value1, SomeEnum.Value2);
+
+            instance.PropertyValue<long?>("Property1").Should().Be.EqualTo(1);
+            instance.PropertyValue<long>("Property2").Should().Be.EqualTo(2);
+            instance.PropertyValue<DateTime?>("Property3").Should().Be.EqualTo(now);
+            instance.PropertyValue<DateTime>("Property4").Should().Be.EqualTo(now);
+            instance.PropertyValue<string>("Property5").Should().Be.EqualTo("str");
+            instance.PropertyValue<SomeEnum>("Property6").Should().Be.EqualTo(SomeEnum.Value1);
+            instance.PropertyValue<SomeEnum?>("Property7").Should().Be.EqualTo(SomeEnum.Value2);
         }
 
         private static CtorWithParams<T> GetCtorWithParams<T>(T exmaple)

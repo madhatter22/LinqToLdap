@@ -12,6 +12,24 @@ namespace LinqToLdap.Tests.PerformanceTests
 {
     public class Speed
     {
+        public Speed()
+        {
+        }
+
+        public Speed(string property1, int property2, decimal property3, byte[] property4, object property5, int property6, long property7, double property8, float property9, SpeedEnum property10)
+        {
+            Property1 = property1;
+            Property2 = property2;
+            Property3 = property3;
+            Property4 = property4;
+            Property5 = property5;
+            Property6 = property6;
+            Property7 = property7;
+            Property8 = property8;
+            Property9 = property9;
+            Property10 = property10;
+        }
+
         public enum SpeedEnum
         {
             Default,
@@ -65,6 +83,24 @@ namespace LinqToLdap.Tests.PerformanceTests
         }
 
         [TestMethod]
+        public void DelegateBuilderNewParameters_Speed()
+        {
+            Speed inst = null;
+            long seven = 7;
+            double eight = 8;
+            float nine = 9;
+            var ctor = DelegateBuilder.BuildUnknownCtorWithParams(typeof(Speed).GetConstructors().First(x => x.GetParameters().Length > 0));
+            var watch = Stopwatch.StartNew();
+            for (int i = 0; i < Iterations; i++)
+            {
+                inst = (Speed)ctor("1", 2, 3m, new byte[0], "5", 6, seven, eight, nine, Speed.SpeedEnum.None);
+            }
+            watch.Stop();
+            Trace.WriteLine(inst.Property1);
+            Trace.WriteLine(watch.ElapsedMilliseconds);
+        }
+
+        [TestMethod]
         public void ExpressionNew_Speed()
         {
             Speed inst = null;
@@ -88,6 +124,23 @@ namespace LinqToLdap.Tests.PerformanceTests
             for (int i = 0; i < Iterations; i++)
             {
                 inst = Activator.CreateInstance(typeof(Speed)) as Speed;
+            }
+            watch.Stop();
+            Trace.WriteLine(inst.Property1);
+            Trace.WriteLine(watch.ElapsedMilliseconds);
+        }
+
+        [TestMethod]
+        public void ActivatorParametersNew_Speed()
+        {
+            Speed inst = null;
+            long seven = 7;
+            double eight = 8;
+            float nine = 9;
+            var watch = Stopwatch.StartNew();
+            for (int i = 0; i < Iterations; i++)
+            {
+                inst = Activator.CreateInstance(typeof(Speed), "1", 2, 3m, new byte[0], "5", 6, seven, eight, nine, Speed.SpeedEnum.None) as Speed;
             }
             watch.Stop();
             Trace.WriteLine(inst.Property1);

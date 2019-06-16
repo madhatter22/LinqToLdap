@@ -10,7 +10,7 @@ namespace LinqToLdap.TestSupport
     /// <summary>
     /// A mock <see cref="IQueryProvider"/>.
     /// </summary>
-    public class MockQueryProvider : IQueryProvider
+    public class MockQueryProvider : IAsyncQueryProvider
     {
         private int _executionCount;
 
@@ -79,7 +79,7 @@ namespace LinqToLdap.TestSupport
             CurrentExpression = expression;
             ExecutedExpressions.Add(expression);
             return ResultsToReturn.Count == 0
-                ? Activator.CreateInstance(TypeSystem.GetElementType(expression.Type))
+                ? ObjectActivator.CreateInstance(TypeSystem.GetElementType(expression.Type))
                 : ResultsToReturn[_executionCount++];
         }
 
@@ -97,5 +97,30 @@ namespace LinqToLdap.TestSupport
                 ? default
                 : (TResult)ResultsToReturn[_executionCount++];
         }
+
+#if !NET35 && !NET40
+
+        /// <summary>
+        /// Sets <see cref="CurrentExpression"/> equal to <paramref name="expression"/> and adds it to <see cref="ExecutedExpressions"/>. Returns the a result from <see cref="ResultsToReturn"/> based on the number of execution calls that have occurred.
+        /// </summary>
+        /// <param name="expression">The expression</param>
+        /// <returns></returns>
+        public System.Threading.Tasks.Task<object> ExecuteAsync(Expression expression)
+        {
+            return System.Threading.Tasks.Task.FromResult(Execute(expression));
+        }
+
+        /// <summary>
+        /// Sets <see cref="CurrentExpression"/> equal to <paramref name="expression"/> and adds it to <see cref="ExecutedExpressions"/>. Returns the a result from <see cref="ResultsToReturn"/> based on the number of execution calls that have occurred.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result</typeparam>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
+        public System.Threading.Tasks.Task<TResult> ExecuteAsync<TResult>(Expression expression)
+        {
+            return System.Threading.Tasks.Task.FromResult(Execute<TResult>(expression));
+        }
+
+#endif
     }
 }

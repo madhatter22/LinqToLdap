@@ -675,5 +675,146 @@ namespace LinqToLdap
                                         .MakeGenericMethod(new[] { typeof(TSource) }),
                                     new[] { source.Expression }));
         }
+
+#if !NET35 && !NET40
+
+        private static readonly MethodInfo AnyAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "AnyAsync" && x.GetParameters().Length == 1);
+        private static readonly MethodInfo AnyPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "AnyAsync" && x.GetParameters().Length == 2);
+        private static readonly MethodInfo ToListAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "ToListAsync" && x.GetParameters().Length == 1);
+        private static readonly MethodInfo CountAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "CountAsync" && x.GetParameters().Length == 1);
+        private static readonly MethodInfo CountPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "CountAsync" && x.GetParameters().Length == 2);
+        private static readonly MethodInfo LongCountAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "LongCountAsync" && x.GetParameters().Length == 1);
+        private static readonly MethodInfo LongCountPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "LongCountAsync" && x.GetParameters().Length == 2);
+
+        /// <summary>
+        /// Executes Any on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <param name="source">The query.</param>
+        /// <typeparam name="TSource">The element type to return.</typeparam>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<bool> AnyAsync<TSource>(this IQueryable<TSource> source)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<bool>(
+                    Expression.Call(null, AnyAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.Any());
+        }
+
+        /// <summary>
+        /// Executes Any on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <param name="source">The query.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <typeparam name="TSource">The element type to return.</typeparam>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<bool> AnyAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<bool>(
+                    Expression.Call(null, AnyPredicateAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression, predicate }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.Any(predicate));
+        }
+
+        /// <summary>
+        /// Executes <see cref="QueryableExtensions.ToList{TSource}"/> on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<List<TSource>> ToListAsync<TSource>(this IQueryable<TSource> source)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<List<TSource>>(
+                    Expression.Call(null, ToListAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.ToList());
+        }
+
+        /// <summary>
+        /// Executes Count on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<int> CountAsync<TSource>(this IQueryable<TSource> source)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<int>(
+                    Expression.Call(null, CountAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.Count());
+        }
+
+        /// <summary>
+        /// Executes Count on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// /// <param name="predicate">The condition by which to filter.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<int> CountAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<int>(
+                    Expression.Call(null, CountPredicateAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression, predicate }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.Count(predicate));
+        }
+
+        /// <summary>
+        /// Executes LongCount on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<long> LongCountAsync<TSource>(this IQueryable<TSource> source)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<long>(
+                    Expression.Call(null, LongCountAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.LongCount());
+        }
+
+        /// <summary>
+        /// Executes LongCount on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// /// <param name="predicate">The condition by which to filter.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<long> LongCountAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<long>(
+                    Expression.Call(null, LongCountPredicateAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression, predicate }));
+            }
+            return await System.Threading.Tasks.Task.FromResult(source.LongCount(predicate));
+        }
+
+#endif
     }
 }

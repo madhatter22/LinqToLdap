@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Threading.Tasks;
 
-namespace LinqToLdap.Contrib
+namespace LinqToLdap.Async
 {
     /// <summary>
     /// Async extension methods for <see cref="IDirectoryContext"/>.

@@ -88,6 +88,32 @@ namespace LinqToLdap
             }
         }
 
+#if (!NET35 && !NET40)
+
+        public override async System.Threading.Tasks.Task<object> ExecuteAsync(Expression expression)
+        {
+            try
+            {
+                if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+                var command = TranslateExpression(expression);
+
+                LdapConnection connection;
+                if (!_connection.TryGetTarget(out connection))
+                {
+                    throw new ObjectDisposedException("_connection", "The LdapConnection associated with this provider has been disposed.");
+                }
+                return await command.ExecuteAsync(connection, _scope, MaxPageSize, _pagingEnabled, Log, NamingContext);
+            }
+            catch (Exception ex)
+            {
+                if (Log != null) Log.Error(ex);
+                throw;
+            }
+        }
+
+#endif
+
         ~DirectoryQueryProvider()
         {
             Dispose(false);

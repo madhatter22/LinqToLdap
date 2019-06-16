@@ -53,5 +53,14 @@ namespace LinqToLdap.QueryCommands
                 ? Options.GetTransformer().Transform(response.Entries[0])
                 : Options.GetTransformer().Default();
         }
+
+#if !NET35 && !NET40
+
+        public override System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
+        {
+            throw new NotImplementedException();
+        }
+
+#endif
     }
 }

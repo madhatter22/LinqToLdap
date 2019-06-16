@@ -205,8 +205,7 @@ namespace LinqToLdap.Visitors
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(QueryableExtensions) ||
-                m.Method.DeclaringType == typeof(PredicateBuilder))
+            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(QueryableExtensions) || m.Method.DeclaringType == typeof(PredicateBuilder))
             {
                 VisitQueryableMethods(m);
             }
@@ -265,6 +264,7 @@ namespace LinqToLdap.Visitors
                     break;
 
                 case "Any":
+                case "AnyAsync":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {
@@ -303,7 +303,9 @@ namespace LinqToLdap.Visitors
 
                 case "LongCount":
                 case "Count":
-                    _isLongCount = m.Method.Name == "LongCount";
+                case "LongCountAsync":
+                case "CountAsync":
+                    _isLongCount = m.Method.Name == "LongCount" || m.Method.Name == "LongCountAsync";
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {
@@ -424,6 +426,7 @@ namespace LinqToLdap.Visitors
                     break;
 
                 case "ToList":
+                case "ToListAsync":
                     foreach (Expression t in m.Arguments)
                     {
                         Visit(t);
