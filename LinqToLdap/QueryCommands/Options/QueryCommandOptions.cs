@@ -1,4 +1,5 @@
 ﻿using LinqToLdap.Collections;
+using LinqToLdap.Helpers;
 using LinqToLdap.Transformers;
 using System;
 using System.Collections.Generic;
@@ -45,20 +46,20 @@ namespace LinqToLdap.QueryCommands.Options
 
         public object GetEnumerator(SearchResultEntryCollection results)
         {
-            return Activator.CreateInstance(typeof(SearchResponseEnumerable<>).MakeGenericType(GetEnumeratorReturnType()),
-                                            new object[] { results, GetTransformer() });
+            return ObjectActivator.CreateGenericInstance(typeof(SearchResponseEnumerable<>), GetEnumeratorReturnType(),
+                                            new object[] { results, GetTransformer() }, "1");
         }
 
         public object GetEnumerator()
         {
-            return Activator.CreateInstance(typeof(SearchResponseEnumerable<>).MakeGenericType(GetEnumeratorReturnType()),
-                                            new object[] { null, GetTransformer() });
+            return ObjectActivator.CreateGenericInstance(typeof(SearchResponseEnumerable<>), GetEnumeratorReturnType(),
+                                            new object[] { null, GetTransformer() }, "1");
         }
 
         public object GetEnumerator(List<SearchResultEntry> results)
         {
-            return Activator.CreateInstance(typeof(SearchResponseEnumerable<>).MakeGenericType(GetEnumeratorReturnType()),
-                                            new object[] { GetTransformer(), results });
+            return ObjectActivator.CreateGenericInstance(typeof(SearchResponseEnumerable<>), GetEnumeratorReturnType(),
+                                            new object[] { GetTransformer(), results }, "2");
         }
 
         public abstract Type GetEnumeratorReturnType();

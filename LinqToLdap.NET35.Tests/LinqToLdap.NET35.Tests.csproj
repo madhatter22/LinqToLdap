@@ -81,6 +81,9 @@
     <Compile Include="..\LinqToLdap.Tests\Helpers\DelegateBuilderTest.cs">
       <Link>Helpers\DelegateBuilderTest.cs</Link>
     </Compile>
+    <Compile Include="..\LinqToLdap.Tests\Helpers\ObjectActivatorTests.cs">
+      <Link>Helpers\ObjectActivatorTests.cs</Link>
+    </Compile>
     <Compile Include="..\LinqToLdap.Tests\IntegrationTests.cs">
       <Link>IntegrationTests.cs</Link>
     </Compile>

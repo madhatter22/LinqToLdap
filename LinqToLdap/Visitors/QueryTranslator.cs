@@ -275,6 +275,8 @@ namespace LinqToLdap.Visitors
 
                 case "FirstOrDefault":
                 case "First":
+                case "FirstOrDefaultAsync":
+                case "FirstAsync":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {

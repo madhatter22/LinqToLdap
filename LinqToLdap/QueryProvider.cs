@@ -1,5 +1,4 @@
 ﻿using LinqToLdap.Helpers;
-using System;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -11,7 +10,7 @@ namespace LinqToLdap
         {
             var elementType = TypeSystem.GetElementType(expression.Type);
 
-            return (IQueryable)ObjectActivator.CreateGenericInstance(typeof(DirectoryQuery<>), elementType, new object[] { this, expression });
+            return (IQueryable)ObjectActivator.CreateGenericInstance(typeof(DirectoryQuery<>), elementType, new object[] { this, expression }, null);
         }
 
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)

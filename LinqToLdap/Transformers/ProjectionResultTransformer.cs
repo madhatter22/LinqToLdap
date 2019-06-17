@@ -25,7 +25,7 @@ namespace LinqToLdap.Transformers
         public override object Default()
         {
             var type = _selectProjection.ReturnType;
-            return type.IsValueType ? ObjectActivator.CreateInstance(type) : null;
+            return type.IsValueType ? Activator.CreateInstance(type) : null;
         }
     }
 }

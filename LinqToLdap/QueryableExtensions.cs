@@ -685,6 +685,10 @@ namespace LinqToLdap
         private static readonly MethodInfo CountPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "CountAsync" && x.GetParameters().Length == 2);
         private static readonly MethodInfo LongCountAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "LongCountAsync" && x.GetParameters().Length == 1);
         private static readonly MethodInfo LongCountPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "LongCountAsync" && x.GetParameters().Length == 2);
+        private static readonly MethodInfo FirstAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "FirstAsync" && x.GetParameters().Length == 1);
+        private static readonly MethodInfo FirstPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "FirstAsync" && x.GetParameters().Length == 2);
+        private static readonly MethodInfo FirstOrDefaultAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "FirstOrDefaultAsync" && x.GetParameters().Length == 1);
+        private static readonly MethodInfo FirstOrDefaultPredicateAsyncMethod = typeof(QueryableExtensions).GetMethods().Single(x => x.Name == "FirstOrDefaultAsync" && x.GetParameters().Length == 2);
 
         /// <summary>
         /// Executes Any on <paramref name="source"/> in a <see cref="System.Threading.Tasks.Task"/>.
@@ -701,7 +705,7 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.Any());
+            return source.Any();
         }
 
         /// <summary>
@@ -720,7 +724,7 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression, predicate }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.Any(predicate));
+            return source.Any(predicate);
         }
 
         /// <summary>
@@ -738,7 +742,7 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.ToList());
+            return source.ToList();
         }
 
         /// <summary>
@@ -756,7 +760,7 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.Count());
+            return source.Count();
         }
 
         /// <summary>
@@ -775,7 +779,7 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression, predicate }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.Count(predicate));
+            return source.Count(predicate);
         }
 
         /// <summary>
@@ -793,7 +797,7 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.LongCount());
+            return source.LongCount();
         }
 
         /// <summary>
@@ -812,7 +816,81 @@ namespace LinqToLdap
                         new[] { typeof(TSource) }),
                         new[] { source.Expression, predicate }));
             }
-            return await System.Threading.Tasks.Task.FromResult(source.LongCount(predicate));
+            return source.LongCount(predicate);
+        }
+
+        /// <summary>
+        /// Executes FirstOrDefault on <paramref name="source"/> in a <see cref="Task"/>.
+        /// </summary>
+        /// <param name="source">The query.</param>
+        /// <typeparam name="TSource">The element type to return.</typeparam>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<TSource> FirstOrDefaultAsync<TSource>(this IQueryable<TSource> source)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<TSource>(
+                    Expression.Call(null, FirstOrDefaultAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression }));
+            }
+            return source.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Executes FirstOrDefault on <paramref name="source"/> in a <see cref="Task"/>.
+        /// </summary>
+        /// <param name="source">The query</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <typeparam name="TSource">The element type to return.</typeparam>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<TSource> FirstOrDefaultAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<TSource>(
+                    Expression.Call(null, FirstOrDefaultPredicateAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression, predicate }));
+            }
+            return source.FirstOrDefault(predicate);
+        }
+
+        /// <summary>
+        /// Executes First on <paramref name="source"/> in a <see cref="Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<TSource>(
+                    Expression.Call(null, FirstAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression }));
+            }
+            return source.First();
+        }
+
+        /// <summary>
+        /// Executes First on <paramref name="source"/> in a <see cref="Task"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of <paramref name="source"/>.</typeparam>
+        /// <param name="source">The query.</param>
+        /// <param name="predicate">The condition by which to filter.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<TSource> FirstAsync<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+        {
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<TSource>(
+                    Expression.Call(null, FirstPredicateAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression, predicate }));
+            }
+            return source.First(predicate);
         }
 
 #endif

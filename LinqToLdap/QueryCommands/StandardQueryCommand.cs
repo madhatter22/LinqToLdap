@@ -48,7 +48,7 @@ namespace LinqToLdap.QueryCommands
         public virtual object HandleStandardRequest(DirectoryConnection connection, ILinqToLdapLogger log, int maxSize, bool pagingEnabled)
         {
             if (Options.YieldNoResults)
-                return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType());
+                return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), null, null);
 
             int pageSize = 0;
             int index = 0;
@@ -98,22 +98,24 @@ namespace LinqToLdap.QueryCommands
 
             var enumerator = Options.GetEnumerator(list);
 
-            return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), new[] { enumerator });
+            return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), new[] { enumerator }, null);
         }
 
         public virtual object HandlePagedRequest(DirectoryConnection connection, PageResultRequestControl pageRequest, ILinqToLdapLogger log)
         {
+            object enumerator = null;
             if (Options.YieldNoResults)
             {
+                enumerator = Options.GetEnumerator();
                 var bindingAttr = new[]
                             {
                                 pageRequest.PageSize,
                                 null,
-                                Options.GetEnumerator(),
+                                enumerator,
                                 null
                             };
 
-                return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), bindingAttr);
+                return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), bindingAttr, null);
             }
 
             if (pageRequest == null)
@@ -133,28 +135,32 @@ namespace LinqToLdap.QueryCommands
 
             AssertSortSuccess(response.Controls);
 
+            enumerator = Options.GetEnumerator(response.Entries);
             var nextPage = GetControl<PageResultResponseControl>(response.Controls);
             var parameters = new[]
                                  {
                                      pageRequest.PageSize,
                                      nextPage?.Cookie,
-                                     Options.GetEnumerator(response.Entries),
+                                     enumerator,
                                      Options.Filter
                                  };
-            return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters);
+            return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters, null);
         }
 
         public virtual object HandleVlvRequest(DirectoryConnection connection, int maxSize, ILinqToLdapLogger log)
         {
             if (Options.YieldNoResults)
             {
+                var enumerator = Options.GetEnumerator();
                 var bindingAttr = new[]
                             {
                                 0,
-                                Options.GetEnumerator()
+                                null,
+                                0,
+                                enumerator
                             };
 
-                return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), bindingAttr);
+                return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), bindingAttr, null);
             }
 
             if (GetControl<SortRequestControl>(SearchRequest.Controls) == null)
@@ -188,7 +194,7 @@ namespace LinqToLdap.QueryCommands
                                      Options.GetEnumerator(response.Entries)
                                  };
 
-            return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters);
+            return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters, null);
         }
 
         public void AssertSortSuccess(DirectoryControl[] controls)
@@ -236,7 +242,7 @@ namespace LinqToLdap.QueryCommands
         private async System.Threading.Tasks.Task<object> HandleStandardRequestAsync(LdapConnection connection, ILinqToLdapLogger log, int maxSize, bool pagingEnabled)
         {
             if (Options.YieldNoResults)
-                return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType());
+                return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), null, null);
 
             int pageSize = 0;
             int index = 0;
@@ -309,20 +315,23 @@ namespace LinqToLdap.QueryCommands
 
             var enumerator = Options.GetEnumerator(list);
 
-            return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), new[] { enumerator });
+            return ObjectActivator.CreateGenericInstance(typeof(List<>), Options.GetEnumeratorReturnType(), new[] { enumerator }, null);
         }
 
         private async System.Threading.Tasks.Task<object> HandleVlvRequestAsync(LdapConnection connection, int maxSize, ILinqToLdapLogger log)
         {
             if (Options.YieldNoResults)
             {
+                var enumerator = Options.GetEnumerator();
                 var bindingAttr = new[]
                             {
                                 0,
-                                Options.GetEnumerator()
+                                null,
+                                0,
+                                enumerator
                             };
 
-                return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), bindingAttr);
+                return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), bindingAttr, null);
             }
 
             if (GetControl<SortRequestControl>(SearchRequest.Controls) == null)
@@ -362,7 +371,7 @@ namespace LinqToLdap.QueryCommands
                                      Options.GetEnumerator(response.Entries)
                                  };
 
-                    return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters);
+                    return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters, null);
                 },
                 null
             );
@@ -372,15 +381,16 @@ namespace LinqToLdap.QueryCommands
         {
             if (Options.YieldNoResults)
             {
+                var enumerator = Options.GetEnumerator();
                 var bindingAttr = new[]
                             {
                                 pageRequest.PageSize,
                                 null,
-                                Options.GetEnumerator(),
+                                enumerator,
                                 null
                             };
 
-                return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), bindingAttr);
+                return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), bindingAttr, null);
             }
 
             if (pageRequest == null)
@@ -406,16 +416,17 @@ namespace LinqToLdap.QueryCommands
                     response.AssertSuccess();
                     AssertSortSuccess(response.Controls);
 
+                    var enumerator = Options.GetEnumerator(response.Entries);
                     var nextPage = GetControl<PageResultResponseControl>(response.Controls);
                     var parameters = new[]
-                                         {
-                                     pageRequest.PageSize,
-                                     nextPage?.Cookie,
-                                     Options.GetEnumerator(response.Entries),
-                                     Options.Filter
-                                 };
+                    {
+                        pageRequest.PageSize,
+                        nextPage?.Cookie,
+                        enumerator,
+                        Options.Filter
+                    };
 
-                    return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters);
+                    return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters, null);
                 },
                 null
             );

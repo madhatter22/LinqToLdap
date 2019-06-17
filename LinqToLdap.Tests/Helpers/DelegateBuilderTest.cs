@@ -3,10 +3,8 @@ using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpTestsEx;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace LinqToLdap.Tests.Helpers
 {

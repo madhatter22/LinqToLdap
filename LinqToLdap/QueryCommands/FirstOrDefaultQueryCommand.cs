@@ -17,6 +17,39 @@ namespace LinqToLdap.QueryCommands
         {
             if (Options.YieldNoResults) return Options.GetTransformer().Default();
 
+            BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
+
+            var response = connection.SendRequest(SearchRequest) as SearchResponse;
+
+            return HandleResponse(response);
+        }
+
+#if !NET35 && !NET40
+
+        public override async System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
+        {
+            if (Options.YieldNoResults) return Options.GetTransformer().Default();
+
+            BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
+
+            return await System.Threading.Tasks.Task.Factory.FromAsync(
+                (callback, state) =>
+                {
+                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                },
+                (asyncresult) =>
+                {
+                    var response = (SearchResponse)connection.EndSendRequest(asyncresult);
+                    return HandleResponse(response);
+                },
+                null
+            );
+        }
+
+#endif
+
+        private void BuildRequest(SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log, string namingContext)
+        {
             SetDistinguishedName(namingContext);
             SearchRequest.Scope = scope;
             if (Options.SortingOptions != null)
@@ -37,22 +70,15 @@ namespace LinqToLdap.QueryCommands
             }
 
             if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
-            var response = connection.SendRequest(SearchRequest) as SearchResponse;
+        }
 
+        private object HandleResponse(SearchResponse response)
+        {
             response.AssertSuccess();
 
             return response.Entries.Count > 0
                 ? Options.GetTransformer().Transform(response.Entries[0])
                 : Options.GetTransformer().Default();
         }
-
-#if !NET35 && !NET40
-
-        public override System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
-        {
-            throw new NotImplementedException();
-        }
-
-#endif
     }
 }

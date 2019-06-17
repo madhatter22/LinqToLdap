@@ -1,7 +1,6 @@
 ﻿using LinqToLdap.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -11,8 +10,6 @@ namespace LinqToLdap.Helpers
     internal delegate T CtorWithParams<out T>(params object[] args);
 
     internal delegate T Ctor<out T>();
-
-    internal delegate object UnknownCtor();
 
     internal delegate object UnknownCtorWithParams(params object[] args);
 
@@ -115,7 +112,7 @@ namespace LinqToLdap.Helpers
             return (CtorWithParams<T>)lambda.Compile();
         }
 
-        internal static UnknownCtor BuildUnknownCtor(Type concreteType)
+        internal static Func<object> BuildUnknownCtor(Type concreteType)
         {
             var ctor = concreteType.GetConstructor(
                     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
@@ -135,7 +132,7 @@ namespace LinqToLdap.Helpers
             ILGenerator il = dyn.GetILGenerator();
             il.Emit(OpCodes.Newobj, ctor);
             il.Emit(OpCodes.Ret);
-            return (UnknownCtor)dyn.CreateDelegate(typeof(UnknownCtor));
+            return (Func<object>)dyn.CreateDelegate(typeof(Func<object>));
         }
 
         internal static UnknownCtorWithParams BuildUnknownCtorWithParams(ConstructorInfo ctor)
@@ -160,36 +157,6 @@ namespace LinqToLdap.Helpers
             var lambda = Expression.Lambda(typeof(UnknownCtorWithParams), newExp, param);
 
             return (UnknownCtorWithParams)lambda.Compile();
-        }
-    }
-
-    internal static class ObjectActivator
-    {
-#if (NET35 || NET40)
-        private readonly static LinqToLdap.Collections.SafeDictionary<string, UnknownCtorWithParams> _constructors = new LinqToLdap.Collections.SafeDictionary<string, UnknownCtorWithParams>();
-#else
-        private readonly static System.Collections.Concurrent.ConcurrentDictionary<string, UnknownCtorWithParams> _constructors = new System.Collections.Concurrent.ConcurrentDictionary<string, UnknownCtorWithParams>();
-#endif
-
-        public static object CreateInstance(Type instanceType, params object[] parameters)
-        {
-            return _constructors.GetOrAdd(instanceType.FullName, _ =>
-            {
-                var constrcutor = instanceType.GetConstructor(parameters.Select(x => x.GetType()).ToArray());
-
-                return DelegateBuilder.BuildUnknownCtorWithParams(constrcutor);
-            }).Invoke(parameters);
-        }
-
-        public static object CreateGenericInstance(Type instanceType, Type genericParameterType, params object[] parameters)
-        {
-            return _constructors.GetOrAdd(instanceType.FullName + genericParameterType.FullName, t =>
-            {
-                var type = instanceType.MakeGenericType(genericParameterType);
-                var constrcutor = type.GetConstructor(parameters.Select(x => x.GetType()).ToArray());
-
-                return DelegateBuilder.BuildUnknownCtorWithParams(constrcutor);
-            }).Invoke(parameters);
         }
     }
 }

@@ -221,8 +221,8 @@ namespace LinqToLdap.Tests
             _configuration.ConfigureFactory(ServerName)
                 //.AuthenticateBy(AuthType.Basic)
                 //.AuthenticateAs(new NetworkCredential("CN=AlphaUser,CN=Users,CN=Employees,DC=Northwind,DC=local", "test"))
-                .AuthenticateBy(AuthType.Negotiate)
-                ;
+                .AuthenticateBy(AuthType.Ntlm)
+                .ProtocolVersion(3);
 
             _context = _configuration.CreateContext();
         }
@@ -633,17 +633,19 @@ namespace LinqToLdap.Tests
 
         [TestMethod]
         [TestCategory("Integration")]
+        [Ignore]//Control isn't supported by Lightweight Directory Services
         public void Virtual_List_View_Test()
         {
             int skip = 0;
             int take = 700;
+            string[] attribs = { "cn", "sn", "givenName" };
 
-            var results = _context.Query<IntegrationUserTest>(SearchScope.Subtree, IntegrationUserTest.NamingContext2)
-                .Where(x => Filter.StartsWith(x, "givenName", "T", true))
-                .OrderByDescending(x => x.Cn)
+            var results = _context.Query(IntegrationUserTest.NamingContext2, SearchScope.Subtree)
+                .Where(x => Filter.StartsWith(x, "givenName", "J", true))
+                .OrderByDescending("cn")
+                .Select(attribs)
                 .Skip(skip)
-                .Take(700)
-                .ToList();
+                .Take(700);
 
             results.Should().Not.Be.Empty().And.Have.Count.EqualTo(700);
             results.As<IVirtualListView<IntegrationUserTest>>().Should().Not.Be.Null();
@@ -652,11 +654,9 @@ namespace LinqToLdap.Tests
             results.As<IVirtualListView<IntegrationUserTest>>().TargetPosition
                 .Should().Be.GreaterThanOrEqualTo(0);
 
-            string[] attribs = { "cn", "sn", "givenName" };
-
             SearchRequest searchRequest = new SearchRequest
                                                     (IntegrationUserTest.NamingContext2,
-                                                     "(givenName=T*)",
+                                                     "(givenName=J*)",
                                                      SearchScope.Subtree,
                                                      attribs);
 

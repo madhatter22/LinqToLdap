@@ -1,14 +1,12 @@
-﻿using LinqToLdap.Logging;
+﻿using LinqToLdap.Async;
+using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
+using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SharpTestsEx;
 using System;
-using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
-using System.Text;
-using LinqToLdap.Async;
-using SharpTestsEx;
-using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 
 namespace LinqToLdap.Tests
 {
@@ -135,7 +133,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void FirstOrDefaultAsync_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query<PersonInheritanceTest>().FirstOrDefaultAsync();
             task.Wait();
@@ -148,7 +145,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void FirstOrDefaultAsync_WithPredicate_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query<IntegrationGroupTest>().FirstOrDefaultAsync(g => g.Member != null);
             task.Wait();
@@ -161,7 +157,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void FirstAsync_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query<PersonInheritanceTest>().FirstAsync();
             task.Wait();
@@ -174,7 +169,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void FirstAsync_WithPredicate_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query<IntegrationGroupTest>().FirstAsync(g => g.Member != null);
             task.Wait();

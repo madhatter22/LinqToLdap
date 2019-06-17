@@ -26,7 +26,7 @@ namespace LinqToLdap.Transformers
             if (_projection != null)
             {
                 var type = _projection.ReturnType;
-                return type.IsValueType ? ObjectActivator.CreateInstance(type) : null;
+                return type.IsValueType ? Activator.CreateInstance(type) : null;
             }
 
             return null;

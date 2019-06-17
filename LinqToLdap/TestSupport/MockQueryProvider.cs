@@ -79,7 +79,7 @@ namespace LinqToLdap.TestSupport
             CurrentExpression = expression;
             ExecutedExpressions.Add(expression);
             return ResultsToReturn.Count == 0
-                ? ObjectActivator.CreateInstance(TypeSystem.GetElementType(expression.Type))
+                ? Activator.CreateInstance(TypeSystem.GetElementType(expression.Type))
                 : ResultsToReturn[_executionCount++];
         }
 
