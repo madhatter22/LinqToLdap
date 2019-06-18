@@ -103,7 +103,7 @@ namespace LinqToLdap.QueryCommands
 
         public virtual object HandlePagedRequest(DirectoryConnection connection, PageResultRequestControl pageRequest, ILinqToLdapLogger log)
         {
-            object enumerator = null;
+            object enumerator;
             if (Options.YieldNoResults)
             {
                 enumerator = Options.GetEnumerator();
@@ -261,7 +261,7 @@ namespace LinqToLdap.QueryCommands
             await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
-                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                    return connection.BeginSendRequest(SearchRequest, Options.AsyncProcessing, callback, state);
                 },
                 (asyncresult) =>
                 {
@@ -287,7 +287,7 @@ namespace LinqToLdap.QueryCommands
                         await System.Threading.Tasks.Task.Factory.FromAsync(
                             (callback, state) =>
                             {
-                                return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                                return connection.BeginSendRequest(SearchRequest, Options.AsyncProcessing, callback, state);
                             },
                             (asyncresult) =>
                             {
@@ -351,7 +351,7 @@ namespace LinqToLdap.QueryCommands
             return await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
-                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                    return connection.BeginSendRequest(SearchRequest, Options.AsyncProcessing, callback, state);
                 },
                 (asyncresult) =>
                 {
@@ -408,7 +408,7 @@ namespace LinqToLdap.QueryCommands
             return await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
-                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                    return connection.BeginSendRequest(SearchRequest, Options.AsyncProcessing, callback, state);
                 },
                 (asyncresult) =>
                 {

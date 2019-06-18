@@ -18,6 +18,40 @@ namespace LinqToLdap.QueryCommands
             if (Options.YieldNoResults)
                 throw new InvalidOperationException("Single returned 0 results due to a locally evaluated condition.");
 
+            BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
+
+            var response = connection.SendRequest(SearchRequest) as SearchResponse;
+
+            return HandleResponse(response);
+        }
+
+#if !NET35 && !NET40
+
+        public override async System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
+        {
+            if (Options.YieldNoResults)
+                throw new InvalidOperationException("Single returned 0 results due to a locally evaluated condition.");
+
+            BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
+
+            return await System.Threading.Tasks.Task.Factory.FromAsync(
+                (callback, state) =>
+                {
+                    return connection.BeginSendRequest(SearchRequest, Options.AsyncProcessing, callback, state);
+                },
+                (asyncresult) =>
+                {
+                    var response = (SearchResponse)connection.EndSendRequest(asyncresult);
+                    return HandleResponse(response);
+                },
+                null
+            );
+        }
+
+#endif
+
+        private void BuildRequest(SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
+        {
             SetDistinguishedName(namingContext);
             SearchRequest.Scope = scope;
             if (Options.SortingOptions != null)
@@ -37,9 +71,10 @@ namespace LinqToLdap.QueryCommands
             }
 
             if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
+        }
 
-            var response = connection.SendRequest(SearchRequest) as SearchResponse;
-
+        private object HandleResponse(SearchResponse response)
+        {
             response.AssertSuccess();
 
             if (response.Entries.Count != 1)
@@ -49,14 +84,5 @@ namespace LinqToLdap.QueryCommands
 
             return Options.GetTransformer().Transform(response.Entries[0]);
         }
-
-#if !NET35 && !NET40
-
-        public override System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
-        {
-            throw new NotImplementedException();
-        }
-
-#endif
     }
 }

@@ -44,6 +44,8 @@ namespace LinqToLdap.QueryCommands.Options
 
         public bool YieldNoResults { get; set; }
 
+        public PartialResultProcessing AsyncProcessing { get; set; }
+
         public object GetEnumerator(SearchResultEntryCollection results)
         {
             return ObjectActivator.CreateGenericInstance(typeof(SearchResponseEnumerable<>), GetEnumeratorReturnType(),

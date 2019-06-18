@@ -22,6 +22,9 @@ namespace LinqToLdap.QueryCommands
                 case QueryCommandType.FirstOrDefaultCommand:
                     return new FirstOrDefaultQueryCommand(options, mapping);
 
+                case QueryCommandType.FirstCommand:
+                    return new FirstQueryCommand(options, mapping);
+
                 case QueryCommandType.SingleCommand:
                     return new SingleQueryCommand(options, mapping);
 

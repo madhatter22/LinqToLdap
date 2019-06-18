@@ -317,6 +317,57 @@ namespace LinqToLdap
             }
         }
 
+#if !NET35 && !NET40
+
+        /// <summary>
+        /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
+        /// </summary>
+        /// <param name="connection">The connection to the directory.</param>
+        /// <param name="log">The log for query information. Defaults to null.</param>
+        /// <param name="distinguishedName">The distinguished name to look for.</param>
+        /// <param name="attributes">The attributes to load.</param>
+        /// <returns></returns>
+        public static async System.Threading.Tasks.Task<IDirectoryAttributes> GetByDNAsync(this LdapConnection connection, string distinguishedName, ILinqToLdapLogger log = null, string[] attributes = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            try
+            {
+                if (connection == null) throw new ArgumentNullException("connection");
+
+                var request = new SearchRequest { DistinguishedName = distinguishedName, Scope = SearchScope.Base };
+
+                if (attributes != null)
+                    request.Attributes.AddRange(attributes);
+
+                var transformer = new DynamicResultTransformer();
+
+                if (log != null && log.TraceEnabled) log.Trace(request.ToLogString());
+
+                return await System.Threading.Tasks.Task.Factory.FromAsync(
+                    (callback, state) =>
+                    {
+                        return connection.BeginSendRequest(request, resultProcessing, callback, state);
+                    },
+                    (asyncresult) =>
+                    {
+                        var response = connection.EndSendRequest(asyncresult) as SearchResponse;
+                        response.AssertSuccess();
+
+                        return (response.Entries.Count == 0
+                                ? transformer.Default()
+                                : transformer.Transform(response.Entries[0])) as IDirectoryAttributes;
+                    },
+                    null
+                );
+            }
+            catch (Exception ex)
+            {
+                if (log != null) log.Error(ex, string.Format("An error occurred while trying to retrieve '{0}'.", distinguishedName));
+                throw;
+            }
+        }
+
+#endif
+
         /// <summary>
         /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
         /// </summary>

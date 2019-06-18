@@ -181,7 +181,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void SingleAsync_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query(PersonInheritanceTest.NamingContext, SearchScope.Base)
                 .SingleAsync();
@@ -195,7 +194,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void SingleAsync_WithPredicate_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query(PersonInheritanceTest.NamingContext)
                 .SingleAsync(g => Filter.Equal(g, "distinguishedName", PersonInheritanceTest.NamingContext, false));
@@ -209,7 +207,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void SingleOrDefaultAsync_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query(PersonInheritanceTest.NamingContext, SearchScope.Base)
                 .SingleOrDefaultAsync();
@@ -223,7 +220,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void SingleOrDefaultAsync_WithPredicate_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query(PersonInheritanceTest.NamingContext)
                 .SingleOrDefaultAsync(g => Filter.Equal(g, "distinguishedName", PersonInheritanceTest.NamingContext, false));
@@ -237,7 +233,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void ListServerAttributesAsync_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query(PersonInheritanceTest.NamingContext, SearchScope.Base)
                 .ListAttributesAsync();
@@ -252,10 +247,9 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void ListServerAttributesAsync_WithSpecifiedAttributes_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.Query(PersonInheritanceTest.NamingContext, SearchScope.Base)
-                .ListAttributesAsync("cn");
+                .ListAttributesAsync(new[] { "cn" });
             task.Wait();
 
             //assert

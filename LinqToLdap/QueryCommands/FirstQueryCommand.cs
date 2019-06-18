@@ -6,16 +6,17 @@ using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.QueryCommands
 {
-    internal class FirstOrDefaultQueryCommand : QueryCommand
+    internal class FirstQueryCommand : QueryCommand
     {
-        public FirstOrDefaultQueryCommand(IQueryCommandOptions options, IObjectMapping mapping)
+        public FirstQueryCommand(IQueryCommandOptions options, IObjectMapping mapping)
             : base(options, mapping, true)
         {
         }
 
         public override object Execute(DirectoryConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
         {
-            if (Options.YieldNoResults) return Options.GetTransformer().Default();
+            if (Options.YieldNoResults)
+                throw new InvalidOperationException("First returned 0 results due to a locally evaluated condition.");
 
             BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
 
@@ -28,7 +29,8 @@ namespace LinqToLdap.QueryCommands
 
         public override async System.Threading.Tasks.Task<object> ExecuteAsync(LdapConnection connection, SearchScope scope, int maxPageSize, bool pagingEnabled, ILinqToLdapLogger log = null, string namingContext = null)
         {
-            if (Options.YieldNoResults) return Options.GetTransformer().Default();
+            if (Options.YieldNoResults)
+                throw new InvalidOperationException("First returned 0 results due to a locally evaluated condition.");
 
             BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
 
@@ -76,9 +78,12 @@ namespace LinqToLdap.QueryCommands
         {
             response.AssertSuccess();
 
-            return response.Entries.Count > 0
-                ? Options.GetTransformer().Transform(response.Entries[0])
-                : Options.GetTransformer().Default();
+            if (response.Entries.Count == 0)
+            {
+                throw new InvalidOperationException(string.Format("First returned {0} results for '{1}' against '{2}'", response.Entries.Count, SearchRequest.Filter, SearchRequest.DistinguishedName));
+            }
+
+            return Options.GetTransformer().Transform(response.Entries[0]);
         }
     }
 }

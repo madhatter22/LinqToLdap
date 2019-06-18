@@ -35,7 +35,7 @@ namespace LinqToLdap.QueryCommands
             return await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
-                    return connection.BeginSendRequest(SearchRequest, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                    return connection.BeginSendRequest(SearchRequest, Options.AsyncProcessing, callback, state);
                 },
                 (asyncresult) =>
                 {

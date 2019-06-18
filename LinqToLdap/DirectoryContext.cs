@@ -222,6 +222,24 @@ namespace LinqToLdap
             return _connection.ListServerAttributes(attributes, Logger);
         }
 
+#if !NET35 && !NET40
+
+        /// <summary>
+        /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name to look for.</param>
+        /// <param name="attributes">The attributes to load.</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        /// <returns></returns>
+        public async System.Threading.Tasks.Task<IDirectoryAttributes> GetByDNAsync(string distinguishedName, string[] attributes = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            return await _connection.GetByDNAsync(distinguishedName, Logger, attributes, resultProcessing);
+        }
+
+#endif
+
         /// <summary>
         /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
         /// </summary>
@@ -234,6 +252,69 @@ namespace LinqToLdap
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
             return _connection.GetByDN(distinguishedName, Logger, attributes);
         }
+
+#if !NET35 && !NET40
+
+        /// <summary>
+        /// Retrieves the mapped class from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name to look for.</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <typeparam name="T">The type of mapped object</typeparam>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        /// <returns></returns>
+        public async System.Threading.Tasks.Task<T> GetByDNAsync<T>(string distinguishedName, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        {
+            try
+            {
+                if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+                var mapping = _configuration.Mapper.Map<T>();
+
+                var request = new SearchRequest { DistinguishedName = distinguishedName, Scope = SearchScope.Base };
+
+                var attributes = mapping.HasCatchAllMapping
+                    ? new string[0]
+                    : (mapping.HasSubTypeMappings
+                        ? mapping.Properties.Values.Union(new[] { "objectClass" }, StringComparer.OrdinalIgnoreCase)
+                        : mapping.Properties.Values);
+
+                foreach (var property in attributes)
+                {
+                    request.Attributes.Add(property);
+                }
+
+                var transformer = new ResultTransformer(mapping.Properties, mapping);
+
+                if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
+
+                return await System.Threading.Tasks.Task.Factory.FromAsync(
+                    (callback, state) =>
+                    {
+                        return _connection.BeginSendRequest(request, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                    },
+                    (asyncresult) =>
+                    {
+                        var response = (SearchResponse)_connection.EndSendRequest(asyncresult);
+                        response.AssertSuccess();
+
+                        var entry = (response.Entries.Count == 0
+                                ? transformer.Default()
+                                : transformer.Transform(response.Entries[0])) as T;
+
+                        return entry;
+                    },
+                    null
+                );
+            }
+            catch (Exception ex)
+            {
+                if (Logger != null) Logger.Error(ex, string.Format("An error occurred while trying to retrieve '{0}'.", distinguishedName));
+
+                throw;
+            }
+        }
+
+#endif
 
         /// <summary>
         /// Retrieves the mapped class from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
@@ -917,6 +998,33 @@ namespace LinqToLdap
 
             return _connection.SendRequest(request);
         }
+
+#if !NET35 && !NET40
+
+        /// <summary>
+        /// Sends the request to the directory.
+        /// </summary>
+        /// <param name="request">The response from the directory</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        public async System.Threading.Tasks.Task<DirectoryResponse> SendRequestAsync(DirectoryRequest request, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+            return await System.Threading.Tasks.Task.Factory.FromAsync(
+                    (callback, state) =>
+                    {
+                        return _connection.BeginSendRequest(request, resultProcessing, callback, state);
+                    },
+                    (asyncresult) =>
+                    {
+                        return _connection.EndSendRequest(asyncresult);
+                    },
+                    null
+                );
+        }
+
+#endif
 
         /// <summary>
         /// Finalizer that disposes of this class.

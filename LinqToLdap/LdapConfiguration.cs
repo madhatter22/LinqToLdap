@@ -15,6 +15,22 @@ namespace LinqToLdap
     /// </summary>
     public class LdapConfiguration : ILdapConfiguration
     {
+#if NET35 || NET40 || NET45
+        /// <summary>
+        /// Default processing behavior. <see cref="PartialResultProcessing.NoPartialResultSupport"/> has the best performance.
+        /// </summary>
+        public const PartialResultProcessing DefaultAsyncResultProcessing = PartialResultProcessing.NoPartialResultSupport;
+#else
+
+        /// <summary>
+        /// Default processing behavior. For .Net Core <see cref="PartialResultProcessing.ReturnPartialResults"/> is used because of a bug in .Net Core 2.2.
+        /// <see cref="PartialResultProcessing.NoPartialResultSupport"/> has better performance.
+        /// https://github.com/dotnet/corefx/issues/34730
+        /// </summary>
+        public const PartialResultProcessing DefaultAsyncResultProcessing = PartialResultProcessing.ReturnPartialResults;
+
+#endif
+
         private int _serverMaxPageSize = 500;
         private bool _pagingEnabled = true;
 #if NET35

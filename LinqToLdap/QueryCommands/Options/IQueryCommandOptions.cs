@@ -96,5 +96,10 @@ namespace LinqToLdap.QueryCommands.Options
         /// Indicates if a locally evaluated condition results in no filter being created.
         /// </summary>
         bool YieldNoResults { get; }
+
+        /// <summary>
+        /// Indicates how async results will be processed.
+        /// </summary>
+        PartialResultProcessing AsyncProcessing { get; }
     }
 }

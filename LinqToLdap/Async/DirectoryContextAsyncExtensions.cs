@@ -15,30 +15,6 @@ namespace LinqToLdap.Async
     public static class DirectoryContextAsyncExtensions
     {
         /// <summary>
-        /// Executes <see cref="DirectoryContext.GetByDN{T}"/> within a <see cref="Task"/>.
-        /// </summary>
-        /// <param name="context">The <see cref="DirectoryContext"/>.</param>
-        /// <param name="distinguishedName">The distinguished name to look for.</param>
-        /// <typeparam name="T">The type of mapped object</typeparam>
-        /// <returns></returns>
-        public static Task<T> GetByDNAsync<T>(this IDirectoryContext context, string distinguishedName) where T : class
-        {
-            return Task.Factory.StartNew(() => context.GetByDN<T>(distinguishedName));
-        }
-
-        /// <summary>
-        /// Executes <see cref="DirectoryContext.GetByDN"/> within a <see cref="Task"/>.
-        /// </summary>
-        /// <param name="context">The <see cref="DirectoryContext"/>.</param>
-        /// <param name="distinguishedName">The distinguished name to look for.</param>
-        /// <param name="attributes">The attributes to load.</param>
-        /// <returns></returns>
-        public static Task<IDirectoryAttributes> GetByDNAsync(this IDirectoryContext context, string distinguishedName, params string[] attributes)
-        {
-            return Task.Factory.StartNew(() => context.GetByDN(distinguishedName, attributes));
-        }
-
-        /// <summary>
         /// Executes <see cref="DirectoryContext.Add{T}(T,string,DirectoryControl[])"/>
         /// </summary>
         /// <typeparam name="T">The type of entry.</typeparam>

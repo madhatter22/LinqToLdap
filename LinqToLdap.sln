@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqToLdap.NET40.Tests", "L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqToLdap.Tests.ClassMapAssembly", "LinqToLdap.Tests.ClassMapAssembly\LinqToLdap.Tests.ClassMapAssembly.csproj", "{C7372F5A-9EE5-4501-8C34-92A588A02565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqToLdap.Tests.PopulateDirectory", "LinqToLdap.Tests.PopulateDirectory\LinqToLdap.Tests.PopulateDirectory.csproj", "{18A78D59-FDD1-48B2-8F32-A794B30A10F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqToLdap.Tests.PopulateDirectory", "LinqToLdap.Tests.PopulateDirectory\LinqToLdap.Tests.PopulateDirectory.csproj", "{18A78D59-FDD1-48B2-8F32-A794B30A10F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

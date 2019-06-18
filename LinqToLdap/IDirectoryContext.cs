@@ -410,5 +410,35 @@ namespace LinqToLdap
         /// <param name="request">The response from the directory</param>
         /// <returns></returns>
         DirectoryResponse SendRequest(DirectoryRequest request);
+
+#if !NET35 && !NET40
+
+        /// <summary>
+        /// Retrieves the mapped class from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name to look for.</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <typeparam name="T">The type of mapped object</typeparam>
+        /// <returns></returns>
+        System.Threading.Tasks.Task<T> GetByDNAsync<T>(string distinguishedName, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class;
+
+        /// <summary>
+        /// Retrieves the mapped class from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name to look for.</param>
+        /// <param name="attributes">The attributes to load.</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        System.Threading.Tasks.Task<IDirectoryAttributes> GetByDNAsync(string distinguishedName, string[] attributes = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing);
+
+        /// <summary>
+        /// Sends the request to the directory.
+        /// </summary>
+        /// <param name="request">The response from the directory</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        System.Threading.Tasks.Task<DirectoryResponse> SendRequestAsync(DirectoryRequest request, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing);
+
+#endif
     }
 }

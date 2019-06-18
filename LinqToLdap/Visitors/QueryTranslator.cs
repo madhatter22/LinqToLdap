@@ -1,4 +1,5 @@
-﻿using LinqToLdap.Exceptions;
+﻿using LinqToLdap;
+using LinqToLdap.Exceptions;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands;
 using LinqToLdap.QueryCommands.Options;
@@ -14,6 +15,16 @@ namespace LinqToLdap.Visitors
 {
     internal class QueryTranslator : ExpressionVisitor
     {
+        private static readonly Dictionary<Type, int> QueryableDeclaringTypes = new Dictionary<Type, int>
+            {
+                { typeof(Queryable), 0},
+                { typeof(QueryableExtensions), 0},
+                { typeof(PredicateBuilder), 0},
+#if (!NET35 && !NET40)
+                { typeof(Async.QueryableAsyncExtensions), 0},
+#endif
+            };
+
         private StringBuilder _sb;
         private bool _not;
         private Stack<ExpressionType> _expressionStack;
@@ -37,6 +48,7 @@ namespace LinqToLdap.Visitors
         private OC? _includeOc;
         private string _pagingFilter;
         private bool _isLongCount;
+        private PartialResultProcessing _asyncProcessing;
 
         private QueryCommandType _commandType = QueryCommandType.StandardCommand;
         private QueryCommandOptions _commandOptions;
@@ -133,6 +145,7 @@ namespace LinqToLdap.Visitors
             _commandOptions.SkipSize = _skipSize;
             _commandOptions.Controls = _controls;
             _commandOptions.IsLongCount = _isLongCount;
+            _commandOptions.AsyncProcessing = _asyncProcessing;
 
             var queryCommand = QueryCommandFactory.GetCommand(_commandType, _commandOptions, _mapping);
             return queryCommand;
@@ -205,7 +218,7 @@ namespace LinqToLdap.Visitors
 
         protected override Expression VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof(Queryable) || m.Method.DeclaringType == typeof(QueryableExtensions) || m.Method.DeclaringType == typeof(PredicateBuilder))
+            if (QueryableDeclaringTypes.ContainsKey(m.Method.DeclaringType))
             {
                 VisitQueryableMethods(m);
             }
@@ -225,9 +238,9 @@ namespace LinqToLdap.Visitors
             else
             {
                 string message = m.Method.DeclaringType == null
-                                     ? "Method " + m.Method.Name + " could not be translated."
-                                     : "Method " + m.Method.Name + " on type " + m.Method.DeclaringType.FullName +
-                                       " could not be translated.";
+                                     ? $"Method  {m.Method.Name} could not be translated."
+                                     : $"Method {m.Method.Name} on type {m.Method.DeclaringType.FullName} could not be translated.";
+
                 throw new NotSupportedException(message);
             }
             return m;
@@ -274,9 +287,7 @@ namespace LinqToLdap.Visitors
                     break;
 
                 case "FirstOrDefault":
-                case "First":
                 case "FirstOrDefaultAsync":
-                case "FirstAsync":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {
@@ -285,7 +296,18 @@ namespace LinqToLdap.Visitors
                     _commandType = QueryCommandType.FirstOrDefaultCommand;
                     break;
 
+                case "First":
+                case "FirstAsync":
+                    if (m.Arguments.Count > 1) _exclusiveWhereCount++;
+                    foreach (Expression t in m.Arguments)
+                    {
+                        Visit(t);
+                    }
+                    _commandType = QueryCommandType.FirstCommand;
+                    break;
+
                 case "SingleOrDefault":
+                case "SingleOrDefaultAsync":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {
@@ -295,6 +317,7 @@ namespace LinqToLdap.Visitors
                     break;
 
                 case "Single":
+                case "SingleAsync":
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {
@@ -311,12 +334,13 @@ namespace LinqToLdap.Visitors
                     if (m.Arguments.Count > 1) _exclusiveWhereCount++;
                     foreach (Expression t in m.Arguments)
                     {
-                        Visit(t);
+                        var x = Visit(t);
                     }
                     _commandType = QueryCommandType.CountCommand;
                     break;
 
                 case "ListAttributes":
+                case "ListAttributesAsync":
                     Dictionary<string, string> attributes = null;
                     foreach (Expression t in m.Arguments)
                     {
@@ -1082,6 +1106,10 @@ namespace LinqToLdap.Visitors
             {
                 _sb.Append(_shouldCleanFilter ? (c.Value as string).CleanFilterValue() : (c.Value as string));
             }
+            else if (c.Type == typeof(PartialResultProcessing))
+            {
+                _asyncProcessing = (PartialResultProcessing)c.Value;
+            }
             else if (_currentProperty != null)
             {
                 var str = _currentProperty.FormatValueToFilter(c.Value);
@@ -1161,8 +1189,7 @@ namespace LinqToLdap.Visitors
 
         private string GetMemberName(MemberExpression m)
         {
-            string attributeName;
-            if (!_mapping.Properties.TryGetValue(m.Member.Name, out attributeName))
+            if (!_mapping.Properties.TryGetValue(m.Member.Name, out string attributeName))
             {
                 throw new MappingException(
                     $"{m.Member.Name} was not found as a mapped property on {_mapping.Type.FullName}");
