@@ -524,7 +524,7 @@ namespace LinqToLdap.Tests.PopulateDirectory
 
                 Console.WriteLine("Adding {0}", dn);
 
-                return context.AddAndGet(entry);
+                return context.AddAndGet(entry, null);
             }
 
             Console.WriteLine("{0} already exists", dn);

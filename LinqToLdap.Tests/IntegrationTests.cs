@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.DirectoryServices.Protocols;
-using System.Net;
-using System.Security.Principal;
-using System.Text;
-using LinqToLdap.Collections;
+﻿using LinqToLdap.Collections;
 using LinqToLdap.EventListeners;
 using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpTestsEx;
-
-#if (!NET35)
-
-using LinqToLdap.Async;
-
-#endif
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.DirectoryServices.Protocols;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
 
 namespace LinqToLdap.Tests
 {

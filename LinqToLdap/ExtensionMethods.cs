@@ -132,7 +132,7 @@ namespace LinqToLdap
             return attributes != null && attributes.Length > 0;
         }
 
-        internal static bool IsNullOrEmpty(this String str)
+        internal static bool IsNullOrEmpty(this string str)
         {
 #if NET35
             return string.IsNullOrEmpty(str) || string.IsNullOrEmpty(str.Trim());

@@ -270,7 +270,8 @@ namespace LinqToLdap
         /// </exception>
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
         /// <exception cref="LdapException">Thrown if the operation fails</exception>
-        public static IDirectoryAttributes UpdateAndGet(this LdapConnection connection, IDirectoryAttributes entry, ILinqToLdapLogger log = null, DirectoryControl[] controls = null, IEnumerable<IUpdateEventListener> listeners = null)
+        public static IDirectoryAttributes UpdateAndGet(this LdapConnection connection, IDirectoryAttributes entry, ILinqToLdapLogger log = null,
+            DirectoryControl[] controls = null, IEnumerable<IUpdateEventListener> listeners = null)
         {
             Update(connection, entry, log, controls, listeners);
 
@@ -316,57 +317,6 @@ namespace LinqToLdap
                 throw;
             }
         }
-
-#if !NET35 && !NET40
-
-        /// <summary>
-        /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
-        /// </summary>
-        /// <param name="connection">The connection to the directory.</param>
-        /// <param name="log">The log for query information. Defaults to null.</param>
-        /// <param name="distinguishedName">The distinguished name to look for.</param>
-        /// <param name="attributes">The attributes to load.</param>
-        /// <returns></returns>
-        public static async System.Threading.Tasks.Task<IDirectoryAttributes> GetByDNAsync(this LdapConnection connection, string distinguishedName, ILinqToLdapLogger log = null, string[] attributes = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
-        {
-            try
-            {
-                if (connection == null) throw new ArgumentNullException("connection");
-
-                var request = new SearchRequest { DistinguishedName = distinguishedName, Scope = SearchScope.Base };
-
-                if (attributes != null)
-                    request.Attributes.AddRange(attributes);
-
-                var transformer = new DynamicResultTransformer();
-
-                if (log != null && log.TraceEnabled) log.Trace(request.ToLogString());
-
-                return await System.Threading.Tasks.Task.Factory.FromAsync(
-                    (callback, state) =>
-                    {
-                        return connection.BeginSendRequest(request, resultProcessing, callback, state);
-                    },
-                    (asyncresult) =>
-                    {
-                        var response = connection.EndSendRequest(asyncresult) as SearchResponse;
-                        response.AssertSuccess();
-
-                        return (response.Entries.Count == 0
-                                ? transformer.Default()
-                                : transformer.Transform(response.Entries[0])) as IDirectoryAttributes;
-                    },
-                    null
-                );
-            }
-            catch (Exception ex)
-            {
-                if (log != null) log.Error(ex, string.Format("An error occurred while trying to retrieve '{0}'.", distinguishedName));
-                throw;
-            }
-        }
-
-#endif
 
         /// <summary>
         /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
@@ -545,9 +495,9 @@ namespace LinqToLdap
                 //Code pulled from http://dunnry.com/blog/2007/08/10/RangeRetrievalUsingSystemDirectoryServicesProtocols.aspx
 
                 var list = new List<TValue>();
-                var range = String.Format("{0};range={{0}}-{{1}}", attributeName);
+                var range = string.Format("{0};range={{0}}-{{1}}", attributeName);
 
-                currentRange = String.Format(range, idx, "*");
+                currentRange = string.Format(range, idx, "*");
 
                 var request = new SearchRequest
                 {
@@ -584,7 +534,7 @@ namespace LinqToLdap
                     if (lastSearch)
                         break;
 
-                    currentRange = String.Format(range, idx, (idx + step));
+                    currentRange = string.Format(range, idx, (idx + step));
 
                     request.Attributes.Clear();
                     request.Attributes.Add(currentRange);

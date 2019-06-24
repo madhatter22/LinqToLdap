@@ -694,7 +694,7 @@ namespace LinqToLdap.Tests
             MockGetByDN(connection);
 
             //act
-            context.UpdateAndGet(directoryAttributes, controls);
+            context.UpdateAndGetEntry(directoryAttributes, controls);
 
             //assert
             connection.SentRequests.Count.Should().Be.EqualTo(2);
@@ -820,7 +820,7 @@ namespace LinqToLdap.Tests
             var context = new DirectoryContext(connection);
 
             //assert
-            Executing.This(() => context.Add(default(IDirectoryAttributes))).Should().Throw<ArgumentNullException>();
+            Executing.This(() => context.AddEntry(default, null)).Should().Throw<ArgumentNullException>();
         }
 
         [TestMethod]
@@ -832,7 +832,7 @@ namespace LinqToLdap.Tests
             var context = new DirectoryContext(connection) { Logger = log.Object };
 
             //assert
-            Executing.This(() => context.Add(default(IDirectoryAttributes))).Should().Throw<ArgumentNullException>();
+            Executing.This(() => context.AddEntry(default, null)).Should().Throw<ArgumentNullException>();
             log.Verify(l => l.Error(It.IsAny<ArgumentNullException>(), "An error occurred while trying to add ''."), Times.Once());
         }
 
@@ -863,7 +863,7 @@ namespace LinqToLdap.Tests
             var context = new DirectoryContext(connection, configuration: configuration.Object);
 
             //assert
-            context.Add(attributes);
+            context.Add(attributes, null);
 
             //assert
             preAdd.Verify(l => l.Notify(It.IsAny<ListenerPreArgs<object, AddRequest>>()), Times.Once());
@@ -891,7 +891,7 @@ namespace LinqToLdap.Tests
             MockGetByDN(connection);
 
             //act
-            context.Add(directoryAttributes, controls);
+            context.AddEntry(directoryAttributes, controls);
 
             //assert
             var addRequest = connection.SentRequests[0].CastTo<AddRequest>();
@@ -955,7 +955,7 @@ namespace LinqToLdap.Tests
             MockGetByDN(connection);
 
             //act
-            context.AddAndGet(directoryAttributes, controls);
+            context.AddAndGetEntry(directoryAttributes, controls);
 
             //assert
             log.Verify(l => l.TraceEnabled, Times.Exactly(2));
@@ -988,7 +988,7 @@ namespace LinqToLdap.Tests
             MockGetByDN(connection);
 
             //act
-            context.AddAndGet(directoryAttributes, controls);
+            context.AddAndGetEntry(directoryAttributes, controls);
 
             //assert
             log.Verify(l => l.TraceEnabled, Times.Exactly(2));
@@ -1981,6 +1981,7 @@ namespace LinqToLdap.Tests
         }
 
 #if (NET35 || NET40 || NET45)
+
         [TestMethod]
         public void Finalizer_Returns_Connection_To_Pool()
         {
@@ -2002,6 +2003,7 @@ namespace LinqToLdap.Tests
             //assert
             connectionFactory.Verify(x => x.ReleaseConnection(connection), Times.Once());
         }
+
 #endif
 
         [TestMethod]

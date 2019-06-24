@@ -1,4 +1,11 @@
-﻿using LinqToLdap.Collections;
+﻿#if !NET35 && !NET40
+
+using LinqToLdap.Async;
+using System.Threading.Tasks;
+
+#endif
+
+using LinqToLdap.Collections;
 using LinqToLdap.EventListeners;
 using LinqToLdap.Exceptions;
 using LinqToLdap.Logging;
@@ -43,6 +50,11 @@ namespace LinqToLdap
             _disposeOfConnection = disposeOfConnection;
             _connection = connection ?? throw new ArgumentNullException("connection");
         }
+
+        /// <summary>
+        /// Indicates if this object has been disposed
+        /// </summary>
+        public bool IsDisposed { get => _disposed; }
 
         /// <summary>
         /// Creates an instance for querying.
@@ -225,6 +237,22 @@ namespace LinqToLdap
 #if !NET35 && !NET40
 
         /// <summary>
+        /// List server information from RootDSE.
+        /// </summary>
+        /// <param name="attributes">
+        /// Specify specific attributes to load.  Some LDAP servers require an explicit request for certain attributes.
+        /// </param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        /// <returns></returns>
+        public async Task<IDirectoryAttributes> ListServerAttributesAsync(string[] attributes = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            return await LdapConnectionAsyncExtensions.ListServerAttributesAsync(_connection, attributes, Logger, resultProcessing);
+        }
+
+        /// <summary>
         /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
         /// </summary>
         /// <param name="distinguishedName">The distinguished name to look for.</param>
@@ -232,28 +260,12 @@ namespace LinqToLdap
         /// <param name="resultProcessing">How the async results are processed</param>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
         /// <returns></returns>
-        public async System.Threading.Tasks.Task<IDirectoryAttributes> GetByDNAsync(string distinguishedName, string[] attributes = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        public async Task<IDirectoryAttributes> GetByDNAsync(string distinguishedName, string[] attributes = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return await _connection.GetByDNAsync(distinguishedName, Logger, attributes, resultProcessing);
+            return await LdapConnectionAsyncExtensions.GetByDNAsync(_connection, distinguishedName, Logger, attributes, resultProcessing);
         }
-
-#endif
-
-        /// <summary>
-        /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
-        /// </summary>
-        /// <param name="distinguishedName">The distinguished name to look for.</param>
-        /// <param name="attributes">The attributes to load.</param>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        /// <returns></returns>
-        public IDirectoryAttributes GetByDN(string distinguishedName, params string[] attributes)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return _connection.GetByDN(distinguishedName, Logger, attributes);
-        }
-
-#if !NET35 && !NET40
 
         /// <summary>
         /// Retrieves the mapped class from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
@@ -263,7 +275,7 @@ namespace LinqToLdap
         /// <typeparam name="T">The type of mapped object</typeparam>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
         /// <returns></returns>
-        public async System.Threading.Tasks.Task<T> GetByDNAsync<T>(string distinguishedName, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        public async Task<T> GetByDNAsync<T>(string distinguishedName, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
         {
             try
             {
@@ -287,10 +299,10 @@ namespace LinqToLdap
 
                 if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
 
-                return await System.Threading.Tasks.Task.Factory.FromAsync(
+                return await Task.Factory.FromAsync(
                     (callback, state) =>
                     {
-                        return _connection.BeginSendRequest(request, PartialResultProcessing.ReturnPartialResultsAndNotifyCallback, callback, state);
+                        return _connection.BeginSendRequest(request, resultProcessing, callback, state);
                     },
                     (asyncresult) =>
                     {
@@ -315,6 +327,19 @@ namespace LinqToLdap
         }
 
 #endif
+
+        /// <summary>
+        /// Retrieves the attributes from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name to look for.</param>
+        /// <param name="attributes">The attributes to load.</param>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        /// <returns></returns>
+        public IDirectoryAttributes GetByDN(string distinguishedName, params string[] attributes)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            return _connection.GetByDN(distinguishedName, Logger, attributes);
+        }
 
         /// <summary>
         /// Retrieves the mapped class from the directory using the distinguished name.  <see cref="SearchScope.Base"/> is used.
@@ -366,13 +391,79 @@ namespace LinqToLdap
             }
         }
 
+#if !NET35 && !NET40
+
         /// <summary>
         /// Adds the entry to the directory and returns the newly saved entry from the directory. If the <paramref name="distinguishedName"/> is
         /// null then a mapped distinguished name property is used.
         /// </summary>
         /// <typeparam name="T">The type of entry.</typeparam>
         /// <param name="entry">The object to save</param>
-        /// <param name="distinguishedName">The distinguished name for the entry.</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
+        /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
+        /// <exception cref="MappingException">
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
+        /// Thrown if object class or object category have not been mapped.
+        /// Thrown if <typeparamref name="T"/> has not been mapped.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
+        /// <exception cref="LdapException">Thrown if the add was not successful.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task<T> AddAndGetAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        {
+            if (entry is IDirectoryAttributes x)
+            {
+                return (await AddAndGetEntryAsync(x, controls, resultProcessing)) as T;
+            }
+            else
+            {
+                var dn = await AddEntryAsync(entry, distinguishedName, controls);
+
+                return await GetByDNAsync<T>(dn);
+            }
+        }
+
+        /// <summary>
+        /// Adds the entry to the directory. If the <paramref name="distinguishedName"/> is
+        /// null then a mapped distinguished name property is used.
+        /// </summary>
+        /// <typeparam name="T">The type of entry.</typeparam>
+        /// <param name="entry">The object to save.</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
+        /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
+        /// <exception cref="MappingException">
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
+        /// Thrown if object class or object category have not been mapped.
+        /// Thrown if <typeparamref name="T"/> has not been mapped.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
+        /// <exception cref="LdapException">Thrown if the add was not successful.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task AddAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        {
+            if (entry is IDirectoryAttributes x) await AddEntryAsync(x, controls, resultProcessing);
+            else await AddEntryAsync(entry, distinguishedName, controls, resultProcessing);
+        }
+
+#endif
+
+        /// <summary>
+        /// Adds the entry to the directory and returns the newly saved entry from the directory. If the <paramref name="distinguishedName"/> is
+        /// null then a mapped distinguished name property is used.
+        /// </summary>
+        /// <typeparam name="T">The type of entry.</typeparam>
+        /// <param name="entry">The object to save</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
@@ -387,9 +478,16 @@ namespace LinqToLdap
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
         public T AddAndGet<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null) where T : class
         {
-            var dn = AddEntry(entry, distinguishedName, controls);
+            if (entry is IDirectoryAttributes x)
+            {
+                return AddAndGetEntry(x, controls) as T;
+            }
+            else
+            {
+                var dn = AddEntry(entry, distinguishedName, controls);
 
-            return GetByDN<T>(dn);
+                return GetByDN<T>(dn);
+            }
         }
 
         /// <summary>
@@ -398,7 +496,7 @@ namespace LinqToLdap
         /// </summary>
         /// <typeparam name="T">The type of entry.</typeparam>
         /// <param name="entry">The object to save.</param>
-        /// <param name="distinguishedName">The distinguished name for the entry.</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
@@ -413,7 +511,8 @@ namespace LinqToLdap
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
         public void Add<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null) where T : class
         {
-            AddEntry(entry, distinguishedName, controls);
+            if (entry is IDirectoryAttributes x) AddEntry(x, controls);
+            else AddEntry(entry, distinguishedName, controls);
         }
 
         private string AddEntry<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null) where T : class
@@ -490,23 +589,6 @@ namespace LinqToLdap
         /// Adds the entry to the directory.
         /// </summary>
         /// <param name="entry">The attributes for the entry</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public void Add(IDirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            _connection.Add(entry, Logger, listeners: _configuration.GetListeners<IAddEventListener>());
-        }
-
-        /// <summary>
-        /// Adds the entry to the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
@@ -514,41 +596,7 @@ namespace LinqToLdap
         /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
         /// <exception cref="LdapException">Thrown if the operation fails.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public void Add(IDirectoryAttributes entry, DirectoryControl[] controls)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            _connection.Add(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>());
-        }
-
-        /// <summary>
-        /// Adds the entry to the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        public void Add(DirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            _connection.Add(entry, Logger, listeners: _configuration.GetListeners<IAddEventListener>());
-        }
-
-        /// <summary>
-        /// Adds the entry to the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry</param>
-        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public void Add(DirectoryAttributes entry, DirectoryControl[] controls)
+        public void AddEntry(IDirectoryAttributes entry, DirectoryControl[] controls = null)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
@@ -559,22 +607,6 @@ namespace LinqToLdap
         /// Adds the entry to the directory and returns the newly saved entry from the directory.
         /// </summary>
         /// <param name="entry">The attributes for the entry</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        public IDirectoryAttributes AddAndGet(IDirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            return _connection.AddAndGet(entry, Logger, listeners: _configuration.GetListeners<IAddEventListener>());
-        }
-
-        /// <summary>
-        /// Adds the entry to the directory and returns the newly saved entry from the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
@@ -582,42 +614,7 @@ namespace LinqToLdap
         /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
         /// <exception cref="LdapException">Thrown if the operation fails.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public IDirectoryAttributes AddAndGet(IDirectoryAttributes entry, DirectoryControl[] controls)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            return _connection.AddAndGet(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>());
-        }
-
-        /// <summary>
-        /// Adds the entry to the directory and returns the newly saved entry from the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public IDirectoryAttributes AddAndGet(DirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            return _connection.AddAndGet(entry, Logger, listeners: _configuration.GetListeners<IAddEventListener>());
-        }
-
-        /// <summary>
-        /// Adds the entry to the directory and returns the newly saved entry from the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry</param>
-        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public IDirectoryAttributes AddAndGet(DirectoryAttributes entry, DirectoryControl[] controls)
+        public IDirectoryAttributes AddAndGetEntry(IDirectoryAttributes entry, DirectoryControl[] controls = null)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
@@ -644,7 +641,7 @@ namespace LinqToLdap
         /// null then a mapped distinguished name property is used.
         /// </summary>
         /// <param name="entry">The entry to update</param>
-        /// <param name="distinguishedName">The distinguished name for the entry.</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <typeparam name="T">The type of entry.</typeparam>
         /// <returns></returns>
@@ -661,7 +658,8 @@ namespace LinqToLdap
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
         public void Update<T>(T entry, string distinguishedName = null, params DirectoryControl[] controls) where T : class
         {
-            UpdateEntry(entry, distinguishedName, controls);
+            if (entry is IDirectoryAttributes x) UpdateEntry(x, controls);
+            else UpdateEntry(entry, distinguishedName, controls);
         }
 
         /// <summary>
@@ -669,7 +667,7 @@ namespace LinqToLdap
         /// null then a mapped distinguished name property is used.
         /// </summary>
         /// <param name="entry">The entry to update</param>
-        /// <param name="distinguishedName">The distinguished name for the entry.</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <typeparam name="T">The type of entry.</typeparam>
         /// <returns></returns>
@@ -682,131 +680,18 @@ namespace LinqToLdap
         /// <exception cref="DirectoryOperationException">Thrown if the operation is not successful</exception>
         /// <exception cref="LdapException">Thrown if the operation is not successful</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public T UpdateAndGet<T>(T entry, string distinguishedName = null, params DirectoryControl[] controls) where T : class
+        public T UpdateAndGet<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null) where T : class
         {
-            var dn = UpdateEntry(entry, distinguishedName, controls);
-
-            return GetByDN<T>(dn);
-        }
-
-        private string UpdateEntry<T>(T entry, string distinguishedName = null, params DirectoryControl[] controls)
-            where T : class
-        {
-            try
+            if (entry is IDirectoryAttributes x)
             {
-                if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-                if (entry == null) throw new ArgumentNullException(nameof(entry));
-
-                var objectMapping = _configuration.Mapper.GetMapping(entry.GetType());
-                if (objectMapping == null) throw new MappingException("Cannot update an unmapped class.");
-
-                distinguishedName = GetDistinguishedName(distinguishedName, objectMapping, entry);
-
-                var request = new ModifyRequest(distinguishedName);
-                if (controls != null)
-                {
-                    request.Controls.AddRange(controls);
-                }
-
-                var modifications = new List<DirectoryAttributeModification>();
-
-                if (!(entry is IDirectoryObject directoryObject))
-                {
-                    modifications.AddRange(objectMapping.GetUpdateablePropertyMappings()
-                        .Select(mapping => mapping.GetDirectoryAttributeModification(entry)));
-                }
-                else
-                {
-                    var changes = directoryObject.GetChanges(objectMapping);
-                    modifications.AddRange(changes);
-                }
-
-                if (objectMapping.GetCatchAllMapping()?.GetValue(entry) is IDirectoryAttributes catchAll)
-                {
-                    modifications.AddRange(catchAll.GetChangedAttributes());
-                }
-
-                if (modifications.Count == 0)
-                {
-                    if (Logger != null && Logger.TraceEnabled) Logger.Trace(string.Format("No changes found for {0}.", distinguishedName));
-
-                    return distinguishedName;
-                }
-
-                request.Modifications.AddRange(modifications.ToArray());
-
-                var preArgs = new ListenerPreArgs<object, ModifyRequest>(entry, request, _connection);
-                foreach (var eventListener in _configuration.GetListeners<IPreUpdateEventListener>())
-                {
-                    eventListener.Notify(preArgs);
-                }
-
-                if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
-
-                var response = _connection.SendRequest(request) as ModifyResponse;
-                response.AssertSuccess();
-
-                var postArgs = new ListenerPostArgs<object, ModifyRequest, ModifyResponse>(entry, request, response, _connection);
-                foreach (var eventListener in _configuration.GetListeners<IPostUpdateEventListener>())
-                {
-                    eventListener.Notify(postArgs);
-                }
+                return UpdateAndGetEntry(x, controls) as T;
             }
-            catch (Exception ex)
+            else
             {
-                if (Logger != null) Logger.Error(ex, string.Format("An error occurred while trying to update '{0}'.", distinguishedName));
-                throw;
+                var dn = UpdateEntry(entry, distinguishedName, controls);
+
+                return GetByDN<T>(dn);
             }
-
-            return distinguishedName;
-        }
-
-        internal static string GetDistinguishedName<T>(string distinguishedName, IObjectMapping objectMapping, T entry)
-        {
-            if (distinguishedName.IsNullOrEmpty())
-            {
-                var distinguishedNameMapping = objectMapping.GetDistinguishedNameMapping();
-
-                if (distinguishedNameMapping == null) throw new MappingException("Distinguished name must be mapped.");
-
-                distinguishedName = distinguishedNameMapping.GetValue(entry) as string;
-
-                if (distinguishedName.IsNullOrEmpty()) throw new ArgumentException("The distinguished name cannot be null or empty.");
-            }
-
-            return distinguishedName;
-        }
-
-        /// <summary>
-        /// Updates the entry in the directory and returns the updated version from the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public IDirectoryAttributes UpdateAndGet(IDirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return _connection.UpdateAndGet(entry, Logger, listeners: _configuration.GetListeners<IUpdateEventListener>());
-        }
-
-        /// <summary>
-        /// Updates the entry in the directory and returns the updated version from the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public IDirectoryAttributes UpdateAndGet(DirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return _connection.UpdateAndGet(entry, Logger, listeners: _configuration.GetListeners<IUpdateEventListener>());
         }
 
         /// <summary>
@@ -820,7 +705,7 @@ namespace LinqToLdap
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
         /// <exception cref="LdapException">Thrown if the operation fails</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public IDirectoryAttributes UpdateAndGet(IDirectoryAttributes entry, DirectoryControl[] controls)
+        public IDirectoryAttributes UpdateAndGetEntry(IDirectoryAttributes entry, DirectoryControl[] controls = null)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
             return _connection.UpdateAndGet(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>());
@@ -829,39 +714,6 @@ namespace LinqToLdap
         /// <summary>
         /// Updates the entry in the directory.
         /// </summary>
-        /// <param name="entry">The attributes for the entry.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails</exception>
-        public void Update(IDirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            _connection.Update(entry, Logger, listeners: _configuration.GetListeners<IUpdateEventListener>());
-        }
-
-        /// <summary>
-        /// Updates the entry in the directory.
-        /// </summary>
-        /// <param name="entry">The attributes for the entry.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
-        /// </exception>
-        /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
-        /// <exception cref="LdapException">Thrown if the operation fails</exception>
-        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public void Update(DirectoryAttributes entry)
-        {
-            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-
-            _connection.Update(entry, Logger, listeners: _configuration.GetListeners<IUpdateEventListener>());
-        }
-
-        /// <summary>
-        /// Updates the entry in the directory.
-        /// </summary>
         /// <param name="entry">The entry to update.</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <returns></returns>
@@ -870,7 +722,7 @@ namespace LinqToLdap
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
         /// <exception cref="LdapException">Thrown if the operation fails</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public void Update(IDirectoryAttributes entry, DirectoryControl[] controls)
+        public void UpdateEntry(IDirectoryAttributes entry, DirectoryControl[] controls = null)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
@@ -999,7 +851,374 @@ namespace LinqToLdap
             return _connection.SendRequest(request);
         }
 
+        private string UpdateEntry<T>(T entry, string distinguishedName = null, params DirectoryControl[] controls)
+            where T : class
+        {
+            try
+            {
+                if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+                if (entry == null) throw new ArgumentNullException(nameof(entry));
+
+                var objectMapping = _configuration.Mapper.GetMapping(entry.GetType());
+                if (objectMapping == null) throw new MappingException("Cannot update an unmapped class.");
+
+                distinguishedName = GetDistinguishedName(distinguishedName, objectMapping, entry);
+
+                var request = new ModifyRequest(distinguishedName);
+                if (controls != null)
+                {
+                    request.Controls.AddRange(controls);
+                }
+
+                var modifications = new List<DirectoryAttributeModification>();
+
+                if (!(entry is IDirectoryObject directoryObject))
+                {
+                    modifications.AddRange(objectMapping.GetUpdateablePropertyMappings()
+                        .Select(mapping => mapping.GetDirectoryAttributeModification(entry)));
+                }
+                else
+                {
+                    var changes = directoryObject.GetChanges(objectMapping);
+                    modifications.AddRange(changes);
+                }
+
+                if (objectMapping.GetCatchAllMapping()?.GetValue(entry) is IDirectoryAttributes catchAll)
+                {
+                    modifications.AddRange(catchAll.GetChangedAttributes());
+                }
+
+                if (modifications.Count == 0)
+                {
+                    if (Logger != null && Logger.TraceEnabled) Logger.Trace(string.Format("No changes found for {0}.", distinguishedName));
+
+                    return distinguishedName;
+                }
+
+                request.Modifications.AddRange(modifications.ToArray());
+
+                var preArgs = new ListenerPreArgs<object, ModifyRequest>(entry, request, _connection);
+                foreach (var eventListener in _configuration.GetListeners<IPreUpdateEventListener>())
+                {
+                    eventListener.Notify(preArgs);
+                }
+
+                if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
+
+                var response = _connection.SendRequest(request) as ModifyResponse;
+                response.AssertSuccess();
+
+                var postArgs = new ListenerPostArgs<object, ModifyRequest, ModifyResponse>(entry, request, response, _connection);
+                foreach (var eventListener in _configuration.GetListeners<IPostUpdateEventListener>())
+                {
+                    eventListener.Notify(postArgs);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Logger != null) Logger.Error(ex, string.Format("An error occurred while trying to update '{0}'.", distinguishedName));
+                throw;
+            }
+
+            return distinguishedName;
+        }
+
+        internal static string GetDistinguishedName<T>(string distinguishedName, IObjectMapping objectMapping, T entry)
+        {
+            if (distinguishedName.IsNullOrEmpty())
+            {
+                var distinguishedNameMapping = objectMapping.GetDistinguishedNameMapping();
+
+                if (distinguishedNameMapping == null) throw new MappingException("Distinguished name must be mapped.");
+
+                distinguishedName = distinguishedNameMapping.GetValue(entry) as string;
+
+                if (distinguishedName.IsNullOrEmpty()) throw new ArgumentException("The distinguished name cannot be null or empty.");
+            }
+
+            return distinguishedName;
+        }
+
 #if !NET35 && !NET40
+
+        /// <summary>
+        /// Adds the entry to the directory.
+        /// </summary>
+        /// <param name="entry">The attributes for the entry</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
+        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task AddEntryAsync(IDirectoryAttributes entry, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+            await _connection.AddAsync(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Adds the entry to the directory and returns the newly saved entry from the directory.
+        /// </summary>
+        /// <param name="entry">The attributes for the entry</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the add was not successful.</exception>
+        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task<IDirectoryAttributes> AddAndGetEntryAsync(IDirectoryAttributes entry, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+            return await _connection.AddAndGetAsync(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Deletes an entry from the directory.
+        /// </summary>
+        /// <param name="distinguishedName">The distinguished name of the entry</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="distinguishedName"/> is null, empty or white space.</exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
+        /// <exception cref="LdapException">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task DeleteAsync(string distinguishedName, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+            await _connection.DeleteAsync(distinguishedName, Logger, controls, _configuration.GetListeners<IDeleteEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Updates the entry in the directory. If the <paramref name="distinguishedName"/> is
+        /// null then a mapped distinguished name property is used.
+        /// </summary>
+        /// <param name="entry">The entry to update</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <typeparam name="T">The type of entry.</typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
+        /// <exception cref="MappingException">
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
+        /// Thrown if object class or object category have not been mapped.
+        /// Thrown if <typeparamref name="T"/> has not been mapped.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if <paramref name="entry"/> is <see cref="DirectoryObjectBase"/> but the entry is not tracking changes.</exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation is not successful</exception>
+        /// <exception cref="LdapException">Thrown if the operation is not successful</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task UpdateAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        {
+            if (entry is IDirectoryAttributes x) await UpdateEntryAsync(x, controls);
+            else await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing);
+        }
+
+        /// <summary>
+        /// Updates the entry in the directory and returns the updated version from the directory. If the <paramref name="distinguishedName"/> is
+        /// null then a mapped distinguished name property is used.
+        /// </summary>
+        /// <param name="entry">The entry to update</param>
+        /// <param name="distinguishedName">The distinguished name for the entry. Ignored if <typeparamref name="T"/> is an instance of <see cref="IDirectoryAttributes"/></param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <typeparam name="T">The type of entry.</typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if entry is null</exception>
+        /// <exception cref="MappingException">
+        /// Thrown if <paramref name="distinguishedName"/> is null and Distinguished Name is not mapped.
+        /// Thrown if <typeparamref name="T"/> has not been mapped.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown if distinguished name is null and there is no mapped distinguished name property.</exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation is not successful</exception>
+        /// <exception cref="LdapException">Thrown if the operation is not successful</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task<T> UpdateAndGetAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        {
+            if (entry is IDirectoryAttributes x)
+            {
+                return (await UpdateAndGetEntryAsync(x, controls)) as T;
+            }
+            else
+            {
+                var dn = await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing);
+
+                return await GetByDNAsync<T>(dn, resultProcessing);
+            }
+        }
+
+        /// <summary>
+        /// Updates the entry in the directory and returns the updated version from the directory.
+        /// </summary>
+        /// <param name="entry">The entry to update.</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
+        /// <exception cref="LdapException">Thrown if the operation fails</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task<IDirectoryAttributes> UpdateAndGetEntryAsync(IDirectoryAttributes entry, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            return await _connection.UpdateAndGetAsync(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Updates the entry in the directory.
+        /// </summary>
+        /// <param name="entry">The entry to update.</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="entry"/> is null.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails</exception>
+        /// <exception cref="LdapException">Thrown if the operation fails</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task UpdateEntryAsync(IDirectoryAttributes entry, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+            await _connection.UpdateAsync(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Adds the attribute to an entry.
+        /// </summary>
+        /// <param name="distinguishedName">The entry</param>
+        /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="value">The value for the entry.</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
+        /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task AddAttributeAsync(string distinguishedName, string attributeName, object value = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            if (distinguishedName.IsNullOrEmpty())
+                throw new ArgumentNullException("distinguishedName");
+
+            var attributes = new DirectoryAttributes(distinguishedName);
+
+            attributes.AddModification(value.ToDirectoryModification(attributeName, DirectoryAttributeOperation.Add));
+
+            await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Removes the attribute from an entry.
+        /// </summary>
+        /// <param name="distinguishedName">The entry</param>
+        /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="distinguishedName"/> is null, empty or white space.</exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
+        /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task DeleteAttributeAsync(string distinguishedName, string attributeName, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            if (distinguishedName.IsNullOrEmpty())
+                throw new ArgumentNullException("distinguishedName");
+
+            var attributes = new DirectoryAttributes(distinguishedName);
+
+            attributes.AddModification(ExtensionMethods.ToDirectoryModification(null, attributeName, DirectoryAttributeOperation.Delete));
+
+            await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+        }
+
+        /// <summary>
+        /// Moves the entry from one container to another without modifying the entry's name.
+        /// </summary>
+        /// <param name="currentDistinguishedName">The entry's current distinguished name</param>
+        /// <param name="newNamingContext">The new container for the entry</param>
+        /// <param name="deleteOldRDN">Maps to <see cref="P:System.DirectoryServices.Protocols.ModifyDNRequest.DeleteOldRdn"/>. Defaults to null to use default behavior from <see cref="P:System.DirectoryServices.Protocols.ModifyDNRequest.DeleteOldRdn"/>.</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="currentDistinguishedName"/> has an invalid format.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="currentDistinguishedName"/>
+        /// or <paramref name="newNamingContext"/> are null, empty or white space.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
+        /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task<string> MoveEntryAsync(string currentDistinguishedName, string newNamingContext, bool? deleteOldRDN = null,
+            DirectoryControl[] controls = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            return await _connection.MoveEntryAsync(currentDistinguishedName, newNamingContext, Logger, deleteOldRDN, controls, resultProcessing);
+        }
+
+        /// <summary>
+        /// Renames the entry within the same container. The <paramref name="newName"/> can be in the format
+        /// XX=New Name or just New Name.
+        /// </summary>
+        /// <param name="currentDistinguishedName">The entry's current distinguished name</param>
+        /// <param name="newName">The new name of the entry</param>
+        /// <param name="deleteOldRDN">Maps to <see cref="P:System.DirectoryServices.Protocols.ModifyDNRequest.DeleteOldRdn"/>. Defaults to null to use default behavior from <see cref="P:System.DirectoryServices.Protocols.ModifyDNRequest.DeleteOldRdn"/>.</param>
+        /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="currentDistinguishedName"/> has an invalid format.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="currentDistinguishedName"/>
+        /// or <paramref name="newName"/> are null, empty or white space.
+        /// </exception>
+        /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
+        /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        public async Task<string> RenameEntryAsync(string currentDistinguishedName, string newName, bool? deleteOldRDN = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+            return await _connection.RenameEntryAsync(currentDistinguishedName, newName, Logger, deleteOldRDN, controls, resultProcessing);
+        }
+
+        /// <summary>
+        /// Uses range retrieval to get all values for <paramref name="attributeName"/> on <paramref name="distinguishedName"/>.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the attribute.  Must be <see cref="string"/> or <see cref="Array"/> of <see cref="byte"/>.</typeparam>
+        /// <param name="distinguishedName">The distinguished name of the entry.</param>
+        /// <param name="attributeName">The attribute to load.</param>
+        /// <param name="start">The starting point for the range. Defaults to 0.</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="distinguishedName"/> or <paramref name="attributeName"/> is null, empty or white space.
+        /// </exception>
+        /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
+        /// <returns></returns>
+        public async Task<IList<TValue>> RetrieveRangesAsync<TValue>(string distinguishedName, string attributeName, int start = 0,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+
+            return await _connection.RetrieveRangesAsync<TValue>(distinguishedName, attributeName, start, Logger, resultProcessing);
+        }
 
         /// <summary>
         /// Sends the request to the directory.
@@ -1007,11 +1226,12 @@ namespace LinqToLdap
         /// <param name="request">The response from the directory</param>
         /// <param name="resultProcessing">How the async results are processed</param>
         /// <returns></returns>
-        public async System.Threading.Tasks.Task<DirectoryResponse> SendRequestAsync(DirectoryRequest request, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        public async Task<DirectoryResponse> SendRequestAsync(DirectoryRequest request, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
-            return await System.Threading.Tasks.Task.Factory.FromAsync(
+#if NET45
+            return await Task.Factory.FromAsync(
                     (callback, state) =>
                     {
                         return _connection.BeginSendRequest(request, resultProcessing, callback, state);
@@ -1022,6 +1242,184 @@ namespace LinqToLdap
                     },
                     null
                 );
+#else
+            return await Task.Run(() => _connection.SendRequest(request) as DirectoryResponse);
+#endif
+        }
+
+        private async Task<string> UpdateEntryAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+            where T : class
+        {
+            try
+            {
+                if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+                if (entry == null) throw new ArgumentNullException(nameof(entry));
+
+                var objectMapping = _configuration.Mapper.GetMapping(entry.GetType());
+                if (objectMapping == null) throw new MappingException("Cannot update an unmapped class.");
+
+                distinguishedName = GetDistinguishedName(distinguishedName, objectMapping, entry);
+
+                var request = new ModifyRequest(distinguishedName);
+                if (controls != null)
+                {
+                    request.Controls.AddRange(controls);
+                }
+
+                var modifications = new List<DirectoryAttributeModification>();
+
+                if (!(entry is IDirectoryObject directoryObject))
+                {
+                    modifications.AddRange(objectMapping.GetUpdateablePropertyMappings()
+                        .Select(mapping => mapping.GetDirectoryAttributeModification(entry)));
+                }
+                else
+                {
+                    var changes = directoryObject.GetChanges(objectMapping);
+                    modifications.AddRange(changes);
+                }
+
+                if (objectMapping.GetCatchAllMapping()?.GetValue(entry) is IDirectoryAttributes catchAll)
+                {
+                    modifications.AddRange(catchAll.GetChangedAttributes());
+                }
+
+                if (modifications.Count == 0)
+                {
+                    if (Logger != null && Logger.TraceEnabled) Logger.Trace(string.Format("No changes found for {0}.", distinguishedName));
+
+                    return distinguishedName;
+                }
+
+                request.Modifications.AddRange(modifications.ToArray());
+
+                var preArgs = new ListenerPreArgs<object, ModifyRequest>(entry, request, _connection);
+                foreach (var eventListener in _configuration.GetListeners<IPreUpdateEventListener>())
+                {
+                    eventListener.Notify(preArgs);
+                }
+
+                if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
+
+                ModifyResponse response = null;
+#if NET45
+                await Task.Factory.FromAsync(
+                        (callback, state) =>
+                        {
+                            return _connection.BeginSendRequest(request, resultProcessing, callback, state);
+                        },
+                        (asyncresult) =>
+                        {
+                            response = _connection.EndSendRequest(asyncresult) as ModifyResponse;
+                        },
+                        null
+                    );
+#else
+                response = await Task.Run(() => _connection.SendRequest(request) as ModifyResponse);
+#endif
+                response.AssertSuccess();
+
+                var postArgs = new ListenerPostArgs<object, ModifyRequest, ModifyResponse>(entry, request, response, _connection);
+                foreach (var eventListener in _configuration.GetListeners<IPostUpdateEventListener>())
+                {
+                    eventListener.Notify(postArgs);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Logger != null) Logger.Error(ex, string.Format("An error occurred while trying to update '{0}'.", distinguishedName));
+                throw;
+            }
+
+            return distinguishedName;
+        }
+
+        private async Task<string> AddEntryAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
+            PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
+        {
+            try
+            {
+                if (_disposed) throw new ObjectDisposedException(GetType().FullName);
+                if (entry == null) throw new ArgumentNullException(nameof(entry));
+                var objectMapping = _configuration.Mapper.GetMapping(entry.GetType());
+                if (objectMapping == null) throw new MappingException("Cannot add an unmapped class.");
+
+                var attributes = new List<DirectoryAttribute>();
+
+                if (objectMapping.ObjectClasses != null && objectMapping.ObjectClasses.Any())
+                {
+                    attributes.Add(new DirectoryAttribute("objectClass", objectMapping.ObjectClasses.Select(oc => (object)oc).ToArray()));
+                }
+                else
+                {
+                    throw new MappingException(
+                        $"Cannot add an entry without mapping objectClass for {typeof(T).FullName}.");
+                }
+
+                distinguishedName = GetDistinguishedName(distinguishedName, objectMapping, entry);
+
+                var request = new AddRequest(distinguishedName);
+
+                if (controls != null)
+                {
+                    request.Controls.AddRange(controls);
+                }
+
+                var directoryAttributes = objectMapping.GetUpdateablePropertyMappings()
+                    .Select(pm => pm.GetDirectoryAttribute(entry))
+                    .Where(da => da.Count > 0);
+
+                var catchAll =
+                    objectMapping.GetCatchAllMapping()?.GetValue(entry) as IDirectoryAttributes;
+
+                catchAll?.GetChangedAttributes().Where(da => da.Count > 0).ForEach(x => attributes.Add(x));
+
+                foreach (var da in directoryAttributes.Union(attributes))
+                {
+                    request.Attributes.Add(da);
+                }
+
+                var preArgs = new ListenerPreArgs<object, AddRequest>(entry, request, _connection);
+                foreach (var eventListener in _configuration.GetListeners<IPreAddEventListener>())
+                {
+                    eventListener.Notify(preArgs);
+                }
+
+                if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
+
+                AddResponse response = null;
+#if NET45
+                await Task.Factory.FromAsync(
+                        (callback, state) =>
+                        {
+                            return _connection.BeginSendRequest(request, resultProcessing, callback, state);
+                        },
+                        (asyncresult) =>
+                        {
+                            response = _connection.EndSendRequest(asyncresult) as AddResponse;
+                        },
+                        null
+                    );
+#else
+                response = await Task.Run(() => _connection.SendRequest(request) as AddResponse);
+#endif
+
+                response.AssertSuccess();
+
+                var postArgs = new ListenerPostArgs<object, AddRequest, AddResponse>(entry, request, response, _connection);
+                foreach (var eventListener in _configuration.GetListeners<IPostAddEventListener>())
+                {
+                    eventListener.Notify(postArgs);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Logger != null) Logger.Error(ex, string.Format("An error occurred while trying to add '{0}'.", distinguishedName));
+                throw;
+            }
+
+            return distinguishedName;
         }
 
 #endif

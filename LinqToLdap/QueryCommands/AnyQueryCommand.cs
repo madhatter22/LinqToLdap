@@ -32,6 +32,7 @@ namespace LinqToLdap.QueryCommands
 
             BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
 
+#if NET45
             return await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
@@ -44,6 +45,10 @@ namespace LinqToLdap.QueryCommands
                 },
                 null
             );
+#else
+            var response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+            return HandleResponse(response);
+#endif
         }
 
 #endif

@@ -56,6 +56,17 @@ namespace LinqToLdap.QueryCommands
             var index = BuildRequest(scope, maxPageSize, pagingEnabled, log, namingContext);
             SearchResponse response = null;
             int count = 0;
+            bool hasResults = false;
+            PageResultResponseControl pageResultResponseControl = null;
+            void handleRespnse(SearchResponse r)
+            {
+                r.AssertSuccess();
+
+                pageResultResponseControl = GetControl<PageResultResponseControl>(r.Controls);
+                hasResults = pageResultResponseControl != null && pageResultResponseControl.Cookie.Length > 0;
+                count += r.Entries.Count;
+            }
+#if NET45
             await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
@@ -64,23 +75,23 @@ namespace LinqToLdap.QueryCommands
                 (asyncresult) =>
                 {
                     response = (SearchResponse)connection.EndSendRequest(asyncresult);
-                    response.AssertSuccess();
-
-                    count = response.Entries.Count;
+                    handleRespnse(response);
                 },
                 null
             );
+#else
+            response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+            handleRespnse(response);
+#endif
 
             if (pagingEnabled && !Options.WithoutPaging)
             {
-                var pageResultResponseControl = GetControl<PageResultResponseControl>(response.Controls);
-                bool hasResults = pageResultResponseControl != null && pageResultResponseControl.Cookie.Length > 0;
                 while (hasResults)
                 {
                     SearchRequest.Controls[index] = new PageResultRequestControl(pageResultResponseControl.Cookie);
 
                     if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
-
+#if NET45
                     await System.Threading.Tasks.Task.Factory.FromAsync(
                         (callback, state) =>
                         {
@@ -89,14 +100,15 @@ namespace LinqToLdap.QueryCommands
                         (asyncresult) =>
                         {
                             response = (SearchResponse)connection.EndSendRequest(asyncresult);
-                            response.AssertSuccess();
-
-                            pageResultResponseControl = GetControl<PageResultResponseControl>(response.Controls);
-                            hasResults = pageResultResponseControl != null && pageResultResponseControl.Cookie.Length > 0;
-                            count += response.Entries.Count;
+                            handleRespnse(response);
                         },
                         null
                     );
+#else
+                    response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+
+                    handleRespnse(response);
+#endif
                 }
             }
 

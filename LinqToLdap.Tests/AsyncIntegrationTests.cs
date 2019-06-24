@@ -261,7 +261,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void GetByDNAsync_MappedObject_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.GetByDNAsync<PersonInheritanceTest>(PersonInheritanceTest.NamingContext);
             task.Wait();
@@ -274,7 +273,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void GetByDNAsync_UnmappedObject_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.GetByDNAsync(PersonInheritanceTest.NamingContext);
             task.Wait();
@@ -287,7 +285,6 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void GetByDNAsync_LdapConnectionExtension_Executes()
         {
-            Assert.Fail();
             //act
             var task = _context.FieldValueEx<LdapConnection>("_connection")
                 .GetByDNAsync(PersonInheritanceTest.NamingContext);

@@ -23,9 +23,9 @@ namespace LinqToLdap
 #else
 
         /// <summary>
-        /// Default processing behavior. For .Net Core <see cref="PartialResultProcessing.ReturnPartialResults"/> is used because of a bug in .Net Core 2.2.
-        /// <see cref="PartialResultProcessing.NoPartialResultSupport"/> has better performance.
+        /// Default processing behavior. <see cref="PartialResultProcessing.NoPartialResultSupport"/> has the best performance. <see cref="System.Threading.Tasks.Task.Run(Action)"/> is used instead of <see cref="LdapConnection.BeginSendRequest(DirectoryRequest, PartialResultProcessing, AsyncCallback, object)"/> for versions targeting .Net Standard / Core due to the performance impact.
         /// https://github.com/dotnet/corefx/issues/34730
+        /// https://docs.microsoft.com/en-us/dotnet/api/system.directoryservices.protocols.partialresultprocessing?view=netframework-4.8
         /// </summary>
         public const PartialResultProcessing DefaultAsyncResultProcessing = PartialResultProcessing.ReturnPartialResults;
 
