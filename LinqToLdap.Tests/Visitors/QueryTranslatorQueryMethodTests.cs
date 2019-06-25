@@ -901,7 +901,7 @@ namespace LinqToLdap.Tests.Visitors
             //prepare
             _queryContext.Query()
                 .OrderBy(x => x.Get("test"))
-                .ThenBy("other", "rule");
+                .ThenBy(x => x.Get("other"), "rule");
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
             //act

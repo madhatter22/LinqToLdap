@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.QueryCommands.Options
@@ -7,6 +8,7 @@ namespace LinqToLdap.QueryCommands.Options
     {
         private readonly List<SortKey> _sortKeys;
         private SortKey _sortKey;
+
         public SortingOptions()
         {
             _sortKeys = new List<SortKey>();
@@ -14,6 +16,8 @@ namespace LinqToLdap.QueryCommands.Options
 
         public void AddSort(string attributeName, bool descending)
         {
+            if (attributeName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(attributeName));
+
             _sortKey = new SortKey { AttributeName = attributeName, ReverseOrder = descending };
             _sortKeys.Add(_sortKey);
         }

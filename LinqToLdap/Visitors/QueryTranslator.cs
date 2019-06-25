@@ -1,4 +1,5 @@
 ﻿using LinqToLdap;
+using LinqToLdap.Collections;
 using LinqToLdap.Exceptions;
 using LinqToLdap.Mapping;
 using LinqToLdap.QueryCommands;
@@ -519,7 +520,19 @@ namespace LinqToLdap.Visitors
                     {
                         if (StripQuotes(t) is LambdaExpression lambda)
                         {
-                            var attribute = GetMemberName((MemberExpression)lambda.Body);
+                            string attribute = null;
+                            if (lambda.Body.NodeType == ExpressionType.MemberAccess)
+                            {
+                                attribute = GetMemberName((MemberExpression)lambda.Body);
+                            }
+                            else if (lambda.Body.NodeType == ExpressionType.Call)
+                            {
+                                var call = (MethodCallExpression)lambda.Body;
+                                if (typeof(IDirectoryAttributes).IsAssignableFrom(call.Method.DeclaringType) && call.Method.Name == "Get")
+                                {
+                                    attribute = ((ConstantExpression)call.Arguments[0]).Value.ToString();
+                                }
+                            }
                             _sortingOptions.AddSort(attribute, true);
                         }
                         else if (t.Type == typeof(string))
@@ -552,7 +565,19 @@ namespace LinqToLdap.Visitors
                     {
                         if (StripQuotes(t) is LambdaExpression lambda)
                         {
-                            var attribute = GetMemberName((MemberExpression)lambda.Body);
+                            string attribute = null;
+                            if (lambda.Body.NodeType == ExpressionType.MemberAccess)
+                            {
+                                attribute = GetMemberName((MemberExpression)lambda.Body);
+                            }
+                            else if (lambda.Body.NodeType == ExpressionType.Call)
+                            {
+                                var call = (MethodCallExpression)lambda.Body;
+                                if (typeof(IDirectoryAttributes).IsAssignableFrom(call.Method.DeclaringType) && call.Method.Name == "Get")
+                                {
+                                    attribute = ((ConstantExpression)call.Arguments[0]).Value.ToString();
+                                }
+                            }
                             _sortingOptions.AddSort(attribute, false);
                         }
                         else if (t.Type == typeof(string))
