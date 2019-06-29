@@ -101,6 +101,19 @@ namespace LinqToLdap.Tests
 
         [TestMethod]
         [TestCategory("Integration")]
+        public void ToListAsync_InPages_Executes()
+        {
+            //act
+            var task = _context.Query<PersonInheritanceTest>()
+                .InPagesOfAsync(1000);
+            task.Wait();
+
+            //assert
+            task.Result.Should().Have.Count.GreaterThan(1);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration")]
         public void CountAsync_Executes()
         {
             //act

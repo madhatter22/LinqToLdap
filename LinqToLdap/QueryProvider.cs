@@ -32,12 +32,12 @@ namespace LinqToLdap
 
         async System.Threading.Tasks.Task<object> IAsyncQueryProvider.ExecuteAsync(Expression expression)
         {
-            return await ExecuteAsync(expression);
+            return await ExecuteAsync(expression).ConfigureAwait(false);
         }
 
         public async System.Threading.Tasks.Task<TResult> ExecuteAsync<TResult>(Expression expression)
         {
-            return (TResult)(await ExecuteAsync(expression));
+            return (TResult)await ExecuteAsync(expression).ConfigureAwait(false);
         }
 
         public abstract System.Threading.Tasks.Task<object> ExecuteAsync(Expression expression);

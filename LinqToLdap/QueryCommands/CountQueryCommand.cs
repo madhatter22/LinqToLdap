@@ -78,9 +78,9 @@ namespace LinqToLdap.QueryCommands
                     handleRespnse(response);
                 },
                 null
-            );
+            ).ConfigureAwait(false);
 #else
-            response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+            response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
             handleRespnse(response);
 #endif
 
@@ -103,9 +103,9 @@ namespace LinqToLdap.QueryCommands
                             handleRespnse(response);
                         },
                         null
-                    );
+                    ).ConfigureAwait(false);
 #else
-                    response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+                    response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
 
                     handleRespnse(response);
 #endif

@@ -75,9 +75,9 @@ namespace LinqToLdap.Async
                         response.AssertSuccess();
                     },
                     null
-                );
+                ).ConfigureAwait(false);
 #else
-                response = await Task.Run(() => connection.SendRequest(request) as AddResponse);
+                response = await Task.Run(() => connection.SendRequest(request) as AddResponse).ConfigureAwait(false);
                 response.AssertSuccess();
 #endif
 
@@ -115,9 +115,9 @@ namespace LinqToLdap.Async
             ILinqToLdapLogger log = null, DirectoryControl[] controls = null, IEnumerable<IAddEventListener> listeners = null,
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
-            await AddAsync(connection, entry, log, controls, listeners, resultProcessing);
+            await AddAsync(connection, entry, log, controls, listeners, resultProcessing).ConfigureAwait(false);
 
-            return await GetByDNAsync(connection, entry.DistinguishedName, log, null, resultProcessing);
+            return await GetByDNAsync(connection, entry.DistinguishedName, log, null, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,9 +171,9 @@ namespace LinqToLdap.Async
                         response.AssertSuccess();
                     },
                     null
-                );
+                ).ConfigureAwait(false);
 #else
-                response = await Task.Run(() => connection.SendRequest(request) as DeleteResponse);
+                response = await Task.Run(() => connection.SendRequest(request) as DeleteResponse).ConfigureAwait(false);
                 response.AssertSuccess();
 #endif
 
@@ -255,9 +255,9 @@ namespace LinqToLdap.Async
                             response.AssertSuccess();
                         },
                         null
-                    );
+                    ).ConfigureAwait(false);
 #else
-                    response = await Task.Run(() => connection.SendRequest(request) as ModifyResponse);
+                    response = await Task.Run(() => connection.SendRequest(request) as ModifyResponse).ConfigureAwait(false);
                     response.AssertSuccess();
 #endif
 
@@ -301,9 +301,9 @@ namespace LinqToLdap.Async
             ILinqToLdapLogger log = null, DirectoryControl[] controls = null, IEnumerable<IUpdateEventListener> listeners = null,
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
-            await UpdateAsync(connection, entry, log, controls, listeners, resultProcessing);
+            await UpdateAsync(connection, entry, log, controls, listeners, resultProcessing).ConfigureAwait(false);
 
-            return await GetByDNAsync(connection, entry.DistinguishedName, log, null, resultProcessing);
+            return await GetByDNAsync(connection, entry.DistinguishedName, log, null, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -336,7 +336,7 @@ namespace LinqToLdap.Async
                         query = query.Select(attributes);
                     }
 
-                    var results = await QueryableAsyncExtensions.FirstOrDefaultAsync(query, resultProcessing);
+                    var results = await QueryableAsyncExtensions.FirstOrDefaultAsync(query, resultProcessing).ConfigureAwait(false);
 
                     return results ?? new DirectoryAttributes();
                 }
@@ -389,9 +389,9 @@ namespace LinqToLdap.Async
                                 : transformer.Transform(response.Entries[0])) as IDirectoryAttributes;
                     },
                     null
-                );
+                ).ConfigureAwait(false);
 #else
-                var response = await Task.Run(() => connection.SendRequest(request) as SearchResponse);
+                var response = await Task.Run(() => connection.SendRequest(request) as SearchResponse).ConfigureAwait(false);
                 response.AssertSuccess();
 
                 return (response.Entries.Count == 0
@@ -439,7 +439,7 @@ namespace LinqToLdap.Async
 
                 var name = DnParser.GetEntryName(currentDistinguishedName);
 
-                var response = await SendModifyDnRequestAsync(connection, currentDistinguishedName, newNamingContext, name, deleteOldRDN, controls, log, resultProcessing);
+                var response = await SendModifyDnRequestAsync(connection, currentDistinguishedName, newNamingContext, name, deleteOldRDN, controls, log, resultProcessing).ConfigureAwait(false);
                 response.AssertSuccess();
 
                 return string.Format("{0},{1}", name, newNamingContext);
@@ -487,7 +487,7 @@ namespace LinqToLdap.Async
                 newName = DnParser.FormatName(newName, currentDistinguishedName);
                 var container = DnParser.GetEntryContainer(currentDistinguishedName);
 
-                var response = await SendModifyDnRequestAsync(connection, currentDistinguishedName, container, newName, deleteOldRDN, controls, log, resultProcessing);
+                var response = await SendModifyDnRequestAsync(connection, currentDistinguishedName, container, newName, deleteOldRDN, controls, log, resultProcessing).ConfigureAwait(false);
                 response.AssertSuccess();
 
                 return string.Format("{0},{1}", newName, container);
@@ -557,9 +557,9 @@ namespace LinqToLdap.Async
                             response = connection.EndSendRequest(asyncresult) as SearchResponse;
                         },
                         null
-                    );
+                    ).ConfigureAwait(false);
 #else
-                    response = await Task.Run(() => connection.SendRequest(request) as SearchResponse);
+                    response = await Task.Run(() => connection.SendRequest(request) as SearchResponse).ConfigureAwait(false);
 #endif
 
                     response.AssertSuccess();
@@ -631,9 +631,9 @@ namespace LinqToLdap.Async
                         return connection.EndSendRequest(asyncresult) as ModifyDNResponse;
                     },
                     null
-                );
+                ).ConfigureAwait(false);
 #else
-            return await Task.Run(() => connection.SendRequest(request) as ModifyDNResponse);
+            return await Task.Run(() => connection.SendRequest(request) as ModifyDNResponse).ConfigureAwait(false);
 #endif
         }
     }

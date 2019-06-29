@@ -470,7 +470,7 @@ namespace LinqToLdap
         }
 
         /// <summary>
-        /// Immediately pages the query into a <see cref="ILdapPage{T}"/>.
+        /// Immediately pages the query into a <see cref="ILdapPage{T}"/> to allow manual paging.
         /// </summary>
         /// <typeparam name="TSource">The type to query against</typeparam>
         /// <param name="source">The query</param>

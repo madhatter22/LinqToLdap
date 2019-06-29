@@ -229,14 +229,14 @@ namespace LinqToLdap.QueryCommands
                 return await (Options.SkipSize.HasValue || GetControl<VlvRequestControl>(SearchRequest.Controls) != null
                     ? HandleVlvRequestAsync(connection, maxPageSize, log)
                     : HandleStandardRequestAsync(connection, log, maxPageSize,
-                        Options.WithoutPaging == false && pagingEnabled));
+                        Options.WithoutPaging == false && pagingEnabled)).ConfigureAwait(false);
             }
 
             if (Options.PagingOptions != null && pageRequest != null)
             {
                 throw new InvalidOperationException("Only one page request control can be sent to the server.");
             }
-            return await HandlePagedRequestAsync(connection, pageRequest, log);
+            return await HandlePagedRequestAsync(connection, pageRequest, log).ConfigureAwait(false);
         }
 
         private async System.Threading.Tasks.Task<object> HandleStandardRequestAsync(LdapConnection connection, ILinqToLdapLogger log, int maxSize, bool pagingEnabled)
@@ -272,9 +272,9 @@ namespace LinqToLdap.QueryCommands
                     list.AddRange(response.Entries.GetRange());
                 },
                 null
-            );
+            ).ConfigureAwait(false);
 #else
-            response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+            response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
             response.AssertSuccess();
             list.AddRange(response.Entries.GetRange());
 #endif
@@ -307,9 +307,9 @@ namespace LinqToLdap.QueryCommands
                                 list.AddRange(response.Entries.GetRange());
                             },
                             null
-                        );
+                        ).ConfigureAwait(false);
 #else
-                        response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+                        response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
                         response.AssertSuccess();
 
                         pageResultResponseControl = GetControl<PageResultResponseControl>(response.Controls);
@@ -391,9 +391,9 @@ namespace LinqToLdap.QueryCommands
                     return ObjectActivator.CreateGenericInstance(typeof(VirtualListView<>), Options.GetEnumeratorReturnType(), parameters, null);
                 },
                 null
-            );
+            ).ConfigureAwait(false);
 #else
-            var response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+            var response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
             response.AssertSuccess();
             AssertSortSuccess(response.Controls);
 
@@ -417,12 +417,11 @@ namespace LinqToLdap.QueryCommands
         {
             if (Options.YieldNoResults)
             {
-                var enumerator = Options.GetEnumerator();
                 var bindingAttr = new[]
                             {
                                 pageRequest.PageSize,
                                 null,
-                                enumerator,
+                                Options.GetEnumerator(),
                                 null
                             };
 
@@ -441,6 +440,7 @@ namespace LinqToLdap.QueryCommands
 
             if (log != null && log.TraceEnabled) log.Trace(SearchRequest.ToLogString());
 
+#if NET45
             return await System.Threading.Tasks.Task.Factory.FromAsync(
                 (callback, state) =>
                 {
@@ -465,7 +465,24 @@ namespace LinqToLdap.QueryCommands
                     return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters, null);
                 },
                 null
-            );
+            ).ConfigureAwait(false);
+#else
+            var response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
+            response.AssertSuccess();
+            AssertSortSuccess(response.Controls);
+
+            var enumerator = Options.GetEnumerator(response.Entries);
+            var nextPage = GetControl<PageResultResponseControl>(response.Controls);
+            var parameters = new[]
+            {
+                        pageRequest.PageSize,
+                        nextPage?.Cookie,
+                        enumerator,
+                        Options.Filter
+                    };
+
+            return ObjectActivator.CreateGenericInstance(typeof(LdapPage<>), Options.GetEnumeratorReturnType(), parameters, null);
+#endif
         }
 
 #endif

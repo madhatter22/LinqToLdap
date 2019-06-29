@@ -44,9 +44,9 @@ namespace LinqToLdap.QueryCommands
                     return HandleResponse(response);
                 },
                 null
-            );
+            ).ConfigureAwait(false);
 #else
-            var response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse);
+            var response = await System.Threading.Tasks.Task.Run(() => connection.SendRequest(SearchRequest) as SearchResponse).ConfigureAwait(false);
             return HandleResponse(response);
 #endif
         }

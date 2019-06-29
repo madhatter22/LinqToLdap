@@ -249,7 +249,7 @@ namespace LinqToLdap
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return await LdapConnectionAsyncExtensions.ListServerAttributesAsync(_connection, attributes, Logger, resultProcessing);
+            return await LdapConnectionAsyncExtensions.ListServerAttributesAsync(_connection, attributes, Logger, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace LinqToLdap
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return await LdapConnectionAsyncExtensions.GetByDNAsync(_connection, distinguishedName, Logger, attributes, resultProcessing);
+            return await LdapConnectionAsyncExtensions.GetByDNAsync(_connection, distinguishedName, Logger, attributes, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -299,6 +299,8 @@ namespace LinqToLdap
 
                 if (Logger != null && Logger.TraceEnabled) Logger.Trace(request.ToLogString());
 
+                SearchResponse response;
+#if NET45
                 return await Task.Factory.FromAsync(
                     (callback, state) =>
                     {
@@ -306,7 +308,7 @@ namespace LinqToLdap
                     },
                     (asyncresult) =>
                     {
-                        var response = (SearchResponse)_connection.EndSendRequest(asyncresult);
+                        response = (SearchResponse)_connection.EndSendRequest(asyncresult);
                         response.AssertSuccess();
 
                         var entry = (response.Entries.Count == 0
@@ -316,7 +318,16 @@ namespace LinqToLdap
                         return entry;
                     },
                     null
-                );
+                ).ConfigureAwait(false);
+#else
+                response = await Task.Run(() => _connection.SendRequest(request) as SearchResponse).ConfigureAwait(false);
+                response.AssertSuccess();
+                var entry = (response.Entries.Count == 0
+                                ? transformer.Default()
+                                : transformer.Transform(response.Entries[0])) as T;
+
+                return entry;
+#endif
             }
             catch (Exception ex)
             {
@@ -418,13 +429,13 @@ namespace LinqToLdap
         {
             if (entry is IDirectoryAttributes x)
             {
-                return (await AddAndGetEntryAsync(x, controls, resultProcessing)) as T;
+                return (await AddAndGetEntryAsync(x, controls, resultProcessing).ConfigureAwait(false)) as T;
             }
             else
             {
-                var dn = await AddEntryAsync(entry, distinguishedName, controls);
+                var dn = await AddEntryAsync(entry, distinguishedName, controls).ConfigureAwait(false);
 
-                return await GetByDNAsync<T>(dn);
+                return await GetByDNAsync<T>(dn).ConfigureAwait(false);
             }
         }
 
@@ -451,8 +462,8 @@ namespace LinqToLdap
         public async Task AddAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
         {
-            if (entry is IDirectoryAttributes x) await AddEntryAsync(x, controls, resultProcessing);
-            else await AddEntryAsync(entry, distinguishedName, controls, resultProcessing);
+            if (entry is IDirectoryAttributes x) await AddEntryAsync(x, controls, resultProcessing).ConfigureAwait(false);
+            else await AddEntryAsync(entry, distinguishedName, controls, resultProcessing).ConfigureAwait(false);
         }
 
 #endif
@@ -958,7 +969,7 @@ namespace LinqToLdap
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
-            await _connection.AddAsync(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>(), resultProcessing);
+            await _connection.AddAsync(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -978,7 +989,7 @@ namespace LinqToLdap
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
-            return await _connection.AddAndGetAsync(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>(), resultProcessing);
+            return await _connection.AddAndGetAsync(entry, Logger, controls, _configuration.GetListeners<IAddEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -996,7 +1007,7 @@ namespace LinqToLdap
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
-            await _connection.DeleteAsync(distinguishedName, Logger, controls, _configuration.GetListeners<IDeleteEventListener>(), resultProcessing);
+            await _connection.DeleteAsync(distinguishedName, Logger, controls, _configuration.GetListeners<IDeleteEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1023,8 +1034,8 @@ namespace LinqToLdap
         public async Task UpdateAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
         {
-            if (entry is IDirectoryAttributes x) await UpdateEntryAsync(x, controls);
-            else await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing);
+            if (entry is IDirectoryAttributes x) await UpdateEntryAsync(x, controls).ConfigureAwait(false);
+            else await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1051,13 +1062,13 @@ namespace LinqToLdap
         {
             if (entry is IDirectoryAttributes x)
             {
-                return (await UpdateAndGetEntryAsync(x, controls)) as T;
+                return (await UpdateAndGetEntryAsync(x, controls).ConfigureAwait(false)) as T;
             }
             else
             {
-                var dn = await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing);
+                var dn = await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing).ConfigureAwait(false);
 
-                return await GetByDNAsync<T>(dn, resultProcessing);
+                return await GetByDNAsync<T>(dn, resultProcessing).ConfigureAwait(false);
             }
         }
 
@@ -1077,7 +1088,7 @@ namespace LinqToLdap
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return await _connection.UpdateAndGetAsync(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+            return await _connection.UpdateAndGetAsync(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1097,7 +1108,7 @@ namespace LinqToLdap
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
-            await _connection.UpdateAsync(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+            await _connection.UpdateAsync(entry, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1122,7 +1133,7 @@ namespace LinqToLdap
 
             attributes.AddModification(value.ToDirectoryModification(attributeName, DirectoryAttributeOperation.Add));
 
-            await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+            await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1147,7 +1158,7 @@ namespace LinqToLdap
 
             attributes.AddModification(ExtensionMethods.ToDirectoryModification(null, attributeName, DirectoryAttributeOperation.Delete));
 
-            await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing);
+            await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1171,7 +1182,7 @@ namespace LinqToLdap
             DirectoryControl[] controls = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return await _connection.MoveEntryAsync(currentDistinguishedName, newNamingContext, Logger, deleteOldRDN, controls, resultProcessing);
+            return await _connection.MoveEntryAsync(currentDistinguishedName, newNamingContext, Logger, deleteOldRDN, controls, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1196,7 +1207,7 @@ namespace LinqToLdap
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
-            return await _connection.RenameEntryAsync(currentDistinguishedName, newName, Logger, deleteOldRDN, controls, resultProcessing);
+            return await _connection.RenameEntryAsync(currentDistinguishedName, newName, Logger, deleteOldRDN, controls, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1217,7 +1228,7 @@ namespace LinqToLdap
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
 
-            return await _connection.RetrieveRangesAsync<TValue>(distinguishedName, attributeName, start, Logger, resultProcessing);
+            return await _connection.RetrieveRangesAsync<TValue>(distinguishedName, attributeName, start, Logger, resultProcessing).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1241,9 +1252,9 @@ namespace LinqToLdap
                         return _connection.EndSendRequest(asyncresult);
                     },
                     null
-                );
+                ).ConfigureAwait(false);
 #else
-            return await Task.Run(() => _connection.SendRequest(request) as DirectoryResponse);
+            return await Task.Run(() => _connection.SendRequest(request) as DirectoryResponse).ConfigureAwait(false);
 #endif
         }
 
@@ -1314,9 +1325,9 @@ namespace LinqToLdap
                             response = _connection.EndSendRequest(asyncresult) as ModifyResponse;
                         },
                         null
-                    );
+                    ).ConfigureAwait(false);
 #else
-                response = await Task.Run(() => _connection.SendRequest(request) as ModifyResponse);
+                response = await Task.Run(() => _connection.SendRequest(request) as ModifyResponse).ConfigureAwait(false);
 #endif
                 response.AssertSuccess();
 
@@ -1400,9 +1411,9 @@ namespace LinqToLdap
                             response = _connection.EndSendRequest(asyncresult) as AddResponse;
                         },
                         null
-                    );
+                    ).ConfigureAwait(false);
 #else
-                response = await Task.Run(() => _connection.SendRequest(request) as AddResponse);
+                response = await Task.Run(() => _connection.SendRequest(request) as AddResponse).ConfigureAwait(false);
 #endif
 
                 response.AssertSuccess();

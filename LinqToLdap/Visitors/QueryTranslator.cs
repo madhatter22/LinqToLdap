@@ -438,6 +438,7 @@ namespace LinqToLdap.Visitors
                     break;
 
                 case "InPagesOf":
+                case "InPagesOfAsync":
                     foreach (Expression t in m.Arguments)
                     {
                         if (t.Type == typeof(int))

@@ -103,7 +103,7 @@ namespace LinqToLdap
                 {
                     throw new ObjectDisposedException("_connection", "The LdapConnection associated with this provider has been disposed.");
                 }
-                return await command.ExecuteAsync(connection, _scope, MaxPageSize, _pagingEnabled, Log, NamingContext);
+                return await command.ExecuteAsync(connection, _scope, MaxPageSize, _pagingEnabled, Log, NamingContext).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

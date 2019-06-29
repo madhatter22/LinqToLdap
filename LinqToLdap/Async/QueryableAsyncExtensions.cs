@@ -31,6 +31,7 @@ namespace LinqToLdap.Async
         private static readonly MethodInfo SingleOrDefaultAsyncMethod = typeof(QueryableAsyncExtensions).GetMethods().Single(x => x.Name == "SingleOrDefaultAsync" && x.GetParameters().Length == 2);
         private static readonly MethodInfo SingleOrDefaultPredicateAsyncMethod = typeof(QueryableAsyncExtensions).GetMethods().Single(x => x.Name == "SingleOrDefaultAsync" && x.GetParameters().Length == 3);
         private static readonly MethodInfo ListAttributesAsyncMethod = typeof(QueryableAsyncExtensions).GetMethods().Single(x => x.Name == "ListAttributesAsync" && x.GetParameters().Length == 3);
+        private static readonly MethodInfo InPagesOfAsyncMethod = typeof(QueryableAsyncExtensions).GetMethods().Single(x => x.Name == "InPagesOfAsync" && x.GetParameters().Length == 3);
 
         /// <summary>
         /// Executes Any on <paramref name="source"/> in a <see cref="Task"/>.
@@ -46,7 +47,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<bool>(
                     Expression.Call(null, AnyAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.Any();
         }
@@ -66,7 +67,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<bool>(
                     Expression.Call(null, AnyPredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.Any(predicate);
         }
@@ -85,7 +86,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<List<TSource>>(
                     Expression.Call(null, ToListAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.ToList();
         }
@@ -104,7 +105,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<int>(
                     Expression.Call(null, CountAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.Count();
         }
@@ -124,7 +125,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<int>(
                     Expression.Call(null, CountPredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.Count(predicate);
         }
@@ -143,7 +144,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<long>(
                     Expression.Call(null, LongCountAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.LongCount();
         }
@@ -163,7 +164,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<long>(
                     Expression.Call(null, LongCountPredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.LongCount(predicate);
         }
@@ -182,7 +183,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, FirstOrDefaultAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.FirstOrDefault();
         }
@@ -202,7 +203,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, FirstOrDefaultPredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.FirstOrDefault(predicate);
         }
@@ -221,7 +222,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, FirstAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.First();
         }
@@ -241,7 +242,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, FirstPredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.First(predicate);
         }
@@ -260,7 +261,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, SingleAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.Single();
         }
@@ -280,7 +281,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, SinglePredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.Single(predicate);
         }
@@ -299,7 +300,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, SingleOrDefaultAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.SingleOrDefault();
         }
@@ -319,7 +320,7 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<TSource>(
                     Expression.Call(null, SingleOrDefaultPredicateAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, predicate, Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.SingleOrDefault(predicate);
         }
@@ -339,9 +340,37 @@ namespace LinqToLdap.Async
                 return await asyncProvider.ExecuteAsync<IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, object>>>>>(
                     Expression.Call(null, ListAttributesAsyncMethod.MakeGenericMethod(
                         new[] { typeof(TSource) }),
-                        new[] { source.Expression, Expression.Constant(attributes ?? new string[0]), Expression.Constant(resultProcessing) }));
+                        new[] { source.Expression, Expression.Constant(attributes ?? new string[0]), Expression.Constant(resultProcessing) })).ConfigureAwait(false);
             }
             return source.ListAttributes();
+        }
+
+        /// <summary>
+        /// Pages through all the results and returns them in a <see cref="List{T}"/>.
+        /// </summary>
+        /// <param name="source">The query</param>
+        /// <param name="pageSize">The size of each page</param>
+        /// <param name="resultProcessing">How the async results are processed</param>
+        /// <typeparam name="TSource">The type to query against</typeparam>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="source"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="pageSize"/> is not greater than 0</exception>
+        /// <returns></returns>
+        public static async Task<List<TSource>> InPagesOfAsync<TSource>(this IQueryable<TSource> source, int pageSize, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
+        {
+            if (source == null) throw new ArgumentNullException("source");
+            if (pageSize < 1) throw new ArgumentException("pageSize must be greater than 0");
+
+            if (source.Provider is IAsyncQueryProvider asyncProvider)
+            {
+                return await asyncProvider.ExecuteAsync<List<TSource>>(
+                    Expression.Call(null, InPagesOfAsyncMethod.MakeGenericMethod(
+                        new[] { typeof(TSource) }),
+                        new[] { source.Expression, Expression.Constant(pageSize), Expression.Constant(resultProcessing) })).ConfigureAwait(false);
+            }
+
+            return source.InPagesOf(pageSize);
         }
     }
 }
