@@ -10,7 +10,7 @@
     <Company>Alan Hatter</Company>
     <Description>LINQ provider built on top of System.DirectoryServices.Protocols for querying and updating LDAP servers.</Description>
     <Product>LINQ to LDAP</Product>
-    <PackageTags>LINQ LDAP AD active directory openldap tivoli</PackageTags>
+    <PackageTags>LINQ LDAP AD active directory openldap tivoli S.DS.P SDSP</PackageTags>
     <PackageIconUrl>http://3.bp.blogspot.com/-tQ7UObq7UQw/Ultls-7CI7I/AAAAAAAAAnM/5OEMj40RXbw/s200/linqtoldap_logo_small.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/madhatter22/LinqToLdap</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
