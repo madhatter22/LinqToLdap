@@ -781,6 +781,38 @@ namespace LinqToLdap.Tests
             _postDeleteNotified.Should().Be.True();
         }
 
+#if !NET35
+
+        [TestMethod]
+        [TestCategory("Integration")]
+        public void Test_Pooledfactory()
+        {
+            var configuration = new LdapConfiguration()
+                .AddMapping(new IntegrationUserTestMapping(), IntegrationUserTest.NamingContext, new[] { "user" })
+                .AddMapping(new AttributeClassMap<IntegrationGroupTest>(), IntegrationGroupTest.NamingContext, new[] { "top", "group" }, true, "group")
+                .AddMapping(new AttributeClassMap<PersonInheritanceTest>())
+                .AddMapping(new AttributeClassMap<OrgPersonInheritanceTest>())
+                .AddMapping(new AttributeClassMap<UserInheritanceTest>())
+                .AddMapping(new AttributeClassMap<PersonCatchAllTest>())
+                .AddMapping(new AttributeClassMap<OrgPersonCatchAllTest>())
+                .MaxPageSizeIs(1000)
+                .LogTo(new SimpleTextLogger(Console.Out));
+
+            configuration.ConfigurePooledFactory(ServerName)
+                .AuthenticateBy(AuthType.Ntlm)
+                .ProtocolVersion(3);
+
+            System.Threading.Tasks.Parallel.For(0, 10, new System.Threading.Tasks.ParallelOptions { MaxDegreeOfParallelism = 4 }, x =>
+            {
+                using (var context = configuration.CreateContext())
+                {
+                    var list = context.Query<IntegrationUserTest>().Where(u => u.Mail == "test").ToList();
+                }
+            });
+        }
+
+#endif
+
         private static byte[] GetPasswordData(string password)
         {
             var formattedPassword = string.Format("\"{0}\"", password);
