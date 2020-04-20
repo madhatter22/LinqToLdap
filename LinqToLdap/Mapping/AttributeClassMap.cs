@@ -29,6 +29,8 @@ namespace LinqToLdap.Mapping
                 throw new MappingException("DirectorySchemaAttribute not found for " + typeof(T).FullName);
             }
 
+            WithoutSubTypeMapping = schemaAttribute.WithoutSubTypeMapping;
+
             NamingContext(namingContext.IsNullOrEmpty() ? schemaAttribute.NamingContext : namingContext);
             if (!objectCategory.IsNullOrEmpty())
             {

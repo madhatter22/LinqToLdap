@@ -59,6 +59,11 @@ namespace LinqToLdap.Mapping
         public bool HasCustomAttributeMapping => _attributeClassMapper != null;
 
         /// <summary>
+        /// Indicates if auto mapping should default to flatten hierarchy on <see cref="IClassMap.WithoutSubTypeMapping"/>.
+        /// </summary>
+        public bool AutoMapWithoutSubTypeMapping { get; set; }
+
+        /// <summary>
         /// Provide a delegate that takes an object type and returns the class map for it.
         /// </summary>
         /// <param name="attributeClassMapBuilder">The delegate.</param>
@@ -167,7 +172,8 @@ namespace LinqToLdap.Mapping
                 mapped.Validate();
 
                 var objectMapping = mapped.ToObjectMapping();
-                MapSubTypes(objectMapping);
+
+                if (!mapped.WithoutSubTypeMapping) MapSubTypes(objectMapping);
 
                 return objectMapping;
             });
@@ -205,7 +211,7 @@ namespace LinqToLdap.Mapping
                         objectClasses = new[] { objectClass };
                     }
                     classMap = !HasCustomAutoMapping
-                        ? new AutoClassMap<T>()
+                        ? new AutoClassMap<T>() { WithoutSubTypeMapping = AutoMapWithoutSubTypeMapping }
                         : _autoClassMapper.Invoke(typeof(T));
                 }
 
@@ -216,7 +222,7 @@ namespace LinqToLdap.Mapping
                 mapped.Validate();
 
                 var objectMapping = mapped.ToObjectMapping();
-                MapSubTypes(objectMapping);
+                if (!mapped.WithoutSubTypeMapping) MapSubTypes(objectMapping);
 
                 return objectMapping;
             });
@@ -255,7 +261,7 @@ namespace LinqToLdap.Mapping
                     mapped.Validate();
 
                     var objectMapping = mapped.ToObjectMapping();
-                    MapSubTypes(objectMapping);
+                    if (!mapped.WithoutSubTypeMapping) MapSubTypes(objectMapping);
                     return objectMapping;
                 }
 

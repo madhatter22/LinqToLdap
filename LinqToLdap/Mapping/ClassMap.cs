@@ -11,7 +11,7 @@ namespace LinqToLdap.Mapping
 {
     /// <summary>
     /// Defines a mapping for a directory entry. Derive from this class to create a mapping,
-    /// and use the constructor to control how your object is queryed.
+    /// and use the constructor to control how your object is queried.
     /// </summary>
     /// <example>
     /// public class UserMap : ClassMap&lt;User&gt;
@@ -104,6 +104,11 @@ namespace LinqToLdap.Mapping
         protected bool IncludeObjectClasses { get; private set; }
 
         /// <summary>
+        /// Indicates if this class should flatten its hierarchy when mapping. Flattened mappings will include inherited properties, but will not work with queries for subtypes or base types.
+        /// </summary>
+        public bool WithoutSubTypeMapping { get; set; }
+
+        /// <summary>
         /// Gets the object category
         /// </summary>
         /// <returns></returns>
@@ -129,7 +134,10 @@ namespace LinqToLdap.Mapping
         {
             return new StandardObjectMapping<T>(GetNamingContext(),
                                                 PropertyMappings.Select(pmb => pmb.ToPropertyMapping()),
-                                                GetObjectCategory(), IncludeObjectCategory, GetObjectClass(), IncludeObjectClasses);
+                                                GetObjectCategory(), IncludeObjectCategory, GetObjectClass(), IncludeObjectClasses)
+            {
+                WithoutSubTypeMapping = WithoutSubTypeMapping
+            };
         }
 
         /// <summary>

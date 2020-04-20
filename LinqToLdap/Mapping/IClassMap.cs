@@ -38,5 +38,10 @@ namespace LinqToLdap.Mapping
         /// </summary>
         /// <returns></returns>
         IObjectMapping ToObjectMapping();
+
+        /// <summary>
+        /// Indicates if this class should flatten its hierarchy when mapping. Flattened mappings will include inherited properties, but will not work with queries for subtypes or base types.
+        /// </summary>
+        bool WithoutSubTypeMapping { get; }
     }
 }

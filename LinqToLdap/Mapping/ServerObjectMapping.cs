@@ -21,6 +21,8 @@ namespace LinqToLdap.Mapping
         public bool HasCatchAllMapping => false;
         public bool IncludeObjectClasses => false;
 
+        public bool FlattenHierarchy => true;
+
 #if (!NET35 && !NET40)
         public System.Collections.ObjectModel.ReadOnlyDictionary<string, string> Properties => new System.Collections.ObjectModel.ReadOnlyDictionary<string, string>(new Dictionary<string, string>());
 #else

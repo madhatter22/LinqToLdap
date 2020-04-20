@@ -85,6 +85,8 @@ namespace LinqToLdap.Mapping
         public ReadOnlyCollection<IObjectMapping> SubTypeMappings => _readOnlySubTypeMappings ??
                                                                      (_readOnlySubTypeMappings = new ReadOnlyCollection<IObjectMapping>(SubTypeMappingsObjectClassDictionary.Values.ToList()));
 
+        public bool WithoutSubTypeMapping { get; set; }
+
         public IEnumerable<IPropertyMapping> GetPropertyMappings()
         {
             return _propertyMappings.Values;
@@ -153,7 +155,7 @@ namespace LinqToLdap.Mapping
 
         public virtual void AddSubTypeMapping(IObjectMapping mapping)
         {
-            if (SubTypeMappingsObjectClassDictionary.Values.Contains(mapping)) return;
+            if (WithoutSubTypeMapping || SubTypeMappingsObjectClassDictionary.Values.Contains(mapping)) return;
 
             var currentMappings = SortByInheritanceDescending(SubTypeMappingsObjectClassDictionary.Values.Union(new[] { mapping }));
 

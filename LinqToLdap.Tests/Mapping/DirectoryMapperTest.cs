@@ -21,27 +21,11 @@ namespace LinqToLdap.Tests.Mapping
 
         public string Property1 { get; set; }
 
-
         [TestInitialize]
         public void SetUp()
         {
             _classMap = new Mock<IClassMap>();
             _mapper = new DirectoryMapper();
-            //_mapper.AutoMapWith(type =>
-            //                        {
-            //                            var mapType = typeof (AutoClassMap<>).MakeGenericType(type);
-
-            //                            return
-            //                                (IClassMap) Activator.CreateInstance(mapType);
-            //                        });
-
-            //_mapper.AttributeMapWith(type =>
-            //                             {
-            //                                 var mapType = typeof (AttributeClassMap<>).MakeGenericType(type);
-
-            //                                 return
-            //                                     (IClassMap) Activator.CreateInstance(mapType);
-            //                             });
         }
 
         [TestMethod]
@@ -166,7 +150,7 @@ namespace LinqToLdap.Tests.Mapping
             //assert
             var mappings = _mapper.GetMappings();
             mappings.Should().Have.Count.EqualTo(3);
-            mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof (AssemblyTestClass).ToString());
+            mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AssemblyTestClass).ToString());
             mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AssenblyTestClass2).ToString());
             mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AssemblyTestClassSub).ToString());
         }
@@ -184,13 +168,13 @@ namespace LinqToLdap.Tests.Mapping
         [TestMethod]
         public void GetMapping_Class_Without_DirectorySchemaAttribute_Throws_Exception()
         {
-            //prepare 
+            //prepare
             Action action = () => _mapper.GetMapping(typeof(object));
 
             //act
             action.Should().Throw<MappingException>()
                 .And.Exception.Message.Should()
-                .Be.EqualTo(string.Format("Mapping not found for '{0}'", typeof (object).FullName));
+                .Be.EqualTo(string.Format("Mapping not found for '{0}'", typeof(object).FullName));
         }
 
         [TestMethod]
@@ -296,7 +280,7 @@ namespace LinqToLdap.Tests.Mapping
             //arrange
             var baseTypeMapping = new Mock<IObjectMapping>();
             baseTypeMapping.SetupGet(x => x.ObjectClasses)
-                .Returns(new []{"base"});
+                .Returns(new[] { "base" });
             baseTypeMapping.Setup(x => x.Type)
                 .Returns(typeof(AttributeClass));
             var subTypeMapping = new Mock<IObjectMapping>();
@@ -327,7 +311,7 @@ namespace LinqToLdap.Tests.Mapping
             subTypeMapping.Setup(x => x.Type)
                 .Returns(typeof(SubAttributeClass));
             subTypeMapping.Setup(x => x.ObjectClasses)
-                .Returns(new[] {"base"});
+                .Returns(new[] { "base" });
 
             //act
             Executing.This(() => DirectoryMapper.ValidateObjectClasses(baseTypeMapping.Object, subTypeMapping.Object))
@@ -351,7 +335,7 @@ namespace LinqToLdap.Tests.Mapping
             baseTypeMapping.SetupGet(x => x.ObjectClasses)
                 .Returns(new[] { "base" });
             baseTypeMapping.SetupGet(x => x.SubTypeMappings)
-                .Returns(new ReadOnlyCollection<IObjectMapping>(new [] { subTypeMapping2.Object }));
+                .Returns(new ReadOnlyCollection<IObjectMapping>(new[] { subTypeMapping2.Object }));
             baseTypeMapping.SetupGet(x => x.HasSubTypeMappings)
                 .Returns(true);
             baseTypeMapping.Setup(x => x.Type)
@@ -401,7 +385,25 @@ namespace LinqToLdap.Tests.Mapping
                 .NotThrow();
         }
 
-        [DirectorySchema("test", ObjectClasses = new [] {"base"})]
+        [TestMethod]
+        public void GetMapping_types_configured_to_flatten_hiearchy_do_not_map_with_inheritance()
+        {
+            //act
+            var baseType = _mapper.GetMapping<AttributeWithoutHierarchyClass>();
+            var subType = _mapper.GetMapping<SubAttributeWithoutHierarchyClass>();
+
+            //assert
+            baseType.SubTypeMappings.Should().Not.Contain(subType).And.Have.Count.EqualTo(0);
+            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property1)).Should().Not.Be.Null();
+            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property2)).Should().Not.Be.Null();
+
+            var instance = new SubAttributeWithoutHierarchyClass();
+            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property1)).SetValue(instance, "sub");
+
+            instance.Property1.Should().Be.EqualTo("sub");
+        }
+
+        [DirectorySchema("test", ObjectClasses = new[] { "base" })]
         private class AttributeClass
         {
             [DirectoryAttribute]
@@ -434,6 +436,20 @@ namespace LinqToLdap.Tests.Mapping
         {
             [DirectoryAttribute]
             public string Property4 { get; set; }
+        }
+
+        [DirectorySchema("test", ObjectClasses = new[] { "base" }, WithoutSubTypeMapping = true)]
+        private class AttributeWithoutHierarchyClass
+        {
+            [DirectoryAttribute]
+            public string Property1 { get; set; }
+        }
+
+        [DirectorySchema("testsub", ObjectClasses = new[] { "base", "sub" }, WithoutSubTypeMapping = true)]
+        private class SubAttributeWithoutHierarchyClass : AttributeWithoutHierarchyClass
+        {
+            [DirectoryAttribute]
+            public string Property2 { get; set; }
         }
     }
 }
