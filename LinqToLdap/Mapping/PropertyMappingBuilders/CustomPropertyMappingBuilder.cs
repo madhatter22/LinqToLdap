@@ -20,9 +20,8 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
         }
 
         public bool IsDistinguishedName { get { return false; } }
-        public bool IsReadOnly { get; private set; }
+        public ReadOnly? ReadOnlyConfiguration { get; private set; }
 
-        public bool IsStoreGenerated { get; private set; }
         public string AttributeName { get; private set; }
         public PropertyInfo PropertyInfo { get; set; }
 
@@ -40,9 +39,8 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
                 AttributeName = AttributeName ?? PropertyInfo.Name.Replace('_', '-'),
                 Getter = DelegateBuilder.BuildGetter<T>(PropertyInfo),
                 Setter = DelegateBuilder.BuildSetter<T>(PropertyInfo),
-                IsStoreGenerated = IsStoreGenerated,
                 IsDistinguishedName = IsDistinguishedName,
-                IsReadOnly = IsReadOnly,
+                ReadOnly = IsDistinguishedName ? Mapping.ReadOnly.Always : ReadOnlyConfiguration.GetValueOrDefault(Mapping.ReadOnly.Never)
             };
             return new CustomPropertyMapping<T, TProperty>(arguments, _convertFrom, _convertTo, _convertToFilter, _isEqual);
         }
@@ -50,12 +48,6 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
         public ICustomPropertyMapper<T, TProperty> Named(string attributeName)
         {
             AttributeName = attributeName.IsNullOrEmpty() ? null : attributeName;
-            return this;
-        }
-
-        public ICustomPropertyMapper<T, TProperty> StoreGenerated()
-        {
-            IsStoreGenerated = true;
             return this;
         }
 
@@ -112,9 +104,9 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
             return this;
         }
 
-        public ICustomPropertyMapper<T, TProperty> ReadOnly()
+        public ICustomPropertyMapper<T, TProperty> ReadOnly(ReadOnly readOnly = Mapping.ReadOnly.Always)
         {
-            IsReadOnly = true;
+            ReadOnlyConfiguration = readOnly;
 
             return this;
         }

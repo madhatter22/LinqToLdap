@@ -29,7 +29,7 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
             private set { _dateTimeFormat = value; }
         }
 
-        public bool IsReadOnly { get; private set; }
+        public ReadOnly? ReadOnlyConfiguration { get; private set; }
         public bool IsDistinguishedName { get; private set; }
         public bool IsStoreGenerated { get; private set; }
         public string AttributeName { get; private set; }
@@ -47,9 +47,8 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
                 Setter = !type.IsAnonymous()
                              ? DelegateBuilder.BuildSetter<T>(PropertyInfo)
                              : null,
-                IsStoreGenerated = IsStoreGenerated,
                 IsDistinguishedName = IsDistinguishedName,
-                IsReadOnly = IsReadOnly,
+                ReadOnly = ReadOnlyConfiguration.GetValueOrDefault(ReadOnly.Never),
                 DirectoryMappings = _directoryMappings,
                 InstanceMappings = _instanceMappings
             };
@@ -76,15 +75,15 @@ namespace LinqToLdap.Mapping.PropertyMappingBuilders
             return this;
         }
 
-        IDateTimePropertyMappingBuilder<T, TProperty> IDateTimePropertyMappingBuilder<T, TProperty>.StoreGenerated()
+        IDateTimePropertyMappingBuilder<T, TProperty> IDateTimePropertyMappingBuilder<T, TProperty>.ReadOnly(ReadOnly readOnly)
         {
-            IsStoreGenerated = true;
+            ReadOnlyConfiguration = readOnly;
             return this;
         }
 
         IDateTimePropertyMappingBuilder<T, TProperty> IDateTimePropertyMappingBuilder<T, TProperty>.ReadOnly()
         {
-            IsReadOnly = true;
+            ReadOnlyConfiguration = ReadOnly.Always;
             return this;
         }
 

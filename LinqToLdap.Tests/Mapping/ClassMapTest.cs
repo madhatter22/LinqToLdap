@@ -34,7 +34,7 @@ namespace LinqToLdap.Tests.Mapping
                 .EnumStoredAsInt();
             Map(s => s.Property2)
                 .Named("prop2")
-                .StoreGenerated();
+                .ReadOnly(ReadOnly.OnAdd);
 
             DistinguishedName(s => s.Property3);
             MapCustomProperty(s => s.Property4).Named("prop4")
@@ -48,7 +48,7 @@ namespace LinqToLdap.Tests.Mapping
                 .CompareChangesUsing((guid1, guid2) => guid1.Equals(guid2));
             Map(s => s.Property5)
                 .Named("cn")
-                .ReadOnly();
+                .ReadOnly(ReadOnly.Always);
 
             return this;
         }
@@ -66,7 +66,7 @@ namespace LinqToLdap.Tests.Mapping
                 .EnumStoredAsInt();
             Map(s => s.Property2)
                 .Named("prop2")
-                .StoreGenerated();
+                .ReadOnly();
             DistinguishedName(s => s.Property3);
             MapCustomProperty(s => s.Property4).Named("prop4")
                 .ConvertFromDirectoryUsing(d =>
@@ -142,27 +142,26 @@ namespace LinqToLdap.Tests.Mapping
 
             first.AttributeName.Should().Be.Null();
             first.PropertyInfo.Should().Not.Be.Null();
-            first.IsStoreGenerated.Should().Be.False();
+            first.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Never);
             first.IsEnumStoredAsInt.Should().Be.True();
 
             second.AttributeName.Should().Be.EqualTo("prop2");
             second.PropertyInfo.Should().Not.Be.Null();
-            second.IsStoreGenerated.Should().Be.True();
+            second.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.OnAdd);
             second.IsEnumStoredAsInt.Should().Be.False();
 
             third.IsDistinguishedName.Should().Be.True();
             third.AttributeName.Should().Be.EqualTo("distinguishedname");
             third.PropertyInfo.Should().Not.Be.Null();
-            third.IsStoreGenerated.Should().Be.False();
+            third.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
 
-            fourth.IsStoreGenerated.Should().Be.False();
+            fourth.ReadOnlyConfiguration.Should().Be.EqualTo(null);
             fourth.AttributeName.Should().Be.EqualTo("prop4");
             fourth.PropertyInfo.Should().Not.Be.Null();
 
-            fifth.IsReadOnly.Should().Be.True();
+            fifth.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
             fifth.AttributeName.Should().Be.EqualTo("cn");
             fifth.PropertyInfo.Should().Not.Be.Null();
-            fifth.IsStoreGenerated.Should().Be.False();
         }
 
         [TestMethod]

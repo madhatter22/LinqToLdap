@@ -5,11 +5,10 @@ namespace LinqToLdap.Mapping
 {
     internal abstract class PropertyMapping : IPropertyMapping
     {
-        protected PropertyMapping(Type propertyType, string propertyName, string attributeName, bool isStoreGenerated, bool isDistinguishedName, bool isReadOnly)
+        protected PropertyMapping(Type propertyType, string propertyName, string attributeName, bool isDistinguishedName, ReadOnly readOnly)
         {
             IsDistinguishedName = isDistinguishedName;
-            IsReadOnly = isReadOnly || isDistinguishedName;
-            IsStoreGenerated = isStoreGenerated;
+            ReadOnly = isDistinguishedName ? ReadOnly.Always : readOnly;
             PropertyType = propertyType;
             PropertyName = propertyName;
             AttributeName = attributeName;
@@ -35,9 +34,10 @@ namespace LinqToLdap.Mapping
 
         public Type PropertyType { get; private set; }
         public Type UnderlyingType { get; private set; }
-        public bool IsStoreGenerated { get; private set; }
+
+        public ReadOnly ReadOnly { get; private set; }
+
         public bool IsDistinguishedName { get; private set; }
-        public bool IsReadOnly { get; private set; }
 
         public string PropertyName { get; private set; }
         public string AttributeName { get; private set; }

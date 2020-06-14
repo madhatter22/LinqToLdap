@@ -72,11 +72,12 @@ namespace LinqToLdap.Mapping
                     if (p.Key.EnumStoredAsInt)
                         property.EnumStoredAsInt();
 
-                    if (p.Key.StoreGenerated)
-                        property.StoreGenerated();
-
-                    if (p.Key.ReadOnly)
-                        property.ReadOnly();
+                    if (p.Key.ReadOnlyOnAdd && p.Key.ReadOnlyOnSet)
+                        property.ReadOnly(ReadOnly.Always);
+                    else if (p.Key.ReadOnlyOnAdd)
+                        property.ReadOnly(ReadOnly.OnAdd);
+                    else if (p.Key.ReadOnlyOnSet)
+                        property.ReadOnly(ReadOnly.OnUpdate);
 
                     property.DateTimeFormat(p.Key.DateTimeFormat);
                 });

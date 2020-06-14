@@ -41,8 +41,8 @@ namespace LinqToLdap.Mapping
                         MapPropertyInfo(p,
                             p.Name.Equals("DistinguishedName", StringComparison.OrdinalIgnoreCase) ||
                             p.Name.Equals("entrydn", StringComparison.OrdinalIgnoreCase),
-                            p.Name.Equals("cn", StringComparison.OrdinalIgnoreCase) ||
-                            p.Name.Equals("ou", StringComparison.OrdinalIgnoreCase)));
+                            (p.Name.Equals("cn", StringComparison.OrdinalIgnoreCase) ||
+                            p.Name.Equals("ou", StringComparison.OrdinalIgnoreCase)) ? ReadOnly.Always : default(ReadOnly?)));
 
             var catchAll = properties
                 .FirstOrDefault(p => typeof(IDirectoryAttributes).IsAssignableFrom(p.PropertyType));

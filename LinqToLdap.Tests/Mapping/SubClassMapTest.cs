@@ -39,7 +39,7 @@ namespace LinqToLdap.Tests.Mapping
         public void Map_ValidMappingWithIgnore_HasCorrectMappedInformation()
         {
             //act
-            var mapping = new SubTestClassMapping().PerformMapping("subcontainer", objectCategory:"subcategory", objectClasses: new[]{"subclass"})
+            var mapping = new SubTestClassMapping().PerformMapping("subcontainer", objectCategory: "subcategory", objectClasses: new[] { "subclass" })
                 .CastTo<SubTestClassMapping>();
 
             //assert
@@ -53,14 +53,13 @@ namespace LinqToLdap.Tests.Mapping
             var first = propertyMappings[0].As<IPropertyMappingBuilder>();
             var second = propertyMappings[3].As<IPropertyMappingBuilder>();
             var third = propertyMappings[4].As<IPropertyMappingBuilder>();
-            
+
             first.AttributeName.Should().Be.EqualTo("prop2");
             first.PropertyInfo.Should().Not.Be.Null();
 
-            second.IsReadOnly.Should().Be.True();
+            second.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
             second.AttributeName.Should().Be.EqualTo("ou");
             second.PropertyInfo.Should().Not.Be.Null();
-            second.IsStoreGenerated.Should().Be.False();
 
             third.PropertyName.Should().Be.EqualTo("Property6");
         }

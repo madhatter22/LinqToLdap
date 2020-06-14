@@ -1,16 +1,15 @@
-﻿using System;
-using System.DirectoryServices.Protocols;
-using LinqToLdap.Mapping;
-using LinqToLdap.Tests.TestSupport.ExtensionMethods;
+﻿using LinqToLdap.Mapping;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpTestsEx;
+using System;
+using System.DirectoryServices.Protocols;
 
 namespace LinqToLdap.Tests.Mapping
 {
     internal class PropertyMappingTestClass : PropertyMapping
     {
-        public PropertyMappingTestClass(Type propertyType, string propertyName, string attributeName, bool isStoreGenerated = false, bool isDistinguishedName = false, bool isCommonName = false)
-            : base(propertyType, propertyName, attributeName, isStoreGenerated, isDistinguishedName, isCommonName)
+        public PropertyMappingTestClass(Type propertyType, string propertyName, string attributeName, bool isDistinguishedName = false, ReadOnly readOnly = ReadOnly.Never)
+            : base(propertyType, propertyName, attributeName, isDistinguishedName, readOnly)
         {
         }
 
@@ -56,7 +55,7 @@ namespace LinqToLdap.Tests.Mapping
             //assert
             mapping.AttributeName.Should().Be.EqualTo("att");
             mapping.PropertyName.Should().Be.Equals("prop");
-            mapping.PropertyType.Should().Be.EqualTo(typeof (string));
+            mapping.PropertyType.Should().Be.EqualTo(typeof(string));
             mapping.IsNullable.Should().Be.True();
         }
 
@@ -65,7 +64,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //act
             var mapping = new PropertyMappingTestClass(typeof(string[]), "prop", "prop");
-            
+
             //assert
             mapping.IsNullable.Should().Be.True();
         }
@@ -75,7 +74,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //act
             var mapping = new PropertyMappingTestClass(typeof(byte[]), "prop", "prop");
-            
+
             //assert
             mapping.IsNullable.Should().Be.True();
         }
@@ -99,13 +98,13 @@ namespace LinqToLdap.Tests.Mapping
             //assert
             mapping.IsNullable.Should().Be.False();
         }
-        
+
         [TestMethod]
         public void Default_NullableValueType_ReturnsNull()
         {
             //prepare
             var mapping = new PropertyMappingTestClass(typeof(DateTime?), "prop", "prop");
-            
+
             //act
             var value = mapping.Default();
 

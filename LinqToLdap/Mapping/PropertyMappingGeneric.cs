@@ -8,7 +8,7 @@ namespace LinqToLdap.Mapping
     internal abstract class PropertyMappingGeneric<T> : PropertyMapping where T : class
     {
         protected PropertyMappingGeneric(PropertyMappingArguments<T> arguments)
-            : base(arguments.PropertyType, arguments.PropertyName, arguments.AttributeName, arguments.IsStoreGenerated, arguments.IsDistinguishedName, arguments.IsReadOnly)
+            : base(arguments.PropertyType, arguments.PropertyName, arguments.AttributeName, arguments.IsDistinguishedName, arguments.ReadOnly)
         {
             Getter = arguments.Getter;
             Setter = arguments.Setter;

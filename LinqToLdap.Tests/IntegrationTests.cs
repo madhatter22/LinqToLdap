@@ -26,19 +26,19 @@ namespace LinqToLdap.Tests
         [DirectoryAttribute("sn")]
         public string LastName { get; set; }
 
-        [DirectoryAttribute("whenchanged", StoreGenerated = true)]
+        [DirectoryAttribute("whenchanged", true)]
         public DateTime? LastChanged { get; set; }
 
-        [DirectoryAttribute("objectsid", StoreGenerated = true)]
+        [DirectoryAttribute("objectsid", true)]
         public SecurityIdentifier Sid { get; set; }
 
-        [DirectoryAttribute("usnchanged", StoreGenerated = true)]
+        [DirectoryAttribute("usnchanged", true)]
         public int Version { get; set; }
 
-        [DirectoryAttribute("objectguid", StoreGenerated = true)]
+        [DirectoryAttribute("objectguid", true)]
         public Guid Guid { get; set; }
 
-        [DirectoryAttribute("cn", ReadOnly = true)]
+        [DirectoryAttribute("cn", true)]
         public string CommonName { get; set; }
     }
 
@@ -51,7 +51,7 @@ namespace LinqToLdap.Tests
         [DirectoryAttribute]
         public string PostalCode { get; set; }
 
-        [DirectoryAttribute(StoreGenerated = true)]
+        [DirectoryAttribute(true)]
         public DateTime? WhenCreated { get; set; }
 
         [DirectoryAttribute("givenname")]
@@ -79,7 +79,7 @@ namespace LinqToLdap.Tests
     [DirectorySchema(NamingContext, ObjectClasses = new[] { "top", "person", "organizationalPerson", "user" })]
     public class UserInheritanceTest : OrgPersonInheritanceTest
     {
-        [DirectoryAttribute("badpwdcount", StoreGenerated = true)]
+        [DirectoryAttribute("badpwdcount", true)]
         public int BadPasswordCount { get; set; }
 
         [DirectoryAttribute(DateTimeFormat = null)]
@@ -94,7 +94,7 @@ namespace LinqToLdap.Tests
         [DistinguishedName]
         public string DistinguishedName { get; set; }
 
-        [DirectoryAttribute("cn", ReadOnly = true)]
+        [DirectoryAttribute("cn", true)]
         public string CommonName { get; set; }
 
         public IDirectoryAttributes CatchAll { get; set; }
@@ -137,7 +137,7 @@ namespace LinqToLdap.Tests
         [DistinguishedName]
         public string DistinguishedName { get; set; }
 
-        [DirectoryAttribute("cn", ReadOnly = true)]
+        [DirectoryAttribute("cn", true)]
         public string CommonName { get; private set; }
 
         [DirectoryAttribute]
@@ -163,16 +163,16 @@ namespace LinqToLdap.Tests
 
             DistinguishedName(c => c.DistinguishedName);
             Map(c => c.Cn)
-                .ReadOnly();
+                .ReadOnly(ReadOnly.Always);
 
             Map(c => c.Mail);
             Map(c => c.ObjectGuid)
-                .StoreGenerated();
+                .ReadOnly(ReadOnly.Always);
             Map(c => c.Manager)
                 .Named("manager");
             Map(c => c.Employees)
                 .Named("directreports")
-                .ReadOnly();
+                .ReadOnly(ReadOnly.Always);
             Map(c => c.AccountExpires)
                 .Named("accountExpires")
                 .DateTimeFormat(null)
@@ -181,10 +181,10 @@ namespace LinqToLdap.Tests
                 .InstanceValueNullOrDefault().Sends("9223372036854775807");
 
             Map(c => c.WhenCreated)
-                .StoreGenerated();
+                .ReadOnly(ReadOnly.Always);
 
             Map(c => c.ObjectSid)
-                .StoreGenerated();
+                .ReadOnly(ReadOnly.Always);
 
             return this;
         }
@@ -693,6 +693,7 @@ namespace LinqToLdap.Tests
             user.Title.Should().Not.Be.NullOrEmpty();
             user.AccountExpires.Satisfies(x => x == null || x < utcNow);
             user.AccountExpires = utcNow;
+            user.WhenCreated.Should().Have.Value();
             _context.Update(user);
 
             var updatedUser =

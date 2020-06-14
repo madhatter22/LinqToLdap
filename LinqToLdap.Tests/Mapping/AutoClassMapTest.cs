@@ -23,16 +23,16 @@ namespace LinqToLdap.Tests.Mapping
         {
             var anon =
                 new
-                    {
-                        DistinguishedName = default(string),
-                        Cn = default(string),
-                        Property1 = default(int?),
-                        Property2 = default(string),
-                        Property3 = DateTime.Now,
-                        Property4 = new Guid(),
-                        Property5 = default(byte[]),
-                        Property6 = default(string[])
-                    };
+                {
+                    DistinguishedName = default(string),
+                    Cn = default(string),
+                    Property1 = default(int?),
+                    Property2 = default(string),
+                    Property3 = DateTime.Now,
+                    Property4 = new Guid(),
+                    Property5 = default(byte[]),
+                    Property6 = default(string[])
+                };
             AssertClassMap(anon, "container", "oc", new List<string> { "cl" });
         }
 
@@ -43,7 +43,7 @@ namespace LinqToLdap.Tests.Mapping
                 .CastTo<AutoClassMap<AutoClassMapTest>>();
             var propertyMappings = mapping.PropertyMappings;
             propertyMappings[0].IsDistinguishedName.Should().Be.True();
-            propertyMappings[1].IsReadOnly.Should().Be.True();
+            propertyMappings[1].ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
             propertyMappings.Should().Have.Count.EqualTo(4);
             propertyMappings.Count(p => p.PropertyInfo.Name == "Property1" || p.PropertyInfo.Name == "Property3" || p.PropertyInfo.Name == "DistinguishedName" || p.PropertyInfo.Name == "Cn")
                 .Should().Be.EqualTo(2);
@@ -54,7 +54,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<bool>("IncludeObjectClasses").Should().Be.False();
         }
 
-        private static void AssertClassMap<T>(T example, string container, string ocategory, IEnumerable<string> oclass) where T : class 
+        private static void AssertClassMap<T>(T example, string container, string ocategory, IEnumerable<string> oclass) where T : class
         {
             var mapping = new AutoClassMap<T>()
                 .PerformMapping(container, ocategory, false, oclass, false)
@@ -62,7 +62,7 @@ namespace LinqToLdap.Tests.Mapping
             var mappedProperties = mapping.PropertyMappings;
             mappedProperties.Should().Have.Count.EqualTo(8);
             mappedProperties[0].IsDistinguishedName.Should().Be.True();
-            mappedProperties[1].IsReadOnly.Should().Be.True();
+            mappedProperties[1].ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
             mapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo(container);
             mapping.PropertyValue<bool>("IncludeObjectCategory").Should().Be.False();
             mapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("oc");

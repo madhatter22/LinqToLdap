@@ -13,19 +13,18 @@ namespace LinqToLdap.Mapping
 {
     internal class PropertyMappingBuilder<T, TProperty> : IPropertyMapperGeneric<TProperty>, IPropertyMappingBuilder, IPropertyMapper where T : class
     {
-        public PropertyMappingBuilder(PropertyInfo propertyInfo, bool isDistinguishedName, bool isReadyOnly)
+        public PropertyMappingBuilder(PropertyInfo propertyInfo, bool isDistinguishedName, ReadOnly readOnly)
         {
             IsDistinguishedName = isDistinguishedName;
             PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
-            IsReadOnly = isReadyOnly;
+            ReadOnlyConfiguration = isDistinguishedName ? ReadOnly.Always : readOnly;
         }
 
         public string DateTimeFormat { get; private set; } = "yyyyMMddHHmmss.0Z";
 
-        public bool IsReadOnly { get; private set; }
+        public ReadOnly? ReadOnlyConfiguration { get; private set; }
         public bool IsDistinguishedName { get; }
         public bool IsEnumStoredAsInt { get; private set; }
-        public bool IsStoreGenerated { get; private set; }
         public string AttributeName { get; private set; }
         public PropertyInfo PropertyInfo { get; }
 
@@ -45,9 +44,8 @@ namespace LinqToLdap.Mapping
                 Setter = !type.IsAnonymous()
                                                  ? DelegateBuilder.BuildSetter<T>(PropertyInfo)
                                                  : null,
-                IsStoreGenerated = IsStoreGenerated,
                 IsDistinguishedName = IsDistinguishedName,
-                IsReadOnly = IsReadOnly,
+                ReadOnly = IsDistinguishedName ? ReadOnly.Always : ReadOnlyConfiguration.GetValueOrDefault(ReadOnly.Never),
                 DirectoryMappings = null,
                 InstanceMappings = null
             };
@@ -155,21 +153,27 @@ namespace LinqToLdap.Mapping
             return this;
         }
 
-        IPropertyMapperGeneric<TProperty> IPropertyMapperGeneric<TProperty>.StoreGenerated()
+        IPropertyMapper IPropertyMapper.ReadOnly(ReadOnly readOnly)
         {
-            IsStoreGenerated = true;
+            ReadOnlyConfiguration = readOnly;
+            return this;
+        }
+
+        IPropertyMapperGeneric<TProperty> IPropertyMapperGeneric<TProperty>.ReadOnly(ReadOnly readOnly)
+        {
+            ReadOnlyConfiguration = readOnly;
             return this;
         }
 
         IPropertyMapper IPropertyMapper.ReadOnly()
         {
-            IsReadOnly = true;
+            ReadOnlyConfiguration = ReadOnly.Always;
             return this;
         }
 
         IPropertyMapperGeneric<TProperty> IPropertyMapperGeneric<TProperty>.ReadOnly()
         {
-            IsReadOnly = true;
+            ReadOnlyConfiguration = ReadOnly.Always;
             return this;
         }
 
@@ -194,12 +198,6 @@ namespace LinqToLdap.Mapping
         IPropertyMapper IPropertyMapper.EnumStoredAsInt()
         {
             IsEnumStoredAsInt = true;
-            return this;
-        }
-
-        IPropertyMapper IPropertyMapper.StoreGenerated()
-        {
-            IsStoreGenerated = true;
             return this;
         }
     }

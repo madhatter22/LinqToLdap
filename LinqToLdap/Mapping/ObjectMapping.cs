@@ -11,16 +11,19 @@ namespace LinqToLdap.Mapping
     {
 #if (!NET35 && !NET40)
         private readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappings;
+        private readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappingsForAdd;
+        private readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappingsForUpdate;
         private readonly System.Collections.ObjectModel.ReadOnlyDictionary<string, IPropertyMapping> _attributePropertyMappings;
         private System.Collections.ObjectModel.ReadOnlyDictionary<string, string> _propertyNames;
 #else
         private readonly Collections.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappings;
+        private readonly Collections.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappingsForAdd;
+        private readonly Collections.ReadOnlyDictionary<string, IPropertyMapping> _propertyMappingsForUpdate;
         private readonly Collections.ReadOnlyDictionary<string, IPropertyMapping> _attributePropertyMappings;
         private Collections.ReadOnlyDictionary<string, string> _propertyNames;
 #endif
         private readonly IPropertyMapping _distinguishedName;
         private readonly IPropertyMapping _catchAll;
-        private readonly ReadOnlyCollection<IPropertyMapping> _updateablePropertyMappings;
         private ReadOnlyCollection<IObjectMapping> _readOnlySubTypeMappings;
 
         protected ObjectMapping(string namingContext, IEnumerable<IPropertyMapping> propertyMappings,
@@ -50,10 +53,15 @@ namespace LinqToLdap.Mapping
             _catchAll =
                 localPropertyMappings.FirstOrDefault(p => typeof(IDirectoryAttributes).IsAssignableFrom(p.PropertyType));
 
-            _updateablePropertyMappings =
-                new ReadOnlyCollection<IPropertyMapping>(
-                    _propertyMappings.Values.Where(p => !p.IsStoreGenerated && !p.IsDistinguishedName && !p.IsReadOnly)
-                        .ToList());
+            _propertyMappingsForAdd = localPropertyMappings
+                .Where(x => x.ReadOnly == ReadOnly.OnUpdate || x.ReadOnly == ReadOnly.Never)
+                .Where(x => !x.IsDistinguishedName)
+                .ToDictionary(pm => pm.PropertyName).ToReadOnlyDictionary();
+
+            _propertyMappingsForUpdate = localPropertyMappings
+                .Where(x => x.ReadOnly == ReadOnly.OnAdd || x.ReadOnly == ReadOnly.Never)
+                .Where(x => !x.IsDistinguishedName)
+                .ToDictionary(pm => pm.PropertyName).ToReadOnlyDictionary();
 
             IncludeObjectCategory = includeObjectCategory;
             IncludeObjectClasses = includeObjectClasses;
@@ -83,7 +91,7 @@ namespace LinqToLdap.Mapping
 #endif
 
         public ReadOnlyCollection<IObjectMapping> SubTypeMappings => _readOnlySubTypeMappings ??
-                                                                     (_readOnlySubTypeMappings = new ReadOnlyCollection<IObjectMapping>(SubTypeMappingsObjectClassDictionary.Values.ToList()));
+            (_readOnlySubTypeMappings = new ReadOnlyCollection<IObjectMapping>(SubTypeMappingsObjectClassDictionary.Values.ToList()));
 
         public bool WithoutSubTypeMapping { get; set; }
 
@@ -92,9 +100,14 @@ namespace LinqToLdap.Mapping
             return _propertyMappings.Values;
         }
 
-        public IEnumerable<IPropertyMapping> GetUpdateablePropertyMappings()
+        public IEnumerable<IPropertyMapping> GetPropertyMappingsForAdd()
         {
-            return _updateablePropertyMappings;
+            return _propertyMappingsForAdd.Values;
+        }
+
+        public IEnumerable<IPropertyMapping> GetPropertyMappingsForUpdate()
+        {
+            return _propertyMappingsForUpdate.Values;
         }
 
         public IPropertyMapping GetPropertyMapping(string name, Type owningType = null)

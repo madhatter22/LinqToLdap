@@ -16,14 +16,14 @@ namespace LinqToLdap.Mapping
         {
             if (collection == null || collection.Count == 0)
             {
-                foreach (var property in mapping.GetUpdateablePropertyMappings())
+                foreach (var property in mapping.GetPropertyMappingsForUpdate())
                 {
                     yield return property.GetDirectoryAttributeModification(instance);
                 }
             }
             else
             {
-                foreach (var updateablePropertyMapping in mapping.GetUpdateablePropertyMappings())
+                foreach (var updateablePropertyMapping in mapping.GetPropertyMappingsForUpdate())
                 {
                     var propertyName = updateablePropertyMapping.PropertyName;
                     object value = collection[propertyName];

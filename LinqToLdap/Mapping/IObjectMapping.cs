@@ -71,10 +71,16 @@ namespace LinqToLdap.Mapping
         IEnumerable<IPropertyMapping> GetPropertyMappings();
 
         /// <summary>
-        /// All mapped properties except those mapped as read-only, store-generated, or distinguished name.
+        /// All mapped properties except those that cannot be modified during an add.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IPropertyMapping> GetUpdateablePropertyMappings();
+        IEnumerable<IPropertyMapping> GetPropertyMappingsForAdd();
+
+        /// <summary>
+        /// All mapped properties except those that cannot be modified during an update.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<IPropertyMapping> GetPropertyMappingsForUpdate();
 
         /// <summary>
         /// Gets a property mapping by property name

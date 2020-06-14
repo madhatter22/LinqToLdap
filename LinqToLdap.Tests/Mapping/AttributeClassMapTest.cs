@@ -26,7 +26,7 @@ namespace LinqToLdap.Tests.Mapping
         [DistinguishedName]
         public string Property5 { get; set; }
 
-        [DirectoryAttribute("ou", ReadOnly = true)]
+        [DirectoryAttribute("ou", true)]
         protected string Property6 { get; set; }
 
         [TestMethod]

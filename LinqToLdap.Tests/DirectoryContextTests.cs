@@ -162,7 +162,7 @@ namespace LinqToLdap.Tests
             propertyMapping1.Setup(pm => pm.GetDirectoryAttributeModification(obj))
                 .Returns("pm1".ToDirectoryModification("att1", DirectoryAttributeOperation.Replace));
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping> { propertyMapping1.Object });
 
             configuration.SetupGet(c => c.Mapper)
@@ -208,7 +208,7 @@ namespace LinqToLdap.Tests
             var mapper = new Mock<IDirectoryMapper>();
             var objectMapping = new Mock<IObjectMapping>();
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping>());
 
             objectMapping.SetupGet(om => om.ObjectClasses)
@@ -242,7 +242,7 @@ namespace LinqToLdap.Tests
             var mapper = new Mock<IDirectoryMapper>();
             var objectMapping = new Mock<IObjectMapping>();
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping>());
 
             objectMapping.SetupGet(om => om.ObjectClasses)
@@ -283,7 +283,7 @@ namespace LinqToLdap.Tests
             var mapper = new Mock<IDirectoryMapper>();
             var objectMapping = new Mock<IObjectMapping>();
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping>());
 
             objectMapping.SetupGet(om => om.ObjectClasses)
@@ -327,7 +327,7 @@ namespace LinqToLdap.Tests
             propertyMapping1.Setup(pm => pm.GetDirectoryAttributeModification(obj))
                 .Returns("pm1".ToDirectoryModification("att1", DirectoryAttributeOperation.Replace));
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping> { propertyMapping1.Object });
 
             configuration.SetupGet(c => c.Mapper)
@@ -372,7 +372,7 @@ namespace LinqToLdap.Tests
             propertyMapping1.Setup(pm => pm.GetDirectoryAttributeModification(obj))
                 .Returns("pm1".ToDirectoryModification("att1", DirectoryAttributeOperation.Replace));
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping> { propertyMapping1.Object });
 
             configuration.SetupGet(c => c.Mapper)
@@ -408,7 +408,7 @@ namespace LinqToLdap.Tests
             propertyMapping1.Setup(pm => pm.GetDirectoryAttributeModification(obj))
                 .Returns("pm1".ToDirectoryModification("att1", DirectoryAttributeOperation.Replace));
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping> { propertyMapping1.Object });
 
             log.SetupGet(l => l.TraceEnabled)
@@ -452,7 +452,7 @@ namespace LinqToLdap.Tests
             propertyMapping1.Setup(pm => pm.GetDirectoryAttributeModification(obj))
                 .Returns("pm1".ToDirectoryModification("att1", DirectoryAttributeOperation.Replace));
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForUpdate())
                 .Returns(new List<IPropertyMapping> { propertyMapping1.Object });
 
             log.SetupGet(l => l.TraceEnabled)
@@ -1149,7 +1149,7 @@ namespace LinqToLdap.Tests
             propertyMapping2.Setup(pm => pm.GetDirectoryAttribute(obj))
                 .Returns(new DirectoryAttributeModification { Name = "att2" });
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForAdd())
                 .Returns(new List<IPropertyMapping> { propertyMapping2.Object, propertyMapping1.Object });
 
             objectMapping.SetupGet(om => om.ObjectClasses)
@@ -1190,7 +1190,7 @@ namespace LinqToLdap.Tests
             propertyMapping2.Setup(pm => pm.GetDirectoryAttribute(obj))
                 .Returns(new DirectoryAttributeModification { Name = "att2" });
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForAdd())
                 .Returns(new List<IPropertyMapping> { propertyMapping2.Object, propertyMapping1.Object });
 
             objectMapping.SetupGet(om => om.ObjectClasses)
@@ -1240,7 +1240,7 @@ namespace LinqToLdap.Tests
             propertyMapping2.Setup(pm => pm.GetDirectoryAttribute(obj))
                 .Returns(new DirectoryAttributeModification { Name = "att2" });
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForAdd())
                 .Returns(new List<IPropertyMapping> { propertyMapping2.Object, propertyMapping1.Object });
 
             objectMapping.SetupGet(om => om.ObjectClasses)
@@ -1290,7 +1290,7 @@ namespace LinqToLdap.Tests
             propertyMapping2.Setup(pm => pm.GetDirectoryAttribute(obj))
                 .Returns(new DirectoryAttributeModification { Name = "att2" });
 
-            objectMapping.Setup(om => om.GetUpdateablePropertyMappings())
+            objectMapping.Setup(om => om.GetPropertyMappingsForAdd())
                 .Returns(new List<IPropertyMapping> { propertyMapping2.Object, propertyMapping1.Object });
 
             objectMapping.SetupGet(om => om.ObjectClasses)

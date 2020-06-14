@@ -15,7 +15,7 @@ namespace LinqToLdap.Tests.PopulateDirectory
         [DirectoryAttribute]
         public string Manager { get; set; }
 
-        [DirectoryAttribute("badpwdcount", StoreGenerated = true)]
+        [DirectoryAttribute("badpwdcount", true)]
         public int BadPasswordCount { get; set; }
 
         public Collection<LdsUser> Employees { get; set; }
@@ -26,31 +26,31 @@ namespace LinqToLdap.Tests.PopulateDirectory
         [DirectoryAttribute]
         public string PostalCode { get; set; }
 
-        [DirectoryAttribute("cn", ReadOnly = true)]
+        [DirectoryAttribute("cn", true)]
         public string CommonName { get; set; }
 
-        [DirectoryAttribute(StoreGenerated = true)]
+        [DirectoryAttribute(true)]
         public DateTime? WhenCreated { get; set; }
 
         [DirectoryAttribute("givenname")]
         public string FirstName { get; set; }
 
-        [DirectoryAttribute("objectguid", StoreGenerated = true)]
+        [DirectoryAttribute("objectguid", true)]
         public Guid Guid { get; set; }
 
         [DirectoryAttribute("l")]
         public string City { get; set; }
 
-        [DirectoryAttribute("usnchanged", StoreGenerated = true)]
+        [DirectoryAttribute("usnchanged", true)]
         public int Version { get; set; }
 
         [DirectoryAttribute("c")]
         public string Country { get; set; }
 
-        [DirectoryAttribute("whenchanged", StoreGenerated = true)]
+        [DirectoryAttribute("whenchanged", true)]
         public DateTime? LastChanged { get; set; }
 
-        [DirectoryAttribute("objectsid", StoreGenerated = true)]
+        [DirectoryAttribute("objectsid", true)]
         public SecurityIdentifier Sid { get; set; }
 
         [DirectoryAttribute("employeeid")]

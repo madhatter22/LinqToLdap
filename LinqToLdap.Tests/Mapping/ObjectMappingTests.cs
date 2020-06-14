@@ -30,15 +30,15 @@ namespace LinqToLdap.Tests.Mapping
             _distinguishedName.Setup(x => x.PropertyName)
                 .Returns("DistinguishedName");
             _storeGenerated = new Mock<IPropertyMapping>();
-            _storeGenerated.Setup(x => x.IsStoreGenerated)
-                .Returns(true);
+            _storeGenerated.Setup(x => x.ReadOnly)
+                .Returns(ReadOnly.OnUpdate);
             _storeGenerated.Setup(x => x.AttributeName)
                 .Returns("StoreGenerated");
             _storeGenerated.Setup(x => x.PropertyName)
                 .Returns("IsStoreGenerated");
             _readOnly = new Mock<IPropertyMapping>();
-            _readOnly.Setup(x => x.IsReadOnly)
-                .Returns(true);
+            _readOnly.Setup(x => x.ReadOnly)
+                .Returns(ReadOnly.Always);
             _readOnly.Setup(x => x.AttributeName)
                 .Returns("ReadOnly");
             _readOnly.Setup(x => x.PropertyName)
@@ -50,7 +50,6 @@ namespace LinqToLdap.Tests.Mapping
                 .Returns("IsUpdateable");
         }
 
-
         [TestMethod]
         public void Constructor_Initializes_Correctly()
         {
@@ -60,16 +59,17 @@ namespace LinqToLdap.Tests.Mapping
 
             //act
             var mapping = new TestObjectMapping("context", propertyMappings,
-                "category", false, new[] {"class"}, false);
+                "category", false, new[] { "class" }, false);
 
             //assert
             mapping.NamingContext.Should().Be.EqualTo("context");
             mapping.ObjectCategory.Should().Be.EqualTo("category");
-            mapping.ObjectClasses.Should().Have.SameSequenceAs(new[] {"class"});
+            mapping.ObjectClasses.Should().Have.SameSequenceAs(new[] { "class" });
             propertyMappings.ToList().ForEach(x => mapping.GetPropertyMappings()
                 .Should().Contain(x));
             mapping.GetDistinguishedNameMapping().Should().Be.EqualTo(_distinguishedName.Object);
-            mapping.GetUpdateablePropertyMappings().Should().Contain(_updateable.Object).And.Have.Count.EqualTo(1);
+            mapping.GetPropertyMappingsForAdd().Should().Contain(_updateable.Object).And.Contain(_storeGenerated.Object).And.Have.Count.EqualTo(2);
+            mapping.GetPropertyMappingsForUpdate().Should().Contain(_updateable.Object).And.Have.Count.EqualTo(1);
             mapping.IncludeObjectCategory.Should().Be.False();
             mapping.IncludeObjectClasses.Should().Be.False();
             mapping.Properties.ForEach(x =>
@@ -115,7 +115,7 @@ namespace LinqToLdap.Tests.Mapping
 
             var subTypePropertyMapping = new Mock<IObjectMapping>();
             subTypePropertyMapping.Setup(x => x.ObjectClasses)
-                .Returns(new[] {"sub"});
+                .Returns(new[] { "sub" });
             subTypePropertyMapping.Setup(x => x.Type)
                 .Returns(typeof(SubType));
             subTypePropertyMapping.Setup(x => x.Properties)
@@ -187,7 +187,7 @@ namespace LinqToLdap.Tests.Mapping
 
             var mapping = new TestObjectMapping("context", propertyMappings,
                 "category", false, new[] { "class" }, false);
-            mapping.Type.Should().Be.EqualTo(typeof (ParentType));
+            mapping.Type.Should().Be.EqualTo(typeof(ParentType));
 
             var subTypePropertyMapping = new Mock<IObjectMapping>();
             subTypePropertyMapping.Setup(x => x.ObjectClasses)
@@ -297,12 +297,12 @@ namespace LinqToLdap.Tests.Mapping
             public TestObjectMapping(string namingContext, IEnumerable<IPropertyMapping> propertyMappings, string objectCategory = null, bool includeObjectCategory = true, IEnumerable<string> objectClass = null, bool includeObjectClasses = true) : base(namingContext, propertyMappings, objectCategory, includeObjectCategory, objectClass, includeObjectClasses)
             {
                 IsForAnonymousType = false;
-                Type = typeof (ParentType);
+                Type = typeof(ParentType);
             }
-            
 
             public override Type Type { get; }
             public override bool IsForAnonymousType { get; }
+
             public override object Create(object[] parameters = null, object[] objectClasses = null)
             {
                 throw new NotImplementedException();
@@ -311,12 +311,10 @@ namespace LinqToLdap.Tests.Mapping
 
         private class ParentType
         {
-
         }
 
         private class SubType : ParentType
         {
-
         }
     }
 }

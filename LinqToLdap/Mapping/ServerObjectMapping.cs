@@ -31,12 +31,17 @@ namespace LinqToLdap.Mapping
 
         public IEnumerable<IPropertyMapping> GetPropertyMappings()
         {
-            return new List<IPropertyMapping>();
+            return new List<IPropertyMapping>(0);
         }
 
-        public IEnumerable<IPropertyMapping> GetUpdateablePropertyMappings()
+        public IEnumerable<IPropertyMapping> GetPropertyMappingsForAdd()
         {
-            return new List<IPropertyMapping>();
+            return new List<IPropertyMapping>(0);
+        }
+
+        public IEnumerable<IPropertyMapping> GetPropertyMappingsForUpdate()
+        {
+            return new List<IPropertyMapping>(0);
         }
 
         public IPropertyMapping GetPropertyMapping(string name, Type owningType = null)

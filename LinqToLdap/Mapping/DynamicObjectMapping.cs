@@ -51,7 +51,12 @@ namespace LinqToLdap.Mapping
             throw new NotSupportedException("Properties are not mapped for DirectoryAttributes.");
         }
 
-        public IEnumerable<IPropertyMapping> GetUpdateablePropertyMappings()
+        public IEnumerable<IPropertyMapping> GetPropertyMappingsForAdd()
+        {
+            throw new NotSupportedException("Properties are not mapped for DirectoryAttributes.");
+        }
+
+        public IEnumerable<IPropertyMapping> GetPropertyMappingsForUpdate()
         {
             throw new NotSupportedException("Properties are not mapped for DirectoryAttributes.");
         }

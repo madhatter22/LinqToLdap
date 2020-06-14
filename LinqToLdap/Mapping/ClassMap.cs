@@ -207,7 +207,7 @@ namespace LinqToLdap.Mapping
 
         internal void CatchAll(PropertyInfo property)
         {
-            Map<IDirectoryAttributes>(property, isReadOnly: true);
+            Map<IDirectoryAttributes>(property, readOnly: ReadOnly.Always);
         }
 
         private PropertyInfo GetPropertyInfo(Expression expression)
@@ -235,7 +235,7 @@ namespace LinqToLdap.Mapping
             return propertyInfo;
         }
 
-        internal IPropertyMapperGeneric<TProperty> Map<TProperty>(PropertyInfo propertyInfo, bool isDistinguishedName = false, bool isReadOnly = false)
+        internal IPropertyMapperGeneric<TProperty> Map<TProperty>(PropertyInfo propertyInfo, bool isDistinguishedName = false, ReadOnly? readOnly = null)
         {
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
@@ -251,7 +251,7 @@ namespace LinqToLdap.Mapping
                 throw new MappingException("Cannot specify more than one CatchAll property.");
             }
 
-            var mapping = new PropertyMappingBuilder<T, TProperty>(propertyInfo, isDistinguishedName, isReadOnly);
+            var mapping = new PropertyMappingBuilder<T, TProperty>(propertyInfo, isDistinguishedName, readOnly.GetValueOrDefault(ReadOnly.Never));
 
             PropertyMappings.Add(mapping);
 
@@ -275,17 +275,17 @@ namespace LinqToLdap.Mapping
         /// </summary>
         /// <param name="propertyInfo">The property to map</param>
         /// <param name="isDistinguishedName">Indicates if the attribute is the distinguishedname.</param>
-        /// <param name="isReadOnly">Indicates if the property should be treated as read only in the directory.</param>
+        /// <param name="readOnly">Indicates if the property should be treated as read only in the directory.</param>
         /// <returns></returns>
-        protected IPropertyMapper MapPropertyInfo(PropertyInfo propertyInfo, bool isDistinguishedName = false, bool isReadOnly = false)
+        protected IPropertyMapper MapPropertyInfo(PropertyInfo propertyInfo, bool isDistinguishedName = false, ReadOnly? readOnly = null)
         {
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
             if (isDistinguishedName && PropertyMappings.Any(p => p.IsDistinguishedName))
                 throw new MappingException("Cannot specify more than one DistinguishedName property.");
 
-            if (isReadOnly && PropertyMappings.Any(p => p.IsReadOnly))
-                throw new MappingException("Cannot specify more than one CommonName property.");
+            if (readOnly.HasValue && PropertyMappings.Any(p => p.PropertyName == propertyInfo.Name && p.ReadOnlyConfiguration.HasValue))
+                throw new MappingException("Cannot specify a read only configuration more than once.");
 
             if (PropertyMappings.Any(p => p.PropertyName == propertyInfo.Name))
             {
@@ -299,7 +299,7 @@ namespace LinqToLdap.Mapping
 
             var type = typeof(PropertyMappingBuilder<,>).MakeGenericType(typeof(T), propertyInfo.PropertyType);
 
-            var mapping = Activator.CreateInstance(type, new object[] { propertyInfo, isDistinguishedName, isReadOnly }) as IPropertyMappingBuilder;
+            var mapping = Activator.CreateInstance(type, new object[] { propertyInfo, isDistinguishedName, readOnly }) as IPropertyMappingBuilder;
 
             PropertyMappings.Add(mapping);
 

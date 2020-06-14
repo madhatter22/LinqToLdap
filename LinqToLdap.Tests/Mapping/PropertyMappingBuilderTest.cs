@@ -32,8 +32,10 @@ namespace LinqToLdap.Tests.Mapping
         public byte[] Property6 { get; set; }
         public BuilderEnum Property7 { get; set; }
         public BuilderEnum? Property8 { get; set; }
+
         //public Bitmap Property9 { get; set; }
         public bool Property10 { get; set; }
+
         public bool? Property11 { get; set; }
         public int Property12 { get; set; }
         public int? Property13 { get; set; }
@@ -131,7 +133,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property_33");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("prop33");
 
             //act
@@ -140,6 +142,7 @@ namespace LinqToLdap.Tests.Mapping
             //assert
             mapping.AttributeName.Should().Be.EqualTo("prop33");
             mapping.PropertyName.Should().Be.EqualTo(property.Name);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -147,7 +150,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property_33");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -155,6 +158,7 @@ namespace LinqToLdap.Tests.Mapping
             //assert
             mapping.AttributeName.Should().Be.EqualTo("Property-33");
             mapping.PropertyName.Should().Be.EqualTo(property.Name);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -162,7 +166,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property21");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -174,6 +178,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -181,7 +186,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property22");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -193,6 +198,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -200,7 +206,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property15");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, byte[][]>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, byte[][]>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -212,6 +218,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -219,7 +226,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property19");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<byte[]>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<byte[]>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -231,6 +238,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -238,7 +246,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("AllProperties");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, IDirectoryAttributes>(property, false, true);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, IDirectoryAttributes>(property, false, ReadOnly.Always);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -250,7 +258,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
-            mapping.IsReadOnly.Should().Be.True();
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Always);
         }
 
         [TestMethod]
@@ -258,7 +266,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property18");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<byte[]>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<byte[]>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -270,6 +278,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -277,7 +286,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property17");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<string>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<string>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -289,6 +298,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -296,7 +306,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property16");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<string>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<string>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -308,6 +318,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -315,7 +326,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property23");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<X509Certificate2>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<X509Certificate2>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -327,6 +338,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -334,7 +346,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property24");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<X509Certificate2>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<X509Certificate2>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -346,6 +358,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -353,7 +366,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property25");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<X509Certificate>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<X509Certificate>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -365,6 +378,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -372,7 +386,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperties().Single(x => x.PropertyType == typeof(SecurityIdentifier[]));
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, SecurityIdentifier[]>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, SecurityIdentifier[]>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -384,6 +398,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -391,7 +406,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperties().Single(x => x.PropertyType == typeof(ICollection<SecurityIdentifier>));
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<SecurityIdentifier>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<SecurityIdentifier>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -403,6 +418,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -410,7 +426,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperties().Single(x => x.PropertyType == typeof(Collection<SecurityIdentifier>));
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<SecurityIdentifier>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<SecurityIdentifier>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -422,6 +438,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -429,7 +446,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property26");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<X509Certificate>>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, ICollection<X509Certificate>>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -441,6 +458,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -448,7 +466,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property27");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate2[]>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate2[]>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -460,6 +478,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -467,7 +486,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property28");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate[]>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, X509Certificate[]>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -479,6 +498,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -486,7 +506,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property2");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().DateTimeFormat(null);
 
             //act
@@ -500,6 +520,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.FieldValueEx<bool>("_isFileTimeFormat").Should().Be.True();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -507,7 +528,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property3");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime?>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime?>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -521,6 +542,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.FieldValueEx<string>("_dateFormat").Should().Be.EqualTo("yyyyMMddHHmmss.0Z");
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -528,7 +550,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property6");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, byte[]>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, byte[]>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -540,6 +562,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -547,7 +570,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property20");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, SecurityIdentifier>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, SecurityIdentifier>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -559,6 +582,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -566,7 +590,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property4");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Guid>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Guid>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -578,6 +602,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -585,7 +610,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property5");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Guid?>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, Guid?>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -597,6 +622,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -604,7 +630,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property7");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, BuilderEnum>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, BuilderEnum>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().EnumStoredAsInt();
 
             //act
@@ -618,6 +644,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -625,7 +652,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //prepare
             var property = GetType().GetProperty("Property8");
-            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, BuilderEnum?>(property, false, false);
+            var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, BuilderEnum?>(property, false, ReadOnly.Never);
 
             //act
             var mapping = builder.ToPropertyMapping();
@@ -638,6 +665,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -646,7 +674,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property1");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, true, true);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, true, ReadOnly.Always);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -659,8 +687,8 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
             mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
             mapping.IsDistinguishedName.Should().Be.True();
-            mapping.IsReadOnly.Should().Be.True();
-            mapping.PropertyType.Should().Be.EqualTo(typeof (string));
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Always);
+            mapping.PropertyType.Should().Be.EqualTo(typeof(string));
             mapping.GetType().Should().Be.EqualTo(type);
         }
 
@@ -670,7 +698,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property14");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, string[]>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, string[]>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -685,6 +713,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyType.Should().Be.EqualTo(typeof(string[]));
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -693,7 +722,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property29");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime?[]>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime?[]>(property, false, ReadOnly.OnAdd);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -708,6 +737,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyType.Should().Be.EqualTo(typeof(DateTime?[]));
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.OnAdd);
         }
 
         [TestMethod]
@@ -716,7 +746,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property30");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime[]>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime[]>(property, false, ReadOnly.OnUpdate);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -731,6 +761,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyType.Should().Be.EqualTo(typeof(DateTime[]));
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.OnUpdate);
         }
 
         [TestMethod]
@@ -739,7 +770,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property31");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<DateTime?>>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<DateTime?>>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -754,6 +785,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyType.Should().Be.EqualTo(typeof(Collection<DateTime?>));
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -762,7 +794,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property32");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<DateTime?>>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<DateTime?>>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -777,6 +809,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.PropertyType.Should().Be.EqualTo(typeof(ICollection<DateTime>));
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -785,7 +818,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property12");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, int>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, int>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -800,6 +833,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.PropertyType.Should().Be.EqualTo(typeof(int));
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -808,7 +842,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property13");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, int?>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, int?>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -823,6 +857,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.PropertyType.Should().Be.EqualTo(typeof(int?));
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -831,7 +866,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property10");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, bool>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, bool>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -846,6 +881,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.PropertyType.Should().Be.EqualTo(typeof(bool));
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -854,7 +890,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property11");
             var builder =
-                new PropertyMappingBuilder<PropertyMappingBuilderTest, bool?>(property, false, false);
+                new PropertyMappingBuilder<PropertyMappingBuilderTest, bool?>(property, false, ReadOnly.Never);
             builder.As<IPropertyMapper>().Named("Attribute1");
 
             //act
@@ -869,13 +905,14 @@ namespace LinqToLdap.Tests.Mapping
             mapping.IsDistinguishedName.Should().Be.False();
             mapping.PropertyType.Should().Be.EqualTo(typeof(bool?));
             mapping.GetType().Should().Be.EqualTo(type);
+            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
         }
-        
+
         [TestMethod]
         public void ToPropertyMapping_AnonymousType_CreatesStandardPropertyMappingWithoutSetter()
         {
             //prepare
-            var anon = new {Property1 = ""};
+            var anon = new { Property1 = "" };
             var property = anon.GetType().GetProperty("Property1");
             var builder = GetMappingString(anon, property);
 
@@ -891,7 +928,7 @@ namespace LinqToLdap.Tests.Mapping
 
         private static PropertyMappingBuilder<T, string> GetMappingString<T>(T example, PropertyInfo property) where T : class
         {
-            return new PropertyMappingBuilder<T, string>(property, false, false);
+            return new PropertyMappingBuilder<T, string>(property, false, ReadOnly.Never);
         }
     }
 }

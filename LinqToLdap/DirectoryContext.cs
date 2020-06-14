@@ -556,7 +556,7 @@ namespace LinqToLdap
                     request.Controls.AddRange(controls);
                 }
 
-                var directoryAttributes = objectMapping.GetUpdateablePropertyMappings()
+                var directoryAttributes = objectMapping.GetPropertyMappingsForAdd()
                     .Select(pm => pm.GetDirectoryAttribute(entry))
                     .Where(da => da.Count > 0);
 
@@ -885,7 +885,7 @@ namespace LinqToLdap
 
                 if (!(entry is IDirectoryObject directoryObject))
                 {
-                    modifications.AddRange(objectMapping.GetUpdateablePropertyMappings()
+                    modifications.AddRange(objectMapping.GetPropertyMappingsForUpdate()
                         .Select(mapping => mapping.GetDirectoryAttributeModification(entry)));
                 }
                 else
@@ -1282,7 +1282,7 @@ namespace LinqToLdap
 
                 if (!(entry is IDirectoryObject directoryObject))
                 {
-                    modifications.AddRange(objectMapping.GetUpdateablePropertyMappings()
+                    modifications.AddRange(objectMapping.GetPropertyMappingsForUpdate()
                         .Select(mapping => mapping.GetDirectoryAttributeModification(entry)));
                 }
                 else
@@ -1377,7 +1377,7 @@ namespace LinqToLdap
                     request.Controls.AddRange(controls);
                 }
 
-                var directoryAttributes = objectMapping.GetUpdateablePropertyMappings()
+                var directoryAttributes = objectMapping.GetPropertyMappingsForAdd()
                     .Select(pm => pm.GetDirectoryAttribute(entry))
                     .Where(da => da.Count > 0);
 
