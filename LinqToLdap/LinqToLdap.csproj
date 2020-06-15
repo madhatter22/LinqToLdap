@@ -5,7 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>-->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>5.0</Version>
+    <Version>5.0.0-preview</Version>
     <Authors>Alan Hatter</Authors>
     <Company>Alan Hatter</Company>
     <Description>LINQ provider built on top of System.DirectoryServices.Protocols for querying and updating LDAP servers.</Description>
