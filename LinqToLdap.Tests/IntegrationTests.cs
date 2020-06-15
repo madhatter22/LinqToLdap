@@ -76,6 +76,40 @@ namespace LinqToLdap.Tests
         public string Comment { get; set; }
     }
 
+    [DirectorySchema(NamingContext, ObjectClasses = new[] { "top", "person", "organizationalPerson" }, WithoutSubTypeMapping = true)]
+    public class OrgPersonFlattenedInheritanceTest : PersonInheritanceTest
+    {
+        [DirectoryAttribute]
+        public string Title { get; set; }
+
+        [DirectoryAttribute]
+        public string PostalCode { get; set; }
+
+        [DirectoryAttribute(true)]
+        public DateTime? WhenCreated { get; set; }
+
+        [DirectoryAttribute("givenname")]
+        public string FirstName { get; set; }
+
+        [DirectoryAttribute("l")]
+        public string City { get; set; }
+
+        [DirectoryAttribute("c")]
+        public string Country { get; set; }
+
+        [DirectoryAttribute("employeeid")]
+        public long EmployeeId { get; set; }
+
+        [DirectoryAttribute("telephonenumber")]
+        public string PhoneNumber { get; set; }
+
+        [DirectoryAttribute]
+        public string Street { get; set; }
+
+        [DirectoryAttribute]
+        public string Comment { get; set; }
+    }
+
     [DirectorySchema(NamingContext, ObjectClasses = new[] { "top", "person", "organizationalPerson", "user" })]
     public class UserInheritanceTest : OrgPersonInheritanceTest
     {
@@ -205,6 +239,7 @@ namespace LinqToLdap.Tests
                 .AddMapping(new AttributeClassMap<IntegrationGroupTest>(), IntegrationGroupTest.NamingContext, new[] { "top", "group" }, true, "group")
                 .AddMapping(new AttributeClassMap<PersonInheritanceTest>())
                 .AddMapping(new AttributeClassMap<OrgPersonInheritanceTest>())
+                .AddMapping(new AttributeClassMap<OrgPersonFlattenedInheritanceTest>())
                 .AddMapping(new AttributeClassMap<UserInheritanceTest>())
                 .AddMapping(new AttributeClassMap<PersonCatchAllTest>())
                 .AddMapping(new AttributeClassMap<OrgPersonCatchAllTest>())
@@ -729,7 +764,10 @@ namespace LinqToLdap.Tests
             var people = _context.Query<PersonInheritanceTest>().ToList();
 
             people.Any(x => x is OrgPersonInheritanceTest).Should().Be.True();
+            people.Any(x => x is OrgPersonFlattenedInheritanceTest).Should().Be.False();
             people.Any(x => x is UserInheritanceTest).Should().Be.True();
+
+            _context.Query<OrgPersonFlattenedInheritanceTest>().ToList().Should().Not.Be.Empty();
 
             var utcNow = DateTime.UtcNow.AddDays(50);
             var user = people.OfType<UserInheritanceTest>().Skip(1).First();
