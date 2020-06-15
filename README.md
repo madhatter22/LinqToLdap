@@ -1,5 +1,7 @@
 LINQ provider built on top of System.DirectoryServices.Protocols for interacting with LDAP servers.
 
+![](https://github.com/madhatter22/LinqToLdap/blob/feature/net-standard/linqtoldap_logo_small.png)
+
 ## Overview
 There are tons of examples on how to access Active Directory via System.DirectoryServices and System.DirectoryServices.AccountManagement.  However, with the introduction of LINQ all of those examples felt completely outdated.  The goal of LINQ to LDAP is to simplify the process of getting information in an out of a directory server using LINQ.
 
