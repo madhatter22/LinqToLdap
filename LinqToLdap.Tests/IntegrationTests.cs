@@ -376,6 +376,50 @@ namespace LinqToLdap.Tests
 
         [TestMethod]
         [TestCategory("Integration")]
+        public void Can_Modify_Individual_Members_Group()
+        {
+            var members = _context.Query<IntegrationUserTest>().Select(u => u.DistinguishedName).ToList();
+
+            members.Count.Should().Be.GreaterThan(2);
+            var group = new IntegrationGroupTest
+            {
+                Member = new Collection<string>(members.Skip(1).ToArray())
+            };
+
+            group.SetDistinguishedName("TestGroup");
+
+            try
+            {
+                var added = _context.AddAndGet(group);
+
+                added.Member.Should().Not.Contain(members.First()).And.Have.Count.EqualTo(members.Count - 1);
+
+                _context.AddAttribute(group.DistinguishedName, "member", members.First());
+
+                added = _context.GetByDN<IntegrationGroupTest>(group.DistinguishedName);
+
+                added.Member.Should().Contain(members.First()).And.Have.Count.EqualTo(members.Count);
+
+                _context.DeleteAttribute(group.DistinguishedName, "member", members.First());
+
+                added = _context.GetByDN<IntegrationGroupTest>(group.DistinguishedName);
+
+                added.Member.Should().Not.Contain(members.First()).And.Have.Count.EqualTo(members.Count - 1);
+            }
+            finally
+            {
+                try
+                {
+                    _context.Delete(group.DistinguishedName);
+                }
+                finally
+                {
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Integration")]
         public void Can_Add_Update_ModifyMembersDynamic_Group()
         {
             var members = _context.Query<IntegrationUserTest>().Select(u => u.DistinguishedName).ToList();

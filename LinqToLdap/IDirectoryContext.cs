@@ -243,11 +243,12 @@ namespace LinqToLdap
         /// </summary>
         /// <param name="distinguishedName">The entry</param>
         /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="value">The optional value. If null the whole attribute will be removed, otherwise the value will be removed.</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="distinguishedName"/> or <paramref name="attributeName"/> is null, empty or white space.</exception>
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
         /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
-        void DeleteAttribute(string distinguishedName, string attributeName, params DirectoryControl[] controls);
+        void DeleteAttribute(string distinguishedName, string attributeName, object value = null, DirectoryControl[] controls = null);
 
         /// <summary>
         /// Moves the entry from one container to another without modifying the entry's name and return's the new distinguished name.
@@ -502,12 +503,13 @@ namespace LinqToLdap
         /// </summary>
         /// <param name="distinguishedName">The entry</param>
         /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="value">The optional value. If null the whole attribute will be removed, otherwise the value will be removed.</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <param name="resultProcessing">How the async results are processed</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="distinguishedName"/> or <paramref name="attributeName"/> is null, empty or white space.</exception>
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
         /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
-        System.Threading.Tasks.Task DeleteAttributeAsync(string distinguishedName, string attributeName, DirectoryControl[] controls = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing);
+        System.Threading.Tasks.Task DeleteAttributeAsync(string distinguishedName, string attributeName, object value = null, DirectoryControl[] controls = null, PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing);
 
         /// <summary>
         /// Moves the entry from one container to another without modifying the entry's name and return's the new distinguished name.

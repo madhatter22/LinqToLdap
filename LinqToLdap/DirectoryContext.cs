@@ -768,12 +768,13 @@ namespace LinqToLdap
         /// </summary>
         /// <param name="distinguishedName">The entry</param>
         /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="value">The optional value. If null the whole attribute will be removed, otherwise the value will be removed.</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="distinguishedName"/> is null, empty or white space.</exception>
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
         /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public void DeleteAttribute(string distinguishedName, string attributeName, params DirectoryControl[] controls)
+        public void DeleteAttribute(string distinguishedName, string attributeName, object value = null, DirectoryControl[] controls = null)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
             if (distinguishedName.IsNullOrEmpty())
@@ -781,7 +782,7 @@ namespace LinqToLdap
 
             var attributes = new DirectoryAttributes(distinguishedName);
 
-            attributes.AddModification(ExtensionMethods.ToDirectoryModification(null, attributeName, DirectoryAttributeOperation.Delete));
+            attributes.AddModification(value.ToDirectoryModification(attributeName, DirectoryAttributeOperation.Delete));
 
             _connection.Update(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>());
         }
@@ -1141,13 +1142,14 @@ namespace LinqToLdap
         /// </summary>
         /// <param name="distinguishedName">The entry</param>
         /// <param name="attributeName">The name of the attribute</param>
+        /// <param name="value">The optional value. If null the whole attribute will be removed, otherwise the value will be removed.</param>
         /// <param name="controls">Any <see cref="DirectoryControl"/>s to be sent with the request</param>
         /// <param name="resultProcessing">How the async results are processed</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="distinguishedName"/> is null, empty or white space.</exception>
         /// <exception cref="DirectoryOperationException">Thrown if the operation fails.</exception>
         /// <exception cref="LdapConnection">Thrown if the operation fails.</exception>
         /// <exception cref="ObjectDisposedException">Thrown if this instance has been disposed.</exception>
-        public async Task DeleteAttributeAsync(string distinguishedName, string attributeName, DirectoryControl[] controls = null,
+        public async Task DeleteAttributeAsync(string distinguishedName, string attributeName, object value = null, DirectoryControl[] controls = null,
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing)
         {
             if (_disposed) throw new ObjectDisposedException(GetType().FullName);
@@ -1156,7 +1158,7 @@ namespace LinqToLdap
 
             var attributes = new DirectoryAttributes(distinguishedName);
 
-            attributes.AddModification(ExtensionMethods.ToDirectoryModification(null, attributeName, DirectoryAttributeOperation.Delete));
+            attributes.AddModification(value.ToDirectoryModification(attributeName, DirectoryAttributeOperation.Delete));
 
             await _connection.UpdateAsync(attributes, Logger, controls, _configuration.GetListeners<IUpdateEventListener>(), resultProcessing).ConfigureAwait(false);
         }
