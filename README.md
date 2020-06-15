@@ -9,7 +9,7 @@ There are tons of examples on how to access Active Directory via System.Director
 Below you'll find the fastest way to get up and running with LINQ to LDAP.  There's also an examples project [here](https://github.com/madhatter22/linqtoldap_examples) with a MVC and WPF example that connects to a live OpenLDAP server.  You can also reference the [Documentation](https://github.com/madhatter22/LinqToLdap/wiki).
 
 #### Get LINQ to LDAP
-Add LINQ to LDAP to your project either by getting it from [NuGet](http://nuget.org/List/Packages/linqtoldap).
+Add LINQ to LDAP to your project by getting it from [NuGet](http://nuget.org/List/Packages/linqtoldap).
 #### Create a class
 ```
 public class User
