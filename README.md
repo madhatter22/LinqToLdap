@@ -40,7 +40,7 @@ public class User
 {
     public const string NamingContext = "CN=Users,CN=Employees,DC=Northwind,DC=local";
 
-    [DistinguishedName](DistinguishedName)
+    [DistinguishedName]
     public string DistinguishedName { get; set; }
 
     [DirectoryAttribute("cn", ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
@@ -52,7 +52,7 @@ public class User
     [DirectoryAttribute("objectsid", ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
     public SecurityIdentifier Sid { get; set; }
 
-    [DirectoryAttribute](DirectoryAttribute)
+    [DirectoryAttribute]
     public string Title { get; set; }
 
     [DirectoryAttribute("givenname")]
