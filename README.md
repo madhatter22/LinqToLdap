@@ -43,13 +43,13 @@ public class User
     [DistinguishedName](DistinguishedName)
     public string DistinguishedName { get; set; }
 
-    [DirectoryAttribute("cn", ReadOnly = true)]
+    [DirectoryAttribute("cn", ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
     public string CommonName { get; set; }
 
-    [DirectoryAttribute("objectguid", StoreGenerated = true)]
+    [DirectoryAttribute("objectguid", ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
     public Guid Guid { get; set; }
 
-    [DirectoryAttribute("objectsid", StoreGenerated = true)]
+    [DirectoryAttribute("objectsid", ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
     public SecurityIdentifier Sid { get; set; }
 
     [DirectoryAttribute](DirectoryAttribute)
@@ -61,10 +61,10 @@ public class User
     [DirectoryAttribute("sn")]
     public string LastName { get; set; }
 
-    [DirectoryAttribute(StoreGenerated = true)]
+    [DirectoryAttribute(ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
     public DateTime WhenCreated { get; set; }
 
-    [DirectoryAttribute(StoreGenerated = true)]
+    [DirectoryAttribute(ReadOnlyOnAdd = true, ReadOnlyOnSet = true)]
     public DateTime WhenChanged { get; set; }
 
     public void SetDistinguishedName()
@@ -88,13 +88,13 @@ public class UserMapping : ClassMap<User>
 
         DistinguishedName(x => x.DistinguishedName);
         Map(x => x.CommonName).Named("cn").ReadOnly();
-        Map(x => x.Guid).Named("objectguid").StoreGenerated();
-        Map(x => x.Sid).Named("objectsid").StoreGenerated();
+        Map(x => x.Guid).Named("objectguid").ReadOnly();
+        Map(x => x.Sid).Named("objectsid").ReadOnly();
         Map(x => x.Title);
         Map(x => x.FirstName).Named("givenname");
         Map(x => x.LastName).Named("sn");
-        Map(x => x.WhenCreated).StoreGenerated();
-        Map(x => x.WhenChanged).StoreGenerated();
+        Map(x => x.WhenCreated).ReadOnly();
+        Map(x => x.WhenChanged).ReadOnly();
 
         return this;
     }
