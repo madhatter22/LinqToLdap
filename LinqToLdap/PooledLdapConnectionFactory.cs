@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToLdap.Helpers;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
@@ -11,13 +12,14 @@ namespace LinqToLdap
     {
         private bool _disposed;
         private object _connectionLockObject = new object();
-        private Dictionary<LdapConnection, DateTime> _availableConnections = new Dictionary<LdapConnection, DateTime>();
-        private List<LdapConnection> _inUseConnections = new List<LdapConnection>();
+        private Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>> _availableConnections = new Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>();
+        private Dictionary<LdapConnection, DateTime> _inUseConnections = new Dictionary<LdapConnection, DateTime>();
         private int _maxPoolSize = 50;
         private int _minPoolSize;
         private double _connectionIdleTime = 1;
         private Timer _timer;
         private bool _isFirstRequest = true;
+        private TimeSpan _maxConnectionAge = TimeSpan.FromMinutes(30);
 
         public PooledLdapConnectionFactory(string serverName) : base(serverName)
         {
@@ -104,7 +106,7 @@ namespace LinqToLdap
                     {
                         try
                         {
-                            if (disposing) connection.Dispose();
+                            if (disposing) connection.Key.Dispose();
                         }
                         catch (Exception ex)
                         {
@@ -205,6 +207,12 @@ namespace LinqToLdap
             return this;
         }
 
+        IPooledConnectionFactoryConfiguration IPooledConnectionFactoryConfiguration.MaxConnectionAgeIs(TimeSpan timeSpan)
+        {
+            _maxConnectionAge = timeSpan;
+            return this;
+        }
+
         IPooledConnectionFactoryConfiguration IPooledConnectionFactoryConfiguration.ConnectionIdleTimeIs(double idleTime)
         {
             if (idleTime < 0) throw new ArgumentException("ConnectionIdleTime cannot be negative.");
@@ -235,10 +243,20 @@ namespace LinqToLdap
 
             lock (lockObject)
             {
-                if (_inUseConnections.Remove(connection))
+                DateTime createdDate;
+                if (_inUseConnections.TryGetValue(connection, out createdDate))
                 {
-                    _availableConnections.Add(connection, DateTime.Now);
-                    if (Logger != null && Logger.TraceEnabled) Logger.Trace("Connection Marked As Available");
+                    _inUseConnections.Remove(connection);
+                    if (DateTime.Now.Subtract(createdDate).TotalMinutes < _maxConnectionAge.TotalMinutes)
+                    {
+                        _availableConnections.Add(connection, new TwoTuple<DateTime, DateTime>(createdDate, DateTime.Now));
+                        if (Logger != null && Logger.TraceEnabled) Logger.Trace("Connection Marked As Available");
+                    }
+                    else
+                    {
+                        connection.Dispose();
+                        if (Logger != null && Logger.TraceEnabled) Logger.Trace("Connection Exceeds Max Age. Connection Disposed.");
+                    }
                 }
                 else
                 {
@@ -260,7 +278,21 @@ namespace LinqToLdap
 
                     var pair = _availableConnections.FirstOrDefault();
 
-                    if (Equals(pair, default(KeyValuePair<LdapConnection, DateTime>)))
+                    while (true)
+                    {
+                        if (!Equals(pair, default(KeyValuePair<LdapConnection, TwoTuple<DateTime, DateTime>>)) && DateTime.Now.Subtract(pair.Value.Item1).TotalMinutes > _maxConnectionAge.TotalMinutes)
+                        {
+                            _availableConnections.Remove(pair.Key);
+                            pair.Key.Dispose();
+                            pair = _availableConnections.FirstOrDefault();
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    if (Equals(pair, default(KeyValuePair<LdapConnection, TwoTuple<DateTime, DateTime>>)))
                     {
                         if (Logger != null && Logger.TraceEnabled) Logger.Trace("Creating Connection For Use.");
                         if ((_inUseConnections.Count + _availableConnections.Count + 1) > _maxPoolSize)
@@ -268,12 +300,12 @@ namespace LinqToLdap
                                 string.Format("LdapConnection pool limit of {0} exceeded.", _maxPoolSize));
 
                         connection = BuildConnection();
-                        _inUseConnections.Add(connection);
+                        _inUseConnections.Add(connection, DateTime.Now);
                     }
                     else
                     {
                         if (Logger != null && Logger.TraceEnabled) Logger.Trace("Using Available Connection.");
-                        _inUseConnections.Add(pair.Key);
+                        _inUseConnections.Add(pair.Key, pair.Value.Item1);
                         _availableConnections.Remove(pair.Key);
                         connection = pair.Key;
                     }
@@ -297,7 +329,7 @@ namespace LinqToLdap
             if (Logger != null && Logger.TraceEnabled) Logger.Trace("Initializing Connection Pool.");
             for (int i = 0; i < _minPoolSize; i++)
             {
-                _availableConnections.Add(BuildConnection(), DateTime.Now);
+                _availableConnections.Add(BuildConnection(), new TwoTuple<DateTime, DateTime>(DateTime.Now, DateTime.Now));
             }
 
             _isFirstRequest = false;
@@ -339,7 +371,7 @@ namespace LinqToLdap
             if (amountToScavenge <= 0) return;
 
             var expiredConnections = (from pair in _availableConnections
-                                      where signalTime.Subtract(pair.Value).TotalMinutes > _connectionIdleTime
+                                      where signalTime.Subtract(pair.Value.Item2).TotalMinutes > _connectionIdleTime
                                       select pair.Key).ToList();
 
             foreach (var expiredConnection in expiredConnections)

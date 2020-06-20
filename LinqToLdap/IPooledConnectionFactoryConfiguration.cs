@@ -97,6 +97,13 @@ namespace LinqToLdap
         IPooledConnectionFactoryConfiguration MinPoolSizeIs(int size);
 
         /// <summary>
+        /// Configure the max age of any connection in the pool.
+        /// </summary>
+        /// <param name="timeSpan">The timespan</param>
+        /// <returns></returns>
+        IPooledConnectionFactoryConfiguration MaxConnectionAgeIs(TimeSpan timeSpan);
+
+        /// <summary>
         /// The time in minutes before a connection is considered stale and ready for scavenging. Default is 1 minute.
         /// </summary>
         /// <param name="idleTime">The value</param>

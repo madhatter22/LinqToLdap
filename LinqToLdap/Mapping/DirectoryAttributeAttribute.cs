@@ -52,7 +52,7 @@ namespace LinqToLdap.Mapping
         public string AttributeName { get; private set; }
 
         /// <summary>
-        /// Speicfy that a <see cref="Enum"/> is stored as an int.  The default is string.
+        /// Specify that a <see cref="Enum"/> is stored as an int.  The default is string.
         /// If the property is not a <see cref="Enum"/> then this setting will be ignored.
         /// </summary>
         /// <returns></returns>
