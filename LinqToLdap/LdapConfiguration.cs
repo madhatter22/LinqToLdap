@@ -15,6 +15,15 @@ namespace LinqToLdap
     /// </summary>
     public class LdapConfiguration : ILdapConfiguration
     {
+        private volatile IDirectoryMapper _mapper;
+        private static readonly object _mapperLock = new object();
+
+#if (NET35 || NET40)
+        private readonly LinqToLdap.Collections.SafeDictionary<string, IDirectoryMapper> _mappers = new LinqToLdap.Collections.SafeDictionary<string, IDirectoryMapper>();
+#else
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, IDirectoryMapper> _mappers = new System.Collections.Concurrent.ConcurrentDictionary<string, IDirectoryMapper>();
+#endif
+
 #if NET35 || NET40 || NET45
         /// <summary>
         /// Default processing behavior. <see cref="PartialResultProcessing.NoPartialResultSupport"/> has the best performance.
@@ -44,7 +53,8 @@ namespace LinqToLdap
         /// </summary>
         public LdapConfiguration()
         {
-            Mapper = new DirectoryMapper();
+            _mapper = new DirectoryMapper();
+            _mappers.TryAdd("", Mapper);
         }
 
         /// <summary>
@@ -54,7 +64,7 @@ namespace LinqToLdap
         {
             ConnectionFactory = null;
             Log = null;
-            Mapper = null;
+            _mapper = null;
         }
 
         /// <summary>
@@ -71,7 +81,36 @@ namespace LinqToLdap
         /// <summary>
         /// Class responsible for mapping objects to directory entries.
         /// </summary>
-        public IDirectoryMapper Mapper { get; set; }
+        public IDirectoryMapper Mapper { get { return _mapper; } }
+
+        /// <summary>
+        /// Registers a new mapper object for altering mappings at runtime.
+        /// </summary>
+        /// <param name="key">Identifier for the mapper</param>
+        /// <param name="mapper">The optional mapper to register otherwise a new instance is created.</param>
+        /// <exception cref="ArgumentNullException">Throw if <paramref name="key"/> is null</exception>
+        public void ChangeMapper(string key, IDirectoryMapper mapper = null)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (mapper != null)
+            {
+#if (NET35 || NET40)
+
+                _mappers.AddOrUpdate(key, mapper);
+#else
+                _mappers.AddOrUpdate(key, mapper, (k, old) => mapper);
+#endif
+            }
+            else
+            {
+                mapper = _mappers.GetOrAdd(key, k => new DirectoryMapper());
+            }
+
+            lock (_mapperLock)
+            {
+                _mapper = mapper;
+            }
+        }
 
         /// <summary>
         /// Get all event listeners of type <typeparamref name="TListener"/> registered with this configuration.

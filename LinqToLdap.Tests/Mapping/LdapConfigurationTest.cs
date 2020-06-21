@@ -42,7 +42,7 @@ namespace LinqToLdap.Tests.Mapping
             var config = new LdapConfiguration();
             var mapper = new Mock<IDirectoryMapper>();
             var classMap = new Mock<IClassMap>();
-            config.Mapper = mapper.Object;
+            config.ChangeMapper("", mapper.Object);
 
             //act
             config.AddMapping(classMap.Object, "nc", new[] { "oc" }, false, "oc", false);
@@ -57,7 +57,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var config = new LdapConfiguration();
             var mapper = new Mock<IDirectoryMapper>();
-            config.Mapper = mapper.Object;
+            config.ChangeMapper("", mapper.Object);
 
             //act
             config.AddMappingsFrom("assemblyname");
@@ -72,7 +72,7 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var config = new LdapConfiguration();
             var mapper = new Mock<IDirectoryMapper>();
-            config.Mapper = mapper.Object;
+            config.ChangeMapper("", mapper.Object);
             var assembly = Assembly.GetAssembly(typeof(AssemblyTestClass));
 
             //act

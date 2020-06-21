@@ -103,5 +103,18 @@ namespace LinqToLdap.Collections
                 _locker.ExitWriteLock();
             }
         }
+
+        public void AddOrUpdate(TKey key, TValue value)
+        {
+            _locker.EnterWriteLock();
+            try
+            {
+                _internal[key] = value;
+            }
+            finally
+            {
+                _locker.ExitWriteLock();
+            }
+        }
     }
 }

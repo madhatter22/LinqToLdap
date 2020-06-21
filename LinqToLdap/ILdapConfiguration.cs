@@ -44,6 +44,14 @@ namespace LinqToLdap
         IDirectoryMapper Mapper { get; }
 
         /// <summary>
+        /// Registers a new mapper object for altering mappings at runtime.
+        /// </summary>
+        /// <param name="key">Identifier for the mapper</param>
+        /// <param name="mapper">The optional mapper to register otherwise a new instance is created.</param>
+        /// <exception cref="System.ArgumentNullException">Throw if <paramref name="key"/> is null</exception>
+        void ChangeMapper(string key, IDirectoryMapper mapper = null);
+
+        /// <summary>
         /// Get all event listeners of type <typeparamref name="TListener"/> registered with this configuration.
         /// </summary>
         /// <typeparam name="TListener">The type of listeners to retrieve.</typeparam>
