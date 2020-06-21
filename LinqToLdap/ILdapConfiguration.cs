@@ -44,7 +44,7 @@ namespace LinqToLdap
         IDirectoryMapper Mapper { get; }
 
         /// <summary>
-        /// Registers a new mapper object for altering mappings at runtime.
+        /// Changes the current mapper object for altering mappings at runtime. The default mapper always has a key of <see cref="string.Empty"/>. If <paramref name="mapper"/> is null then a default instance will be created with the key.
         /// </summary>
         /// <param name="key">Identifier for the mapper</param>
         /// <param name="mapper">The optional mapper to register otherwise a new instance is created.</param>

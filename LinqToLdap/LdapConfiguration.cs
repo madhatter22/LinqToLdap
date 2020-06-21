@@ -15,7 +15,7 @@ namespace LinqToLdap
     /// </summary>
     public class LdapConfiguration : ILdapConfiguration
     {
-        private volatile IDirectoryMapper _mapper;
+        private IDirectoryMapper _mapper;
         private static readonly object _mapperLock = new object();
 
 #if (NET35 || NET40)
@@ -54,7 +54,7 @@ namespace LinqToLdap
         public LdapConfiguration()
         {
             _mapper = new DirectoryMapper();
-            _mappers.TryAdd("", Mapper);
+            _mappers.TryAdd(string.Empty, Mapper);
         }
 
         /// <summary>
