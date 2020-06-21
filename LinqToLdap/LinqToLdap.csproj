@@ -11,7 +11,9 @@
     <Description>LINQ provider built on top of System.DirectoryServices.Protocols for querying and updating LDAP servers.</Description>
     <Product>LINQ to LDAP</Product>
     <PackageTags>LINQ LDAP AD active directory openldap tivoli S.DS.P SDSP</PackageTags>
-    <PackageIconUrl>https://github.com/madhatter22/LinqToLdap/blob/feature/net-standard/linqtoldap_logo_small.png</PackageIconUrl>
+    <PackageIcon>linqtoldap_logo_small.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/madhatter22/LinqToLdap.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/madhatter22/LinqToLdap</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -32,5 +34,8 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\linqtoldap_logo_small.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
