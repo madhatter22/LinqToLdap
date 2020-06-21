@@ -89,7 +89,7 @@ namespace LinqToLdap
         /// <param name="key">Identifier for the mapper</param>
         /// <param name="mapper">The optional mapper to register otherwise a new instance is created.</param>
         /// <exception cref="ArgumentNullException">Throw if <paramref name="key"/> is null</exception>
-        public void ChangeMapper(string key, IDirectoryMapper mapper = null)
+        public IDirectoryMapper ChangeMapper(string key, IDirectoryMapper mapper = null)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (mapper != null)
@@ -110,6 +110,8 @@ namespace LinqToLdap
             {
                 _mapper = mapper;
             }
+
+            return _mapper;
         }
 
         /// <summary>
