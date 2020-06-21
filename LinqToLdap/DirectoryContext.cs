@@ -1035,7 +1035,7 @@ namespace LinqToLdap
         public async Task UpdateAsync<T>(T entry, string distinguishedName = null, DirectoryControl[] controls = null,
             PartialResultProcessing resultProcessing = LdapConfiguration.DefaultAsyncResultProcessing) where T : class
         {
-            if (entry is IDirectoryAttributes x) await UpdateEntryAsync(x, controls).ConfigureAwait(false);
+            if (entry is IDirectoryAttributes x) await UpdateEntryAsync(x, controls, resultProcessing).ConfigureAwait(false);
             else await UpdateEntryAsync(entry, distinguishedName, controls, resultProcessing).ConfigureAwait(false);
         }
 
@@ -1063,7 +1063,7 @@ namespace LinqToLdap
         {
             if (entry is IDirectoryAttributes x)
             {
-                return (await UpdateAndGetEntryAsync(x, controls).ConfigureAwait(false)) as T;
+                return (await UpdateAndGetEntryAsync(x, controls, resultProcessing).ConfigureAwait(false)) as T;
             }
             else
             {
