@@ -5,7 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LinqToLdap</PackageId>
-    <Version>5.0.0-preview2</Version>
+    <Version>5.0.0</Version>
     <Authors>Alan Hatter</Authors>
     <Company>Alan Hatter</Company>
     <Description>LINQ provider built on top of System.DirectoryServices.Protocols for querying and updating LDAP servers.</Description>
@@ -15,7 +15,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/madhatter22/LinqToLdap.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/madhatter22/LinqToLdap</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/madhatter22/LinqToLdap/releases/tag/5.0.0-preview2</PackageReleaseNotes>
+    <PackageReleaseNotes>https://github.com/madhatter22/LinqToLdap/releases/tag/5.0.0</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <NeutralLanguage>en-US</NeutralLanguage>
     <SignAssembly>true</SignAssembly>
