@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.1;netstandard2.0;net35;net40;net45</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
-    <AssemblyOriginatorKeyFile>C:\Users\alanh\Code\local\LinqToLdap\LinqToLdap.Tests\linqtoldap_tests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\LinqToLdap.Tests\linqtoldap_tests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
