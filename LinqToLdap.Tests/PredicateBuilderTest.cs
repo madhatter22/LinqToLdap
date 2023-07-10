@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests
 {
@@ -71,7 +71,7 @@ namespace LinqToLdap.Tests
             var value = expression.Compile().Invoke(_t3);
 
             //assert
-            value.Should().Be.EqualTo(3);
+            value.Should().Be(3);
         }
         
         [TestMethod]
@@ -84,43 +84,43 @@ namespace LinqToLdap.Tests
             var function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Test", "test").Compile();
             //assert
             list.Where(function).Should().Contain(_t1);
-            list.Where(function).Should().Not.Contain(_t2);
+            list.Where(function).Should().NotContain(_t2);
 
             //act on boolean
             function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Eval", "true").Compile();
             //assert 
             list.Where(function).Should().Contain(_t1);
-            list.Where(function).Should().Not.Contain(_t2);
+            list.Where(function).Should().NotContain(_t2);
 
             //act on int
             function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Number", "1").Compile();
             //assert 
             list.Where(function).Should().Contain(_t1);
-            list.Where(function).Should().Not.Contain(_t2);
+            list.Where(function).Should().NotContain(_t2);
 
             //act on enum
             function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Stuff", "Enum1").Compile();
             //assert 
             list.Where(function).Should().Contain(_t1);
-            list.Where(function).Should().Not.Contain(_t2);
+            list.Where(function).Should().NotContain(_t2);
 
             //act on enum number value
             function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Stuff", "2").Compile();
             //assert 
-            list.Where(function).Should().Not.Contain(_t1);
+            list.Where(function).Should().NotContain(_t1);
             list.Where(function).Should().Contain(_t2);
 
             //act on sub property string
             function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Complex.TestProperty", "testsub").Compile();
             //assert 
             list.Where(function).Should().Contain(_t1);
-            list.Where(function).Should().Not.Contain(_t2);
+            list.Where(function).Should().NotContain(_t2);
 
             //act on sub property int
             function = PredicateBuilder.WhereEqual<ExpressionTestClass>("Complex.Number", "1").Compile();
             //assert 
             list.Where(function).Should().Contain(_t1);
-            list.Where(function).Should().Not.Contain(_t2);
+            list.Where(function).Should().NotContain(_t2);
         }
 
         [TestMethod]
@@ -231,7 +231,7 @@ namespace LinqToLdap.Tests
             var propertyName = "EnumerableChildren";
             var predicate = PredicateBuilder.WhereContains<ExpressionTestClass>(propertyName, _t2).Compile();
 
-            list.Where(predicate).Should().Contain(_t1).And.Not.Contain(_t2);
+            list.Where(predicate).Should().Contain(_t1).And.NotContain(_t2);
         }
 
         [TestMethod]
@@ -242,7 +242,7 @@ namespace LinqToLdap.Tests
             var propertyName = "ListChildren";
             var predicate = PredicateBuilder.WhereContains<ExpressionTestClass>(propertyName, _t2).Compile();
 
-            list.Where(predicate).Should().Contain(_t1).And.Not.Contain(_t2);
+            list.Where(predicate).Should().Contain(_t1).And.NotContain(_t2);
         }
 
         [TestMethod]
@@ -253,7 +253,7 @@ namespace LinqToLdap.Tests
             var propertyName = "EnumerableChildren";
             var predicate = PredicateBuilder.WhereNotContains<ExpressionTestClass>(propertyName, _t2).Compile();
 
-            list.Where(predicate).Should().Contain(_t2).And.Not.Contain(_t1);
+            list.Where(predicate).Should().Contain(_t2).And.NotContain(_t1);
         }
 
         [TestMethod]
@@ -265,7 +265,7 @@ namespace LinqToLdap.Tests
 
             var orList = list.Where(expression.Compile());
             orList.Should().Contain(_t1);
-            orList.Should().Not.Contain(_t2);
+            orList.Should().NotContain(_t2);
             orList.Should().Contain(_t3);
 
             expression = expression.Or(t => t.Stuff == Stuff.Enum2);
@@ -292,8 +292,8 @@ namespace LinqToLdap.Tests
 
             andList = list.Where(expression.Compile());
             andList.Should().Contain(_t1);
-            andList.Should().Not.Contain(_t2);
-            andList.Should().Not.Contain(_t3);
+            andList.Should().NotContain(_t2);
+            andList.Should().NotContain(_t3);
         }
     }
 

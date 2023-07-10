@@ -7,7 +7,7 @@ using LinqToLdap.Mapping;
 using LinqToLdap.Tests.ClassMapAssembly;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -62,16 +62,16 @@ namespace LinqToLdap.Tests.Mapping
                 "category", false, new[] { "class" }, false);
 
             //assert
-            mapping.NamingContext.Should().Be.EqualTo("context");
-            mapping.ObjectCategory.Should().Be.EqualTo("category");
-            mapping.ObjectClasses.Should().Have.SameSequenceAs(new[] { "class" });
+            mapping.NamingContext.Should().Be("context");
+            mapping.ObjectCategory.Should().Be("category");
+            mapping.ObjectClasses.Should().ContainInOrder(new[] { "class" });
             propertyMappings.ToList().ForEach(x => mapping.GetPropertyMappings()
                 .Should().Contain(x));
-            mapping.GetDistinguishedNameMapping().Should().Be.EqualTo(_distinguishedName.Object);
-            mapping.GetPropertyMappingsForAdd().Should().Contain(_updateable.Object).And.Contain(_storeGenerated.Object).And.Have.Count.EqualTo(2);
-            mapping.GetPropertyMappingsForUpdate().Should().Contain(_updateable.Object).And.Have.Count.EqualTo(1);
-            mapping.IncludeObjectCategory.Should().Be.False();
-            mapping.IncludeObjectClasses.Should().Be.False();
+            mapping.GetDistinguishedNameMapping().Should().Be(_distinguishedName.Object);
+            mapping.GetPropertyMappingsForAdd().Should().Contain(_updateable.Object).And.Contain(_storeGenerated.Object).And.HaveCount(2);
+            mapping.GetPropertyMappingsForUpdate().Should().Contain(_updateable.Object).And.HaveCount(1);
+            mapping.IncludeObjectCategory.Should().BeFalse();
+            mapping.IncludeObjectClasses.Should().BeFalse();
             mapping.Properties.ForEach(x =>
             {
                 var result = (x.Key == _distinguishedName.Object.PropertyName &&
@@ -83,9 +83,9 @@ namespace LinqToLdap.Tests.Mapping
                              (x.Key == _updateable.Object.PropertyName &&
                               x.Value == _updateable.Object.AttributeName);
 
-                result.Should().Be.True();
+                result.Should().BeTrue();
             });
-            mapping.Properties.Count.Should().Be.EqualTo(4);
+            mapping.Properties.Count.Should().Be(4);
         }
 
         [TestMethod]
@@ -109,9 +109,9 @@ namespace LinqToLdap.Tests.Mapping
                              (x.Key == _updateable.Object.PropertyName &&
                               x.Value == _updateable.Object.AttributeName);
 
-                result.Should().Be.True();
+                result.Should().BeTrue();
             });
-            mapping.Properties.Count.Should().Be.EqualTo(4);
+            mapping.Properties.Count.Should().Be(4);
 
             var subTypePropertyMapping = new Mock<IObjectMapping>();
             subTypePropertyMapping.Setup(x => x.ObjectClasses)
@@ -143,9 +143,9 @@ namespace LinqToLdap.Tests.Mapping
                              (x.Key == "IsSubType" &&
                               x.Value == "SubType");
 
-                result.Should().Be.True();
+                result.Should().BeTrue();
             });
-            mapping.Properties.Count.Should().Be.EqualTo(5);
+            mapping.Properties.Count.Should().Be(5);
         }
 
         [TestMethod]
@@ -175,7 +175,7 @@ namespace LinqToLdap.Tests.Mapping
             var propertyMapping = mapping.GetPropertyMapping("DistinguishedName");
 
             //assert
-            propertyMapping.Should().Be.EqualTo(_distinguishedName.Object);
+            propertyMapping.Should().Be(_distinguishedName.Object);
         }
 
         [TestMethod]
@@ -187,7 +187,7 @@ namespace LinqToLdap.Tests.Mapping
 
             var mapping = new TestObjectMapping("context", propertyMappings,
                 "category", false, new[] { "class" }, false);
-            mapping.Type.Should().Be.EqualTo(typeof(ParentType));
+            mapping.Type.Should().Be(typeof(ParentType));
 
             var subTypePropertyMapping = new Mock<IObjectMapping>();
             subTypePropertyMapping.Setup(x => x.ObjectClasses)
@@ -206,7 +206,7 @@ namespace LinqToLdap.Tests.Mapping
             var propertyMapping = mapping.GetPropertyMapping("DistinguishedName", mapping.Type);
 
             //assert
-            propertyMapping.Should().Be.EqualTo(_distinguishedName.Object);
+            propertyMapping.Should().Be(_distinguishedName.Object);
         }
 
         [TestMethod]
@@ -218,7 +218,7 @@ namespace LinqToLdap.Tests.Mapping
 
             var mapping = new TestObjectMapping("context", propertyMappings,
                 "category", false, new[] { "class" }, false);
-            mapping.Type.Should().Be.EqualTo(typeof(ParentType));
+            mapping.Type.Should().Be(typeof(ParentType));
 
             var subTypePropertyMapping = new Mock<IPropertyMapping>();
             var subTypeMapping = new Mock<IObjectMapping>();
@@ -240,7 +240,7 @@ namespace LinqToLdap.Tests.Mapping
             var propertyMapping = mapping.GetPropertyMapping("IsSubType", typeof(SubType));
 
             //assert
-            propertyMapping.Should().Be.EqualTo(subTypePropertyMapping.Object);
+            propertyMapping.Should().Be(subTypePropertyMapping.Object);
         }
 
         [TestMethod]
@@ -252,14 +252,14 @@ namespace LinqToLdap.Tests.Mapping
 
             var mapping = new TestObjectMapping("context", propertyMappings,
                 "category", false, new[] { "class" }, false);
-            mapping.Type.Should().Be.EqualTo(typeof(ParentType));
+            mapping.Type.Should().Be(typeof(ParentType));
 
             //assert
             Executing.This(() => mapping.GetPropertyMapping("error"))
                 .Should()
                 .Throw<MappingException>()
-                .Exception.Message.Should()
-                .Be.EqualTo($"Property mapping with name 'error' was not found for '{mapping.Type.FullName}'");
+                .And.Message.Should()
+                .Be($"Property mapping with name 'error' was not found for '{mapping.Type.FullName}'");
         }
 
         [TestMethod]
@@ -271,7 +271,7 @@ namespace LinqToLdap.Tests.Mapping
 
             var mapping = new TestObjectMapping("context", propertyMappings,
                 "category", false, new[] { "class" }, false);
-            mapping.Type.Should().Be.EqualTo(typeof(ParentType));
+            mapping.Type.Should().Be(typeof(ParentType));
             var subTypePropertyMapping = new Mock<IPropertyMapping>();
             var subTypeMapping = new Mock<IObjectMapping>();
             subTypeMapping.Setup(x => x.ObjectClasses)
@@ -289,7 +289,7 @@ namespace LinqToLdap.Tests.Mapping
             mapping.AddSubTypeMapping(subTypeMapping.Object);
 
             //assert
-            mapping.GetPropertyMapping("error").Should().Be.Null();
+            mapping.GetPropertyMapping("error").Should().BeNull();
         }
 
         private class TestObjectMapping : ObjectMapping

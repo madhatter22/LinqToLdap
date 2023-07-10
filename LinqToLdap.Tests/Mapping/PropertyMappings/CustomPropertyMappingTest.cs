@@ -3,7 +3,7 @@ using System.DirectoryServices.Protocols;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -47,7 +47,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(_guid);
 
             //assert
-            value.Should().Be.EqualTo(_guid.ToStringOctet());
+            value.Should().Be(_guid.ToStringOctet());
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", _guid.ToByteArray()), "dn");
 
             //assert
-            value.CastTo<Guid>().ToByteArray().Should().Have.SameSequenceAs(_guid.ToByteArray());
+            value.CastTo<Guid>().ToByteArray().Should().ContainInOrder(_guid.ToByteArray());
         }
 
         [TestMethod]
@@ -74,9 +74,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value[0].As<byte[]>().Should().Have.SameSequenceAs(_guid.ToByteArray());
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value[0].CastTo<byte[]>().Should().ContainInOrder(_guid.ToByteArray());
         }
 
         [TestMethod]
@@ -91,9 +91,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value[0].As<string>().Should().Be.EqualTo("convert");
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value[0].CastTo<string>().Should().Be("convert");
         }
 
         [TestMethod]
@@ -108,9 +108,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.GetValues(typeof(string)).As<string[]>().Should().Have.SameSequenceAs(new[] {"1", "2"});
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.GetValues(typeof(string)).CastTo<string[]>().Should().ContainInOrder(new[] {"1", "2"});
         }
 
         [TestMethod]
@@ -125,10 +125,10 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.GetValues(typeof(byte[])).As<byte[][]>()[0].Should().Have.SameSequenceAs(_guid.ToByteArray());
-            value.GetValues(typeof(byte[])).As<byte[][]>()[1].Should().Have.SameSequenceAs(_guid.ToByteArray());
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.GetValues(typeof(byte[])).CastTo<byte[][]>()[0].Should().ContainInOrder(_guid.ToByteArray());
+            value.GetValues(typeof(byte[])).CastTo<byte[][]>()[1].Should().ContainInOrder(_guid.ToByteArray());
         }
 
         [TestMethod]
@@ -143,8 +143,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, _guid, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -159,8 +159,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, _guid, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
 
         [TestMethod]
@@ -175,8 +175,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, null, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

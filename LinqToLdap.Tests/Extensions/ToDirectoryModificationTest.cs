@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 #if NET35
 
@@ -38,9 +38,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(0);
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(0);
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -50,11 +50,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].Should().Be.EqualTo("one");
-            modification[1].Should().Be.EqualTo("two");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].Should().Be("one");
+            modification[1].Should().Be("two");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -64,11 +64,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].Should().Be.EqualTo("one");
-            modification[1].Should().Be.EqualTo("two");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].Should().Be("one");
+            modification[1].Should().Be("two");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -78,10 +78,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].Should().Be.EqualTo(o);
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].Should().Be(o);
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -91,10 +91,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(o as IEnumerable<byte>);
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(o as IEnumerable<byte>);
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -104,10 +104,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(o.CastTo<Guid>().ToByteArray());
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(o.CastTo<Guid>().ToByteArray());
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -122,10 +122,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(bytes);
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(bytes);
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -137,11 +137,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].Should().Be.EqualTo(bytes1);
-            modification[1].Should().Be.EqualTo(bytes2);
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].Should().Be(bytes1);
+            modification[1].Should().Be(bytes2);
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -151,11 +151,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].Should().Be.EqualTo("1");
-            modification[1].Should().Be.EqualTo("2");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].Should().Be("1");
+            modification[1].Should().Be("2");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -165,11 +165,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].Should().Be.EqualTo("1");
-            modification[1].Should().Be.EqualTo("2");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].Should().Be("1");
+            modification[1].Should().Be("2");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -179,10 +179,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].Should().Be.EqualTo("test");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].Should().Be("test");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -192,10 +192,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].Should().Be.EqualTo("TRUE");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].Should().Be("TRUE");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -205,10 +205,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = o.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].Should().Be.EqualTo("FALSE");
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].Should().Be("FALSE");
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -218,10 +218,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = cert.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(cert.GetRawCertData());
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(cert.GetRawCertData());
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -231,10 +231,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = cert.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(1);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(cert.GetRawCertData());
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(1);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(cert.GetRawCertData());
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -244,11 +244,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = cert.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(cert[0].GetRawCertData());
-            modification[1].As<byte[]>().Should().Have.SameSequenceAs(cert[1].GetRawCertData());
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(cert[0].GetRawCertData());
+            modification[1].CastTo<byte[]>().Should().ContainInOrder(cert[1].GetRawCertData());
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
 
         [TestMethod]
@@ -258,11 +258,11 @@ namespace LinqToLdap.Tests.Extensions
 
             var modification = cert.ToDirectoryModification("x", DirectoryAttributeOperation.Replace);
 
-            modification.Name.Should().Be.EqualTo("x");
-            modification.Count.Should().Be.EqualTo(2);
-            modification[0].As<byte[]>().Should().Have.SameSequenceAs(cert[0].GetRawCertData());
-            modification[1].As<byte[]>().Should().Have.SameSequenceAs(cert[1].GetRawCertData());
-            modification.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
+            modification.Name.Should().Be("x");
+            modification.Count.Should().Be(2);
+            modification[0].CastTo<byte[]>().Should().ContainInOrder(cert[0].GetRawCertData());
+            modification[1].CastTo<byte[]>().Should().ContainInOrder(cert[1].GetRawCertData());
+            modification.Operation.Should().Be(DirectoryAttributeOperation.Replace);
         }
     }
 }

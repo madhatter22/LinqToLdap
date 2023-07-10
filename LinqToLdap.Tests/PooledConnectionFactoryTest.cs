@@ -7,7 +7,7 @@ using LinqToLdap.Logging;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests
 {
@@ -27,16 +27,16 @@ namespace LinqToLdap.Tests
         {
             //prepare
             _factory = new PooledLdapConnectionFactory("localhost");
-            _factory.As<IPooledConnectionFactoryConfiguration>().MinPoolSizeIs(2);
+            _factory.CastTo<IPooledConnectionFactoryConfiguration>().MinPoolSizeIs(2);
 
             //act
             _factory.GetConnection();
 
             //assert
             _factory.FieldValueEx<Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>>("_availableConnections")
-                .Should().Have.Count.EqualTo(1);
+                .Should().HaveCount(1);
             _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_inUseConnections")
-                .Should().Have.Count.EqualTo(1);
+                .Should().HaveCount(1);
         }
 
         [TestMethod]
@@ -48,9 +48,9 @@ namespace LinqToLdap.Tests
 
             //assert
             _factory.FieldValueEx<Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>>("_availableConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
             _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_inUseConnections")
-                .Should().Have.Count.EqualTo(1);
+                .Should().HaveCount(1);
         }
 
         [TestMethod]
@@ -65,9 +65,9 @@ namespace LinqToLdap.Tests
 
             //assert
             _factory.FieldValueEx<Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>>("_availableConnections")
-                .Should().Have.Count.EqualTo(1);
+                .Should().HaveCount(1);
             _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_inUseConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
         }
 
         [TestMethod]
@@ -75,12 +75,12 @@ namespace LinqToLdap.Tests
         {
             //prepare
             _factory = new PooledLdapConnectionFactory("localhost");
-            _factory.As<IPooledConnectionFactoryConfiguration>().ScavengeIntervalIs(1000).MaxConnectionAgeIs(TimeSpan.FromMilliseconds(1000));
+            _factory.CastTo<IPooledConnectionFactoryConfiguration>().ScavengeIntervalIs(1000).MaxConnectionAgeIs(TimeSpan.FromMilliseconds(1000));
             var connection = _factory.GetConnection();
-            connection.Should().Not.Be.Null();
+            connection.Should().NotBeNull();
             _factory.ReleaseConnection(connection);
             var same = _factory.GetConnection();
-            same.Should().Be.SameInstanceAs(connection);
+            same.Should().BeSameAs(connection);
             _factory.ReleaseConnection(same);
 
             System.Threading.Thread.Sleep(1000);
@@ -89,7 +89,7 @@ namespace LinqToLdap.Tests
             var connection2 = _factory.GetConnection();
 
             //assert
-            connection2.Should().Not.Be.SameInstanceAs(connection);
+            connection2.Should().NotBeSameAs(connection);
             _factory.ReleaseConnection(connection2);
         }
 
@@ -104,15 +104,11 @@ namespace LinqToLdap.Tests
             _factory.ReleaseConnection(connection);
 
             //assert
-#if (!NET35 && !NET40 && !NET45)
-            connection.FieldValueEx<bool>("_disposed").Should().Be.True();
-#else
-            connection.FieldValueEx<bool>("disposed").Should().Be.True();
-#endif
+            connection.FieldValueEx<bool>("_disposed").Should().BeTrue();
             _factory.FieldValueEx<Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>>("_availableConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
             _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_inUseConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
         }
 
         [TestMethod]
@@ -122,7 +118,7 @@ namespace LinqToLdap.Tests
             _factory = new PooledLdapConnectionFactory("localhost");
             var connection = _factory.GetConnection();
             _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_inUseConnections")
-                .Should().Have.Count.EqualTo(1);
+                .Should().HaveCount(1);
             _factory.SetFieldValue<object>("_connectionLockObject", null);
 
             //act
@@ -130,7 +126,7 @@ namespace LinqToLdap.Tests
 
             //assert
             _factory.FieldValueEx<Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>>("_availableConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
         }
 
         [TestMethod]
@@ -144,7 +140,7 @@ namespace LinqToLdap.Tests
             Action work = () => _factory.Reinitialize();
 
             work.Should().Throw<ObjectDisposedException>()
-                .And.Exception.ObjectName.Should().Be.EqualTo(_factory.GetType().FullName);
+                .And.ObjectName.Should().Be(_factory.GetType().FullName);
         }
 
         [TestMethod]
@@ -152,7 +148,7 @@ namespace LinqToLdap.Tests
         {
             //prepare
             _factory = new PooledLdapConnectionFactory("localhost");
-            _factory.As<IPooledConnectionFactoryConfiguration>().MinPoolSizeIs(2);
+            _factory.CastTo<IPooledConnectionFactoryConfiguration>().MinPoolSizeIs(2);
             var logger = new Mock<ILinqToLdapLogger>();
             logger.SetupGet(l => l.TraceEnabled)
                   .Returns(true);
@@ -165,12 +161,12 @@ namespace LinqToLdap.Tests
             //assert
             logger.Verify(l => l.Trace("Scavenge Timer Stopped."), Times.Once());
             logger.Verify(l => l.Trace("Initializing Connection Pool."), Times.Exactly(2));
-            _factory.FieldValueEx<Timer>("_timer").Enabled.Should().Be.False();
-            _factory.FieldValueEx<bool>("_isFirstRequest").Should().Be.True();
+            _factory.FieldValueEx<Timer>("_timer").Enabled.Should().BeFalse();
+            _factory.FieldValueEx<bool>("_isFirstRequest").Should().BeTrue();
             _factory.FieldValueEx<Dictionary<LdapConnection, TwoTuple<DateTime, DateTime>>>("_availableConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
             _factory.FieldValueEx<Dictionary<LdapConnection, DateTime>>("_inUseConnections")
-                .Should().Have.Count.EqualTo(0);
+                .Should().HaveCount(0);
         }
     }
 }

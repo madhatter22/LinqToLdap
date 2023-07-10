@@ -1,7 +1,7 @@
 ﻿using System.DirectoryServices.Protocols;
 using LinqToLdap.Mapping.PropertyMappings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -32,7 +32,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(bytes);
 
             //assert
-            value.Should().Be.EqualTo(bytes.ToStringOctet());
+            value.Should().Be(bytes.ToStringOctet());
         }
 
         [TestMethod]
@@ -46,7 +46,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", bytes), "dn");
 
             //assert
-            value.Should().Be.EqualTo(bytes);
+            value.Should().Be(bytes);
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -74,8 +74,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new byte[] { 1, 2, 7 }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -89,8 +89,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new byte[] { 1, 2 }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -104,8 +104,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new byte[] { 1, 2, 3 }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -119,8 +119,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new byte[] { 1, 2, 3 }, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

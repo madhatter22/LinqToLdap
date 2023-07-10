@@ -5,7 +5,7 @@ using LinqToLdap.Mapping;
 using LinqToLdap.Mapping.PropertyMappingBuilders;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -124,53 +124,53 @@ namespace LinqToLdap.Tests.Mapping
         [TestMethod]
         public void Map_ValidMapping_HasCorrectMappedInformation()
         {
-            _validMapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo("container");
-            _validMapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("category");
-            _validMapping.PropertyValue<bool>("IncludeObjectCategory").Should().Be.True();
-            _validMapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Be.Equals(new[] { "cl" });
-            _validMapping.PropertyValue<bool>("IncludeObjectClasses").Should().Be.False();
+            _validMapping.FieldValueEx<string>("_namingContext").Should().Be("container");
+            _validMapping.FieldValueEx<string>("_objectCategory").Should().Be("category");
+            _validMapping.PropertyValue<bool>("IncludeObjectCategory").Should().BeTrue();
+            _validMapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().ContainInOrder(new[] { "cl" });
+            _validMapping.PropertyValue<bool>("IncludeObjectClasses").Should().BeFalse();
 
             var propertyMappings = _validMapping.PropertyMappings;
 
-            propertyMappings.Should().Have.Count.EqualTo(5);
+            propertyMappings.Should().HaveCount(5);
 
-            var first = propertyMappings[0].As<PropertyMappingBuilder<TestClass, int?>>();
-            var second = propertyMappings[1].As<PropertyMappingBuilder<TestClass, string>>();
-            var third = propertyMappings[2].As<PropertyMappingBuilder<TestClass, string>>();
-            var fourth = propertyMappings[3].As<CustomPropertyMappingBuilder<TestClass, Guid>>();
-            var fifth = propertyMappings[4].As<PropertyMappingBuilder<TestClass, string>>();
+            var first = propertyMappings[0].CastTo<PropertyMappingBuilder<TestClass, int?>>();
+            var second = propertyMappings[1].CastTo<PropertyMappingBuilder<TestClass, string>>();
+            var third = propertyMappings[2].CastTo<PropertyMappingBuilder<TestClass, string>>();
+            var fourth = propertyMappings[3].CastTo<CustomPropertyMappingBuilder<TestClass, Guid>>();
+            var fifth = propertyMappings[4].CastTo<PropertyMappingBuilder<TestClass, string>>();
 
-            first.AttributeName.Should().Be.Null();
-            first.PropertyInfo.Should().Not.Be.Null();
-            first.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Never);
-            first.IsEnumStoredAsInt.Should().Be.True();
+            first.AttributeName.Should().BeNull();
+            first.PropertyInfo.Should().NotBeNull();
+            first.ReadOnlyConfiguration.Should().Be(ReadOnly.Never);
+            first.IsEnumStoredAsInt.Should().BeTrue();
 
-            second.AttributeName.Should().Be.EqualTo("prop2");
-            second.PropertyInfo.Should().Not.Be.Null();
-            second.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.OnAdd);
-            second.IsEnumStoredAsInt.Should().Be.False();
+            second.AttributeName.Should().Be("prop2");
+            second.PropertyInfo.Should().NotBeNull();
+            second.ReadOnlyConfiguration.Should().Be(ReadOnly.OnAdd);
+            second.IsEnumStoredAsInt.Should().BeFalse();
 
-            third.IsDistinguishedName.Should().Be.True();
-            third.AttributeName.Should().Be.EqualTo("distinguishedname");
-            third.PropertyInfo.Should().Not.Be.Null();
-            third.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
+            third.IsDistinguishedName.Should().BeTrue();
+            third.AttributeName.Should().Be("distinguishedname");
+            third.PropertyInfo.Should().NotBeNull();
+            third.ReadOnlyConfiguration.Should().Be(ReadOnly.Always);
 
-            fourth.ReadOnlyConfiguration.Should().Be.EqualTo(null);
-            fourth.AttributeName.Should().Be.EqualTo("prop4");
-            fourth.PropertyInfo.Should().Not.Be.Null();
+            fourth.ReadOnlyConfiguration.Should().Be(null);
+            fourth.AttributeName.Should().Be("prop4");
+            fourth.PropertyInfo.Should().NotBeNull();
 
-            fifth.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
-            fifth.AttributeName.Should().Be.EqualTo("cn");
-            fifth.PropertyInfo.Should().Not.Be.Null();
+            fifth.ReadOnlyConfiguration.Should().Be(ReadOnly.Always);
+            fifth.AttributeName.Should().Be("cn");
+            fifth.PropertyInfo.Should().NotBeNull();
         }
 
         [TestMethod]
         public void Map_ValidMappingWithNoOCInformation_IgnoresOC()
         {
-            _validOCMapping.FieldValueEx<string>("_objectCategory").Should().Be.Null();
-            _validOCMapping.PropertyValue<bool>("IncludeObjectCategory").Should().Be.False();
-            _validOCMapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Be.Null();
-            _validOCMapping.PropertyValue<bool>("IncludeObjectClasses").Should().Be.False();
+            _validOCMapping.FieldValueEx<string>("_objectCategory").Should().BeNull();
+            _validOCMapping.PropertyValue<bool>("IncludeObjectCategory").Should().BeFalse();
+            _validOCMapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().BeNull();
+            _validOCMapping.PropertyValue<bool>("IncludeObjectClasses").Should().BeFalse();
         }
 
         [TestMethod]

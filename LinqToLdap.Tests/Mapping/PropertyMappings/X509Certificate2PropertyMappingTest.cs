@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 #if NET35
             using LinqToLdap.NET35.Tests.Properties;
@@ -55,7 +55,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(_certificate);
 
             //assert
-            value.Should().Be.EqualTo(_certificate.GetRawCertData().ToStringOctet());
+            value.Should().Be(_certificate.GetRawCertData().ToStringOctet());
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", _certificate.GetRawCertData()), "dn");
 
             //assert
-            value.CastTo<X509Certificate2>().GetRawCertData().Should().Have.SameSequenceAs(_certificate.GetRawCertData());
+            value.CastTo<X509Certificate2>().GetRawCertData().Should().ContainInOrder(_certificate.GetRawCertData());
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -97,8 +97,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, _certificate2, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -112,8 +112,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, _certificate2, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -127,8 +127,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, _certificate, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

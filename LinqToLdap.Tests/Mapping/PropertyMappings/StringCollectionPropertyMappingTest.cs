@@ -4,7 +4,7 @@ using System.DirectoryServices.Protocols;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -46,7 +46,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter("str");
 
             //assert
-            value.Should().Be.EqualTo("str");
+            value.Should().Be("str");
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("names", strings), "dn");
 
             //assert
-            value.As<Collection<string>>().Should().Have.SameSequenceAs(strings);
+            value.CastTo<Collection<string>>().Should().ContainInOrder(strings);
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", "str"), "dn");
 
             //assert
-            value.As<Collection<string>>().Should().Contain("str");
+            value.CastTo<Collection<string>>().Should().Contain("str");
         }
 
         [TestMethod]
@@ -102,8 +102,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<string>(new string[] { "1", "2", "7" }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -117,8 +117,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new string[] { "1", "2" }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -132,8 +132,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<string>(new string[] { "1", "2", "3" }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -147,8 +147,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<string>(new string[] { "1", "2", "3" }), out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

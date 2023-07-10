@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 #if NET35
             using LinqToLdap.NET35.Tests.Properties;
@@ -78,7 +78,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(certs);
 
             //assert
-            value.Should().Be.EqualTo(certs.GetRawCertData().ToStringOctet());
+            value.Should().Be(certs.GetRawCertData().ToStringOctet());
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(certs);
 
             //assert
-            value.Should().Be.EqualTo(certs.GetRawCertData().ToStringOctet());
+            value.Should().Be(certs.GetRawCertData().ToStringOctet());
         }
 
         [TestMethod]
@@ -107,7 +107,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", certs.Select(c => c.GetRawCertData()).ToArray()), "dn");
 
             //assert
-            value.As<Collection<X509Certificate2>>().Should().Have.SameSequenceAs(certs);
+            value.CastTo<Collection<X509Certificate2>>().Should().ContainInOrder(certs);
         }
 
         [TestMethod]
@@ -122,7 +122,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", certs.Select(c => c.GetRawCertData()).ToArray()), "dn");
 
             //assert
-            value.As<Collection<X509Certificate>>().Should().Have.SameSequenceAs(certs);
+            value.CastTo<Collection<X509Certificate>>().Should().ContainInOrder(certs);
         }
 
         [TestMethod]
@@ -136,7 +136,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -151,7 +151,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", certs.GetRawCertData()), "dn");
 
             //assert
-            value.As<Collection<X509Certificate2>>().Should().Contain(certs);
+            value.CastTo<Collection<X509Certificate2>>().Should().Contain(certs);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", certs.GetRawCertData()), "dn");
 
             //assert
-            value.As<Collection<X509Certificate>>().Should().Contain(certs);
+            value.CastTo<Collection<X509Certificate>>().Should().Contain(certs);
         }
 
         [TestMethod]
@@ -181,8 +181,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<X509Certificate2>(new[] { new X509Certificate2(Resources.cert), new X509Certificate2(Resources.cert2) }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -197,8 +197,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<X509Certificate2>(new[] { new X509Certificate2(Resources.cert) }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -213,8 +213,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<X509Certificate2>(new[] { new X509Certificate2(Resources.cert) }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -229,8 +229,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<X509Certificate>(new[] { new X509Certificate2(Resources.cert), new X509Certificate2(Resources.cert2) }), out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

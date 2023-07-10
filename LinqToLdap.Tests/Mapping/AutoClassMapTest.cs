@@ -4,7 +4,7 @@ using System.Linq;
 using LinqToLdap.Mapping;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -42,16 +42,16 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new AutoClassMap<AutoClassMapTest>().PerformMapping("container", "oc", false, new List<string> { "cl" }, false)
                 .CastTo<AutoClassMap<AutoClassMapTest>>();
             var propertyMappings = mapping.PropertyMappings;
-            propertyMappings[0].IsDistinguishedName.Should().Be.True();
-            propertyMappings[1].ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
-            propertyMappings.Should().Have.Count.EqualTo(4);
+            propertyMappings[0].IsDistinguishedName.Should().BeTrue();
+            propertyMappings[1].ReadOnlyConfiguration.Should().Be(ReadOnly.Always);
+            propertyMappings.Should().HaveCount(4);
             propertyMappings.Count(p => p.PropertyInfo.Name == "Property1" || p.PropertyInfo.Name == "Property3" || p.PropertyInfo.Name == "DistinguishedName" || p.PropertyInfo.Name == "Cn")
-                .Should().Be.EqualTo(2);
-            mapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo("container");
-            mapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("oc");
-            mapping.PropertyValue<bool>("IncludeObjectCategory").Should().Be.False();
-            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Be.Equals(new[] { "cl" });
-            mapping.PropertyValue<bool>("IncludeObjectClasses").Should().Be.False();
+                .Should().Be(2);
+            mapping.FieldValueEx<string>("_namingContext").Should().Be("container");
+            mapping.FieldValueEx<string>("_objectCategory").Should().Be("oc");
+            mapping.PropertyValue<bool>("IncludeObjectCategory").Should().BeFalse();
+            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().ContainInOrder(new[] { "cl" });
+            mapping.PropertyValue<bool>("IncludeObjectClasses").Should().BeFalse();
         }
 
         private static void AssertClassMap<T>(T example, string container, string ocategory, IEnumerable<string> oclass) where T : class
@@ -60,14 +60,14 @@ namespace LinqToLdap.Tests.Mapping
                 .PerformMapping(container, ocategory, false, oclass, false)
                 .CastTo<AutoClassMap<T>>();
             var mappedProperties = mapping.PropertyMappings;
-            mappedProperties.Should().Have.Count.EqualTo(8);
-            mappedProperties[0].IsDistinguishedName.Should().Be.True();
-            mappedProperties[1].ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
-            mapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo(container);
-            mapping.PropertyValue<bool>("IncludeObjectCategory").Should().Be.False();
-            mapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("oc");
-            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Be.Equals(new[] { "cl" });
-            mapping.PropertyValue<bool>("IncludeObjectClasses").Should().Be.False();
+            mappedProperties.Should().HaveCount(8);
+            mappedProperties[0].IsDistinguishedName.Should().BeTrue();
+            mappedProperties[1].ReadOnlyConfiguration.Should().Be(ReadOnly.Always);
+            mapping.FieldValueEx<string>("_namingContext").Should().Be(container);
+            mapping.PropertyValue<bool>("IncludeObjectCategory").Should().BeFalse();
+            mapping.FieldValueEx<string>("_objectCategory").Should().Be("oc");
+            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().ContainInOrder(new[] { "cl" });
+            mapping.PropertyValue<bool>("IncludeObjectClasses").Should().BeFalse();
         }
     }
 }

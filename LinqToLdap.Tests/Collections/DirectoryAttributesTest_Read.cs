@@ -1,12 +1,13 @@
 ﻿using LinqToLdap.Collections;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.DirectoryServices.Protocols;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Linq;
+using System.Runtime.Versioning;
 
 #if NET35
             using LinqToLdap.NET35.Tests.Properties;
@@ -78,25 +79,25 @@ namespace LinqToLdap.Tests.Collections
         [TestMethod]
         public void GetValue_ExistsAndCorrectType_ReturnsByte()
         {
-            _attributes.GetValue("property2").Should().Be.EqualTo("2");
+            _attributes.GetValue("property2").Should().Be("2");
         }
 
         [TestMethod]
         public void Indexer_ExistsAndCorrectType_ReturnsByte()
         {
-            _attributes["property2"].Should().Be.EqualTo("2");
+            _attributes["property2"].Should().Be("2");
         }
 
         [TestMethod]
         public void GetByte_ExistsAndCorrectType_ReturnsByte()
         {
-            _attributes.GetByte("property2").Should().Be.EqualTo(2);
+            _attributes.GetByte("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetByte_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetByte("nope").Should().Not.Have.Value();
+            _attributes.GetByte("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
@@ -104,252 +105,274 @@ namespace LinqToLdap.Tests.Collections
         {
             Executing.This(() => _attributes.GetByte("property1"))
                 .Should().Throw<FormatException>()
-                .And.Exception.Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Byte' for theDn") &&
-                    e.InnerException.As<FormatException>() != null);
+                .And.Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Byte' for theDn");
+
+            Executing.This(() => _attributes.GetByte("property1"))
+                .Should().Throw<FormatException>()
+                .And.InnerException.Should().BeOfType<FormatException>();
         }
 
         [TestMethod]
         public void GetBoolean_ExistsAndCorrectType_ReturnsBoolean()
         {
-            _attributes.GetBoolean("property6").Should().Be.EqualTo(true);
+            _attributes.GetBoolean("property6").Should().Be(true);
         }
 
         [TestMethod]
         public void GetBoolean_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetBoolean("nope").Should().Not.Have.Value();
+            _attributes.GetBoolean("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetBoolean_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetBoolean("property1"))
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Boolean' for theDn");
+
+            Executing.This(() => _attributes.GetBoolean("property1"))
                 .Should().Throw<FormatException>()
-                .Exception.Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Boolean' for theDn") &&
-                        e.InnerException.GetType().Equals(typeof(FormatException)));
+                .And.InnerException.Should().BeOfType<FormatException>();
         }
 
         [TestMethod]
         public void GetShort_ExistsAndCorrectType_ReturnsShort()
         {
-            _attributes.GetShort("property2").Should().Be.EqualTo(2);
+            _attributes.GetShort("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetShort_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetShort("nope").Should().Not.Have.Value();
+            _attributes.GetShort("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetShort_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetShort("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Int16' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Int16' for theDn");
+
+            Executing.This(() => _attributes.GetShort("property1"))
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
         }
 
         [TestMethod]
         public void GetInt_ExistsAndCorrectType_ReturnsInt()
         {
-            _attributes.GetInt("property2").Should().Be.EqualTo(2);
+            _attributes.GetInt("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetInt_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetInt("nope").Should().Not.Have.Value();
+            _attributes.GetInt("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetInt_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetInt("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Int32' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Int32' for theDn");
+
+            Executing.This(() => _attributes.GetInt("property1"))
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
         }
 
         [TestMethod]
         public void GetLong_ExistsAndCorrectType_ReturnsLong()
         {
-            _attributes.GetLong("property2").Should().Be.EqualTo(2);
+            _attributes.GetLong("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetLong_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetLong("nope").Should().Not.Have.Value();
+            _attributes.GetLong("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetLong_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetLong("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Int64' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Int64' for theDn");
+
+            Executing.This(() => _attributes.GetLong("property1"))
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
         }
 
         [TestMethod]
         public void GetFloat_ExistsAndCorrectType_ReturnsFloat()
         {
-            _attributes.GetFloat("property2").Should().Be.EqualTo(2);
+            _attributes.GetFloat("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetFloat_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetFloat("nope").Should().Not.Have.Value();
+            _attributes.GetFloat("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetFloat_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetFloat("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Single' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
+
+            Executing.This(() => _attributes.GetFloat("property1"))
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Single' for theDn");
         }
 
         [TestMethod]
         public void GetDouble_ExistsAndCorrectType_ReturnsDouble()
         {
-            _attributes.GetDouble("property2").Should().Be.EqualTo(2);
+            _attributes.GetDouble("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetDouble_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetDouble("nope").Should().Not.Have.Value();
+            _attributes.GetDouble("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetDouble_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetDouble("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Double' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
+
+            Executing.This(() => _attributes.GetDouble("property1"))
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Double' for theDn");
         }
 
         [TestMethod]
         public void GetDecimal_ExistsAndCorrectType_ReturnsDecimal()
         {
-            _attributes.GetDecimal("property2").Should().Be.EqualTo(2);
+            _attributes.GetDecimal("property2").Should().Be(2);
         }
 
         [TestMethod]
         public void GetDecimal_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetDecimal("nope").Should().Not.Have.Value();
+            _attributes.GetDecimal("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetDecimal_ExistsAndWrongType_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetDecimal("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Decimal' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
+
+            Executing.This(() => _attributes.GetDecimal("property1"))
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'Decimal' for theDn");
         }
 
         [TestMethod]
         public void GetDateTime_ExistsAndCorrectTypeWithDefaultFormat_ReturnsDateTime()
         {
-            _attributes.GetDateTime("property7").Should().Be.EqualTo("20110313064859.0Z".FormatLdapDateTime(ExtensionMethods.LdapFormat));
+            _attributes.GetDateTime("property7").Should().Be("20110313064859.0Z".FormatLdapDateTime(ExtensionMethods.LdapFormat));
         }
 
         [TestMethod]
         public void GetDateTime_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetDateTime("nope").Should().Not.Have.Value();
+            _attributes.GetDateTime("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
         public void GetDateTime_ExistsAndCorrectTypeWithDifferentFormat_ReturnsDateTime()
         {
             var dateTime = "20110313064859Z".FormatLdapDateTime("yyyyMMddHHmmssZ");
-            _attributes.GetDateTime("property9", "yyyyMMddHHmmssZ").Should().Be.EqualTo(dateTime);
+            _attributes.GetDateTime("property9", "yyyyMMddHHmmssZ").Should().Be(dateTime);
         }
 
         [TestMethod]
         public void GetDateTime_ExistsAndCorrectTypeWithFileTimeFormat_ReturnsDateTime()
         {
-            _attributes.GetDateTime("property8", null).Should().Be.EqualTo(DateTime.FromFileTime(129444725394225946));
+            _attributes.GetDateTime("property8", null).Should().Be(DateTime.FromFileTime(129444725394225946));
         }
 
         [TestMethod]
         public void GetDateTime_ExistsAndWrongTypeWithWrongFormat_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetDateTime("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'DateTime' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
+
+            Executing.This(() => _attributes.GetDateTime("property1"))
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value 'prop1' for attribute 'property1' caused FormatException when trying to convert to 'DateTime' for theDn");
         }
 
         [TestMethod]
         public void GetDateTime_ExistsAndCorrectTypeWithWrongFormat_ThrowsFormatException()
         {
             Executing.This(() => _attributes.GetDateTime("property9"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value '20110313064859Z' for attribute 'property9' caused FormatException when trying to convert to 'DateTime' for theDn") &&
-                        e.InnerException.As<FormatException>() != null);
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<FormatException>();
+
+            Executing.This(() => _attributes.GetDateTime("property9"))
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value '20110313064859Z' for attribute 'property9' caused FormatException when trying to convert to 'DateTime' for theDn");
         }
 
         [TestMethod]
         public void GetString_Exists_ReturnsString()
         {
-            _attributes.GetString("property1").Should().Be.EqualTo("prop1");
+            _attributes.GetString("property1").Should().Be("prop1");
         }
 
         [TestMethod]
         public void GetString_DoesNotExist_ReturnsNull()
         {
-            _attributes.GetString("nope").Should().Be.Null();
+            _attributes.GetString("nope").Should().BeNull();
         }
 
         [TestMethod]
         public void GetStrings_Exists_ReturnsStringArray()
         {
-            _attributes.GetStrings("property4").Should().Have.SameSequenceAs(new[] { "one", "two", "three", "four" });
+            _attributes.GetStrings("property4").Should().ContainInOrder(new[] { "one", "two", "three", "four" });
         }
 
         [TestMethod]
         public void GetStrings_ExistsAsSingleValue_ReturnsStringArray()
         {
-            _attributes.GetStrings("property1").Should().Have.SameSequenceAs(new[] { "prop1" });
+            _attributes.GetStrings("property1").Should().ContainInOrder(new[] { "prop1" });
         }
 
         [TestMethod]
         public void GetStrings_DoesNotExist_ReturnsEmpty()
         {
-            _attributes.GetStrings("nope").Should().Be.Empty();
+            _attributes.GetStrings("nope").Should().BeEmpty();
         }
 
         [TestMethod]
         public void GetBytes_ExistsAndCorrectType_ReturnsByteArray()
         {
-            _attributes.GetBytes("property3").Should().Have.SameSequenceAs(_guidBytes);
+            _attributes.GetBytes("property3").Should().ContainInOrder(_guidBytes);
         }
 
         [TestMethod]
         public void GetBytes_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetBytes("nope").Should().Be.Null();
+            _attributes.GetBytes("nope").Should().BeNull();
         }
 
         [TestMethod]
         public void GetGuid_ExistsAndCorrectType_ReturnsGuid()
         {
-            _attributes.GetGuid("property3").Should().Be.EqualTo(new Guid(_guidBytes));
+            _attributes.GetGuid("property3").Should().Be(new Guid(_guidBytes));
         }
 
         [TestMethod]
         public void GetGuid_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetGuid("nope").Should().Not.Have.Value();
+            _attributes.GetGuid("nope").Should().NotHaveValue();
         }
 
         [TestMethod]
@@ -361,133 +384,135 @@ namespace LinqToLdap.Tests.Collections
             var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1"));
 #endif
             Executing.This(() => _attributes.GetGuid("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value '" + str + "' for attribute 'property1' caused ArgumentException when trying to convert to 'Guid' for theDn") &&
-                        e.InnerException.As<ArgumentException>() != null);
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value '" + str + "' for attribute 'property1' caused ArgumentException when trying to convert to 'Guid' for theDn");
+
+            Executing.This(() => _attributes.GetGuid("property1"))
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<ArgumentException>();
         }
 
         [TestMethod]
         public void GetSecurityIdentifier_ExistsAndCorrectType_ReturnsSecurityIdentifier()
         {
-            _attributes.GetSecurityIdentifier("property5").Should().Be.EqualTo(new SecurityIdentifier(_siBytes, 0));
+            _attributes.GetSecurityIdentifier("property5").Should().Be(new SecurityIdentifier(_siBytes, 0));
         }
 
         [TestMethod]
         public void GetSecurityIdentifier_DoesNotExistAndCorrectType_ReturnsNull()
         {
-            _attributes.GetSecurityIdentifier("nope").Should().Be.Null();
+            _attributes.GetSecurityIdentifier("nope").Should().BeNull();
         }
 
+        [SupportedOSPlatform("windows")]
         [TestMethod]
         public void GetSecurityIdentifier_ExistsAndWrongType_ThrowsFormatException()
         {
-#if NET35
-            var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1").Select(b => b.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray());
-#else
             var str = string.Join(",", System.Text.Encoding.ASCII.GetBytes("prop1"));
-#endif
+
             Executing.This(() => _attributes.GetSecurityIdentifier("property1"))
-                .Should().Throw<FormatException>().And.Exception
-                .Satisfies(e => e.Message.Equals("Value '" + str + "' for attribute 'property1' caused ArgumentOutOfRangeException when trying to convert to 'SecurityIdentifier' for theDn") &&
-                        e.InnerException.As<ArgumentException>() != null);
+                .Should().Throw<FormatException>().And
+                .Message.Should().Be("Value '" + str + "' for attribute 'property1' caused ArgumentOutOfRangeException when trying to convert to 'SecurityIdentifier' for theDn");
+
+            Executing.This(() => _attributes.GetSecurityIdentifier("property1"))
+                .Should().Throw<FormatException>().And.InnerException.Should().BeOfType<ArgumentException>();
         }
 
         [TestMethod]
         public void GetByteArrays_ExistsAndCorrectType_ReturnsListOfByteArrays()
         {
-            _attributes.GetByteArrays("property10").Should().Have.SameSequenceAs(_byteArrays);
+            _attributes.GetByteArrays("property10").Should().ContainInOrder(_byteArrays);
         }
 
         [TestMethod]
         public void GetByteArrays_DoesNotExist_ReturnsEmpty()
         {
-            _attributes.GetByteArrays("nope").Should().Be.Empty();
+            _attributes.GetByteArrays("nope").Should().BeEmpty();
         }
 
         [TestMethod]
         public void GetByteArrays_ExistsAndSingleValueCorrectType_ReturnsListOfByteArrays()
         {
-            _attributes.GetByteArrays("property3").Should().Contain(_guidBytes).And.Have.Count.EqualTo(1);
+            _attributes.GetByteArrays("property3").Should().Contain(_guidBytes).And.HaveCount(1);
         }
 
         [TestMethod]
         public void GetX509Certificate_ExistsAndCorrectType_ReturnsX509Certificate()
         {
-            _attributes.GetX509Certificate("property11").Should().Be.EqualTo(new X509Certificate(Resources.cert));
+            _attributes.GetX509Certificate("property11").Should().Be(new X509Certificate(Resources.cert));
         }
 
         [TestMethod]
         public void GetX509Certificate_DoesNotExist_ReturnsNull()
         {
-            _attributes.GetX509Certificate("nope").Should().Be.Null();
+            _attributes.GetX509Certificate("nope").Should().BeNull();
         }
 
         [TestMethod]
         public void GetX509Certificate2_ExistsAndCorrectType_ReturnsX509Certificate2()
         {
-            _attributes.GetX509Certificate2("property11").Should().Be.EqualTo(new X509Certificate2(Resources.cert));
+            _attributes.GetX509Certificate2("property11").Should().Be(new X509Certificate2(Resources.cert));
         }
 
         [TestMethod]
         public void GetX509Certificate2_DoesNotExist_ReturnsNull()
         {
-            _attributes.GetX509Certificate2("nope").Should().Be.Null();
+            _attributes.GetX509Certificate2("nope").Should().BeNull();
         }
 
         [TestMethod]
         public void GetX509Certificates_ExistsAndCorrectType_ReturnsListOfX509Certificates()
         {
-            _attributes.GetX509Certificates("property11").Should().Have.SameSequenceAs(new[] { new X509Certificate(Resources.cert) });
+            _attributes.GetX509Certificates("property11").Should().ContainInOrder(new[] { new X509Certificate(Resources.cert) });
         }
 
         [TestMethod]
         public void GetX509Certificates_DoesNotExist_ReturnsNull()
         {
-            _attributes.GetX509Certificates("nope").Should().Be.Null();
+            _attributes.GetX509Certificates("nope").Should().BeNull();
         }
 
         [TestMethod]
         public void GetX509Certificate2s_ExistsAndCorrectType_ReturnsListOfX509Certificates()
         {
-            _attributes.GetX509Certificate2s("property11").Should().Have.SameSequenceAs(new[] { new X509Certificate2(Resources.cert) });
+            _attributes.GetX509Certificate2s("property11").Should().ContainInOrder(new[] { new X509Certificate2(Resources.cert) });
         }
 
         [TestMethod]
         public void GetX509Certificate2s_DoesNotExist_ReturnsNull()
         {
-            _attributes.GetX509Certificate2s("nope").Should().Be.Null();
+            _attributes.GetX509Certificate2s("nope").Should().BeNull();
         }
 
         [TestMethod]
         public void AddModification_NullModification_ThrowsArgumentNullException()
         {
             Executing.This(() => _attributes.AddModification(null))
-                     .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                     .Should().Be.EqualTo("modification");
+                     .Should().Throw<ArgumentNullException>().And.CastTo<ArgumentNullException>().ParamName
+                     .Should().Be("modification");
         }
 
         [TestMethod]
         public void AddModification_NullModification_ThrowsArgumentException()
         {
             Executing.This(() => _attributes.AddModification(new DirectoryAttributeModification()))
-                     .Should().Throw<ArgumentException>().And.Exception.Message
-                     .Should().Be.EqualTo("The modification must have a name.");
+                     .Should().Throw<ArgumentException>().And.Message
+                     .Should().Be("The modification must have a name.");
         }
 
         [TestMethod]
         public void AddModification_DistinguishedName_ThrowsArgumentException()
         {
             Executing.This(() => _attributes.AddModification(new DirectoryAttributeModification { Name = "Distinguishedname" }))
-                     .Should().Throw<ArgumentException>().And.Exception.Message
-                     .Should().Be.EqualTo("Cannot change the distinguished name. Please use MoveEntry or RenameEntry.");
+                     .Should().Throw<ArgumentException>().And.Message
+                     .Should().Be("Cannot change the distinguished name. Please use MoveEntry or RenameEntry.");
         }
 
         [TestMethod]
         public void AddModification_EntryDN_ThrowsArgumentException()
         {
             Executing.This(() => _attributes.AddModification(new DirectoryAttributeModification { Name = "Entrydn" }))
-                     .Should().Throw<ArgumentException>().And.Exception.Message
-                     .Should().Be.EqualTo("Cannot change the distinguished name. Please use MoveEntry or RenameEntry.");
+                     .Should().Throw<ArgumentException>().And.Message
+                     .Should().Be("Cannot change the distinguished name. Please use MoveEntry or RenameEntry.");
         }
 
         [TestMethod]
@@ -528,8 +553,8 @@ namespace LinqToLdap.Tests.Collections
 
             //act
             Executing.This(() => _attributes.AddModification(mod2))
-                .Should().Throw<InvalidOperationException>().And.Exception.Message
-                .Should().Be.EqualTo("A modification for Test with operation Delete has already been added.");
+                .Should().Throw<InvalidOperationException>().And.Message
+                .Should().Be("A modification for Test with operation Delete has already been added.");
         }
     }
 }

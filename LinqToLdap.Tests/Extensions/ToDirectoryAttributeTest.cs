@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 #if NET35
 
@@ -35,8 +35,8 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(0);
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(0);
         }
 
         [TestMethod]
@@ -46,10 +46,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].Should().Be.EqualTo("one");
-            attribute[1].Should().Be.EqualTo("two");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].Should().Be("one");
+            attribute[1].Should().Be("two");
         }
 
         [TestMethod]
@@ -59,10 +59,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].Should().Be.EqualTo("one");
-            attribute[1].Should().Be.EqualTo("two");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].Should().Be("one");
+            attribute[1].Should().Be("two");
         }
 
         [TestMethod]
@@ -72,9 +72,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].Should().Be.EqualTo(o);
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].Should().Be(o);
         }
 
         [TestMethod]
@@ -84,9 +84,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(o as IEnumerable<byte>);
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(o as IEnumerable<byte>);
         }
 
         [TestMethod]
@@ -96,9 +96,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(o.CastTo<Guid>().ToByteArray());
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(o.CastTo<Guid>().ToByteArray());
         }
 
         [TestMethod]
@@ -113,9 +113,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(bytes);
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(bytes);
         }
 
         [TestMethod]
@@ -127,10 +127,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].Should().Be.EqualTo(bytes1);
-            attribute[1].Should().Be.EqualTo(bytes2);
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].Should().Be(bytes1);
+            attribute[1].Should().Be(bytes2);
         }
 
         [TestMethod]
@@ -140,10 +140,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].Should().Be.EqualTo("1");
-            attribute[1].Should().Be.EqualTo("2");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].Should().Be("1");
+            attribute[1].Should().Be("2");
         }
 
         [TestMethod]
@@ -153,10 +153,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].Should().Be.EqualTo("1");
-            attribute[1].Should().Be.EqualTo("2");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].Should().Be("1");
+            attribute[1].Should().Be("2");
         }
 
         [TestMethod]
@@ -166,9 +166,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].Should().Be.EqualTo("test");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].Should().Be("test");
         }
 
         [TestMethod]
@@ -178,9 +178,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].Should().Be.EqualTo("TRUE");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].Should().Be("TRUE");
         }
 
         [TestMethod]
@@ -190,9 +190,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = o.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].Should().Be.EqualTo("FALSE");
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].Should().Be("FALSE");
         }
 
         [TestMethod]
@@ -202,9 +202,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = cert.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(cert.GetRawCertData());
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(cert.GetRawCertData());
         }
 
         [TestMethod]
@@ -214,9 +214,9 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = cert.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(1);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(cert.GetRawCertData());
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(1);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(cert.GetRawCertData());
         }
 
         [TestMethod]
@@ -226,10 +226,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = cert.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(cert[0].GetRawCertData());
-            attribute[1].As<byte[]>().Should().Have.SameSequenceAs(cert[1].GetRawCertData());
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(cert[0].GetRawCertData());
+            attribute[1].CastTo<byte[]>().Should().ContainInOrder(cert[1].GetRawCertData());
         }
 
         [TestMethod]
@@ -239,10 +239,10 @@ namespace LinqToLdap.Tests.Extensions
 
             var attribute = cert.ToDirectoryAttribute("x");
 
-            attribute.Name.Should().Be.EqualTo("x");
-            attribute.Count.Should().Be.EqualTo(2);
-            attribute[0].As<byte[]>().Should().Have.SameSequenceAs(cert[0].GetRawCertData());
-            attribute[1].As<byte[]>().Should().Have.SameSequenceAs(cert[1].GetRawCertData());
+            attribute.Name.Should().Be("x");
+            attribute.Count.Should().Be(2);
+            attribute[0].CastTo<byte[]>().Should().ContainInOrder(cert[0].GetRawCertData());
+            attribute[1].CastTo<byte[]>().Should().ContainInOrder(cert[1].GetRawCertData());
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -47,7 +47,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter(date);
 
             //assert
-            value.Should().Be.EqualTo(date.FormatLdapDateTime("yyyyMMddHHmmss.0Z"));
+            value.Should().Be(date.FormatLdapDateTime("yyyyMMddHHmmss.0Z"));
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("names", dates.Select(d => d.Value.ToFileTime().ToString()).ToArray()), "dn");
 
             //assert
-            value.As<DateTime?[]>().Should().Have.SameSequenceAs(dates);
+            value.CastTo<DateTime?[]>().Should().ContainInOrder(dates);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("names", dates.Select(d => d.FormatLdapDateTime("yyyyMMddHHmmss.0Z")).ToArray()), "dn");
 
             //assert
-            value.As<DateTime[]>().Should().Have.SameSequenceAs(dates);
+            value.CastTo<DateTime[]>().Should().ContainInOrder(dates);
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -109,7 +109,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", now.ToFileTime().ToString()), "dn");
 
             //assert
-            value.As<DateTime[]>().Should().Contain(now);
+            value.CastTo<DateTime[]>().Should().Contain(now);
         }
 
         [TestMethod]
@@ -126,8 +126,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new [] { date1, date2, date3.AddDays(1) }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -144,8 +144,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { date1, date2 }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -159,8 +159,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { DateTime.Now }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -179,8 +179,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { date1, date2, date3 }, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

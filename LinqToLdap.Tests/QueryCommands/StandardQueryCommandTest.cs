@@ -11,7 +11,7 @@ using LinqToLdap.Tests.TestSupport.QueryCommands;
 using LinqToLdap.Transformers;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 
 namespace LinqToLdap.Tests.QueryCommands
@@ -49,9 +49,9 @@ namespace LinqToLdap.Tests.QueryCommands
             command.Execute(null, SearchScope.OneLevel, 1, true);
 
             //assert
-            command.GetRequest().Controls.OfType<SortRequestControl>().Should().Have.Count.EqualTo(1);
-            command.HandleStandardRequestCalled.Should().Be.True();
-            command.HandlePagedRequestCalled.Should().Be.False();
+            command.GetRequest().Controls.OfType<SortRequestControl>().Should().HaveCount(1);
+            command.HandleStandardRequestCalled.Should().BeTrue();
+            command.HandlePagedRequestCalled.Should().BeFalse();
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace LinqToLdap.Tests.QueryCommands
             var command = new MockStandardQueryCommand(_options.Object, _mapping.Object);
 
             //assert
-            command.GetRequest().Attributes.Count.Should().Be.EqualTo(0);
+            command.GetRequest().Attributes.Count.Should().Be(0);
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace LinqToLdap.Tests.QueryCommands
             var command = new MockStandardQueryCommand(_options.Object, _mapping.Object);
 
             //assert
-            command.GetRequest().Attributes.Count.Should().Be.EqualTo(1);
+            command.GetRequest().Attributes.Count.Should().Be(1);
             command.GetRequest().Attributes.Cast<string>().Should().Contain("cn");
         }
 
@@ -97,9 +97,9 @@ namespace LinqToLdap.Tests.QueryCommands
             command.Execute(null, SearchScope.OneLevel, 1, true);
 
             //assert
-            command.GetRequest().Controls.OfType<SortRequestControl>().Should().Have.Count.EqualTo(1);
-            command.HandleStandardRequestCalled.Should().Be.False();
-            command.HandlePagedRequestCalled.Should().Be.True();
+            command.GetRequest().Controls.OfType<SortRequestControl>().Should().HaveCount(1);
+            command.HandleStandardRequestCalled.Should().BeFalse();
+            command.HandlePagedRequestCalled.Should().BeTrue();
         }
 
         [TestMethod]
@@ -120,9 +120,9 @@ namespace LinqToLdap.Tests.QueryCommands
             command.Execute(null, SearchScope.OneLevel, 1, true);
 
             //assert
-            command.GetRequest().Controls.OfType<SortRequestControl>().Should().Have.Count.EqualTo(1);
-            command.HandleStandardRequestCalled.Should().Be.False();
-            command.HandlePagedRequestCalled.Should().Be.True();
+            command.GetRequest().Controls.OfType<SortRequestControl>().Should().HaveCount(1);
+            command.HandleStandardRequestCalled.Should().BeFalse();
+            command.HandlePagedRequestCalled.Should().BeTrue();
         }
 
         [TestMethod]
@@ -142,7 +142,7 @@ namespace LinqToLdap.Tests.QueryCommands
             //assert
             Executing.This(() => command.Execute(null, SearchScope.OneLevel, 1, true))
                 .Should().Throw<InvalidOperationException>()
-                .And.Exception.Message.Should().Be.EqualTo("Only one sort request control can be sent to the server");
+                .And.GetBaseException().Message.Should().Be("Only one sort request control can be sent to the server");
         }
 
         [TestMethod]
@@ -157,10 +157,12 @@ namespace LinqToLdap.Tests.QueryCommands
                 .DisablePagedRequest()
                 .DisableStandardRequest();
 
+            var func = () => command.Execute(null, SearchScope.OneLevel, 1, true);
+
             //assert
             Executing.This(() => command.Execute(null, SearchScope.OneLevel, 1, true))
                 .Should().Throw<InvalidOperationException>()
-                .Exception.Message.Should().Be.EqualTo("Only one page request control can be sent to the server.");
+                .And.GetBaseException().Message.Should().Be("Only one page request control can be sent to the server.");
         }
 
         [TestMethod]
@@ -199,11 +201,11 @@ namespace LinqToLdap.Tests.QueryCommands
             var obj = command.HandlePagedRequest(connection, null, null);
 
             //assert
-            command.GetRequest().Controls.OfType<PageResultRequestControl>().Should().Have.Count.EqualTo(1);
-            obj.Should().Be.InstanceOf<LdapPage<object>>();
-            obj.As<LdapPage<object>>().PageSize.Should().Be.EqualTo(1);
-            obj.As<LdapPage<object>>().NextPage.Should().Have.SameSequenceAs(new byte[] { 1, 2 });
-            obj.As<LdapPage<object>>().Filter.Should().Be.EqualTo("filter");
+            command.GetRequest().Controls.OfType<PageResultRequestControl>().Should().HaveCount(1);
+            obj.Should().BeOfType<LdapPage<object>>();
+            obj.CastTo<LdapPage<object>>().PageSize.Should().Be(1);
+            obj.CastTo<LdapPage<object>>().NextPage.Should().ContainInOrder(new byte[] { 1, 2 });
+            obj.CastTo<LdapPage<object>>().Filter.Should().Be("filter");
         }
 
         [TestMethod]
@@ -241,11 +243,11 @@ namespace LinqToLdap.Tests.QueryCommands
 
             //assert
             command.GetRequest().Controls.OfType<PageResultRequestControl>()
-                .Should().Have.Count.EqualTo(0);
-            obj.Should().Be.InstanceOf<LdapPage<object>>();
-            obj.As<LdapPage<object>>().PageSize.Should().Be.EqualTo(2);
-            obj.As<LdapPage<object>>().NextPage.Should().Have.SameSequenceAs(new byte[] { 1, 2 });
-            obj.As<LdapPage<object>>().Filter.Should().Be.EqualTo("filter");
+                .Should().HaveCount(0);
+            obj.Should().BeOfType<LdapPage<object>>();
+            obj.CastTo<LdapPage<object>>().PageSize.Should().Be(2);
+            obj.CastTo<LdapPage<object>>().NextPage.Should().ContainInOrder(new byte[] { 1, 2 });
+            obj.CastTo<LdapPage<object>>().Filter.Should().Be("filter");
         }
     }
 }

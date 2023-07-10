@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netstandard2.0;net35;net40;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;net6.0;net7.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LinqToLdap</PackageId>
-    <Version>5.0.0</Version>
+    <Version>6.0.0</Version>
     <Authors>Alan Hatter</Authors>
     <Company>Alan Hatter</Company>
     <Description>LINQ provider built on top of System.DirectoryServices.Protocols for querying and updating LDAP servers.</Description>
@@ -24,17 +24,10 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net35' AND '$(TargetFramework)' != 'net40' ">
-    <PackageReference Include="System.DirectoryServices.Protocols" Version="4.7.0" />
+  <ItemGroup>
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="7.0.1" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" />
     <PackageReference Include="System.Reflection.Emit.LightWeight" Version="4.7.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
-    <Reference Include="System.DirectoryServices.Protocols, Version=2.0.0.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <Reference Include="System.DirectoryServices.Protocols, Version=4.0.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\linqtoldap_logo_small.png" Pack="true" PackagePath="\" />

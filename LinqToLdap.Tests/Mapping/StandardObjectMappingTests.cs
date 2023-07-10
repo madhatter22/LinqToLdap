@@ -6,7 +6,7 @@ using LinqToLdap.Collections;
 using LinqToLdap.Mapping;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -56,7 +56,7 @@ namespace LinqToLdap.Tests.Mapping
                 "category", false, new[] { "class" }, false);
             _mapping.AddSubTypeMapping(_subTypeMapping.Object);
             _mapping.AddSubTypeMapping(_subType2Mapping.Object);
-            _mapping.HasSubTypeMappings.Should().Be.True();
+            _mapping.HasSubTypeMappings.Should().BeTrue();
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace LinqToLdap.Tests.Mapping
             var instance = _mapping.Create();
 
             //assert
-            instance.Should().Be.InstanceOf<ParentType>();
+            instance.Should().BeOfType<ParentType>();
         }
 
         [TestMethod]
@@ -78,7 +78,7 @@ namespace LinqToLdap.Tests.Mapping
             var instance = _mapping.Create(null, new object[] {"nope"});
 
             //assert
-            instance.Should().Be.InstanceOf<ParentType>();
+            instance.Should().BeOfType<ParentType>();
         }
 
         [TestMethod]
@@ -93,7 +93,7 @@ namespace LinqToLdap.Tests.Mapping
             var instance = _mapping.Create(null, objectClasses);
 
             //assert
-            instance.Should().Be.InstanceOf<SubType>();
+            instance.Should().BeOfType<SubType>();
         }
 
         [TestMethod]
@@ -108,7 +108,7 @@ namespace LinqToLdap.Tests.Mapping
             var instance = _mapping.Create(null, objectClasses);
 
             //assert
-            instance.Should().Be.InstanceOf<SubType2>();
+            instance.Should().BeOfType<SubType2>();
         }
 
         private class ParentType

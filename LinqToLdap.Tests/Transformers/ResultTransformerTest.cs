@@ -6,7 +6,7 @@ using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using LinqToLdap.Transformers;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Transformers
 {
@@ -131,7 +131,7 @@ namespace LinqToLdap.Tests.Transformers
             var transformed = _transformer.Transform(searchResultsEntry);
 
             //assert
-            transformed.Should().Be.SameInstanceAs(instance);
+            transformed.Should().BeSameAs(instance);
             _property1.Verify(p => p.SetValue(instance, "prop1"));
             _property2.Verify(p => p.SetValue(instance, "2"));
             _property3.Verify(p => p.SetValue(instance, _bytes));
@@ -170,7 +170,7 @@ namespace LinqToLdap.Tests.Transformers
             var transformed = _transformer.Transform(searchResultsEntry);
 
             //assert
-            transformed.Should().Be.SameInstanceAs(instance);
+            transformed.Should().BeSameAs(instance);
             _property1.Verify(p => p.SetValue(instance, "prop1"));
             _property2.Verify(p => p.SetValue(instance, "2"));
             _property3.Verify(p => p.SetValue(instance, _bytes), Times.Never());
@@ -231,7 +231,7 @@ namespace LinqToLdap.Tests.Transformers
             var transformed = _transformer.Transform(searchResultsEntry);
 
             //assert
-            transformed.Should().Be.SameInstanceAs(instance);
+            transformed.Should().BeSameAs(instance);
             _property1.Verify(p => p.SetValue(instance, "prop1"));
             _property2.Verify(p => p.SetValue(instance, "2"));
             _property3.Verify(p => p.SetValue(instance, _bytes), Times.Never());
@@ -280,7 +280,7 @@ namespace LinqToLdap.Tests.Transformers
             var transformed = _transformer.Transform(searchResultsEntry);
 
             //assert
-            transformed.Should().Be.SameInstanceAs(instance);
+            transformed.Should().BeSameAs(instance);
         }
 
         [TestMethod]
@@ -317,7 +317,7 @@ namespace LinqToLdap.Tests.Transformers
             var transformed = _transformer.Transform(searchResultsEntry);
 
             //assert
-            transformed.Should().Be.SameInstanceAs(instance);
+            transformed.Should().BeSameAs(instance);
         }
     }
 }

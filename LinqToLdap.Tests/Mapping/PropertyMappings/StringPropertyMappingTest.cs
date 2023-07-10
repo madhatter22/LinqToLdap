@@ -1,7 +1,7 @@
 ﻿using System.DirectoryServices.Protocols;
 using LinqToLdap.Mapping.PropertyMappings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -30,7 +30,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter("str");
 
             //assert
-            value.Should().Be.EqualTo("str");
+            value.Should().Be("str");
         }
 
         [TestMethod]
@@ -43,7 +43,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter("a\\*()\u0000z");
 
             //assert
-            value.Should().Be.EqualTo("a\\5c\\2a\\28\\29\\00z");
+            value.Should().Be("a\\5c\\2a\\28\\29\\00z");
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(new DirectoryAttribute("name", "str"), "dn");
 
             //assert
-            value.Should().Be.EqualTo("str");
+            value.Should().Be("str");
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(new DirectoryAttribute("name"), "dn");
 
             //assert
-            value.Should().Be.EqualTo(string.Empty);
+            value.Should().Be(string.Empty);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -99,9 +99,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value[0].Should().Be.EqualTo("str");
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value[0].Should().Be("str");
         }
 
         [TestMethod]
@@ -116,8 +116,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, "1", out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -131,8 +131,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, "2", out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -147,8 +147,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, "4", out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

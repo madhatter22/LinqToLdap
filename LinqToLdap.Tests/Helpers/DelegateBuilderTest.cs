@@ -1,7 +1,7 @@
 ﻿using LinqToLdap.Helpers;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -59,13 +59,13 @@ namespace LinqToLdap.Tests.Helpers
 
             var instance = ctor((long?)1, (long)2, now, now, "str", SomeEnum.Value1, SomeEnum.Value2);
 
-            instance.Property1.Should().Be.EqualTo(1);
-            instance.Property2.Should().Be.EqualTo(2);
-            instance.Property3.Should().Be.EqualTo(now);
-            instance.Property4.Should().Be.EqualTo(now);
-            instance.Property5.Should().Be.EqualTo("str");
-            instance.Property6.Should().Be.EqualTo(SomeEnum.Value1);
-            instance.Property7.Should().Be.EqualTo(SomeEnum.Value2);
+            instance.Property1.Should().Be(1);
+            instance.Property2.Should().Be(2);
+            instance.Property3.Should().Be(now);
+            instance.Property4.Should().Be(now);
+            instance.Property5.Should().Be("str");
+            instance.Property6.Should().Be(SomeEnum.Value1);
+            instance.Property7.Should().Be(SomeEnum.Value2);
         }
 
         [TestMethod]
@@ -87,13 +87,13 @@ namespace LinqToLdap.Tests.Helpers
 
             var instance = ctor((long?)1, (long)2, now, now, "str", SomeEnum.Value1, SomeEnum.Value2);
 
-            instance.PropertyValue<long?>("Property1").Should().Be.EqualTo(1);
-            instance.PropertyValue<long>("Property2").Should().Be.EqualTo(2);
-            instance.PropertyValue<DateTime?>("Property3").Should().Be.EqualTo(now);
-            instance.PropertyValue<DateTime>("Property4").Should().Be.EqualTo(now);
-            instance.PropertyValue<string>("Property5").Should().Be.EqualTo("str");
-            instance.PropertyValue<SomeEnum>("Property6").Should().Be.EqualTo(SomeEnum.Value1);
-            instance.PropertyValue<SomeEnum?>("Property7").Should().Be.EqualTo(SomeEnum.Value2);
+            instance.PropertyValue<long?>("Property1").Should().Be(1);
+            instance.PropertyValue<long>("Property2").Should().Be(2);
+            instance.PropertyValue<DateTime?>("Property3").Should().Be(now);
+            instance.PropertyValue<DateTime>("Property4").Should().Be(now);
+            instance.PropertyValue<string>("Property5").Should().Be("str");
+            instance.PropertyValue<SomeEnum>("Property6").Should().Be(SomeEnum.Value1);
+            instance.PropertyValue<SomeEnum?>("Property7").Should().Be(SomeEnum.Value2);
         }
 
         private static CtorWithParams<T> GetCtorWithParams<T>(T exmaple)
@@ -120,12 +120,12 @@ namespace LinqToLdap.Tests.Helpers
             {
                 var getter = GetGetter(anon, property);
                 var value = getter(anon);
-                value.Should().Not.Be.Null();
-                value.Should().Be.EqualTo(property.GetValue(anon, null));
+                value.Should().NotBeNull();
+                value.Should().Be(property.GetValue(anon, null));
                 count++;
             }
 
-            count.Should().Be.EqualTo(7);
+            count.Should().Be(7);
         }
 
         [TestMethod]
@@ -144,12 +144,12 @@ namespace LinqToLdap.Tests.Helpers
             {
                 var getter = DelegateBuilder.BuildGetter<DelegateBuilderTest>(property);
                 var value = getter(this);
-                value.Should().Not.Be.Null();
-                value.Should().Be.EqualTo(property.GetValue(this, null));
+                value.Should().NotBeNull();
+                value.Should().Be(property.GetValue(this, null));
                 count++;
             }
 
-            count.Should().Be.EqualTo(7);
+            count.Should().Be(7);
         }
 
         [TestMethod]
@@ -172,13 +172,13 @@ namespace LinqToLdap.Tests.Helpers
             var propertySetter7 = DelegateBuilder.BuildSetter<DelegateBuilderTest>(GetType().GetProperty("Property7", flags));
             propertySetter7(this, SomeEnum.Value2);
 
-            Property1.Should().Be.EqualTo(1);
-            Property2.Should().Be.EqualTo(2);
-            Property3.Should().Be.EqualTo(now);
-            Property4.Should().Be.EqualTo(now);
-            Property5.Should().Be.EqualTo("str");
-            Property6.Should().Be.EqualTo(SomeEnum.Value1);
-            Property7.Should().Be.EqualTo(SomeEnum.Value2);
+            Property1.Should().Be(1);
+            Property2.Should().Be(2);
+            Property3.Should().Be(now);
+            Property4.Should().Be(now);
+            Property5.Should().Be("str");
+            Property6.Should().Be(SomeEnum.Value1);
+            Property7.Should().Be(SomeEnum.Value2);
         }
 
         [TestMethod]
@@ -189,7 +189,7 @@ namespace LinqToLdap.Tests.Helpers
 
             var getter = GetGetter(anon, anon.GetType().GetProperty("Property1"));
 
-            getter(anon).Should().Be.EqualTo(now);
+            getter(anon).Should().Be(now);
         }
 
         private static Func<T, object> GetGetter<T>(T example, PropertyInfo propertyInfo)

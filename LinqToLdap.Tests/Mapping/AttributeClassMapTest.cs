@@ -3,7 +3,7 @@ using System.Linq;
 using LinqToLdap.Mapping;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -36,18 +36,18 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new AttributeClassMap<AttributeClassMapTest>().PerformMapping().CastTo<AttributeClassMap<AttributeClassMapTest>>();
 
             //assert
-            mapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo("name");
-            mapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("oc");
-            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Have.SameSequenceAs(new[] { "cl" });
+            mapping.FieldValueEx<string>("_namingContext").Should().Be("name");
+            mapping.FieldValueEx<string>("_objectCategory").Should().Be("oc");
+            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().ContainInOrder(new[] { "cl" });
             var properties = mapping.PropertyMappings.ToList();
 
-            properties.Should().Have.Count.EqualTo(4);
+            properties.Should().HaveCount(4);
 
-            properties[0].As<PropertyMappingBuilder<AttributeClassMapTest, int?>>().AttributeName.Should().Be.EqualTo("prop1");
-            properties[1].As<PropertyMappingBuilder<AttributeClassMapTest, byte[]>>().AttributeName.Should().Be.Null();
-            properties[1].As<PropertyMappingBuilder<AttributeClassMapTest, byte[]>>().PropertyInfo.Name.Should().Be.EqualTo("Property3");
-            properties[2].As<PropertyMappingBuilder<AttributeClassMapTest, string>>().AttributeName.Should().Be.EqualTo("ou");
-            properties[3].As<PropertyMappingBuilder<AttributeClassMapTest, string>>().AttributeName.Should().Be.EqualTo("distinguishedname");
+            properties[0].CastTo<PropertyMappingBuilder<AttributeClassMapTest, int?>>().AttributeName.Should().Be("prop1");
+            properties[1].CastTo<PropertyMappingBuilder<AttributeClassMapTest, byte[]>>().AttributeName.Should().BeNull();
+            properties[1].CastTo<PropertyMappingBuilder<AttributeClassMapTest, byte[]>>().PropertyInfo.Name.Should().Be("Property3");
+            properties[2].CastTo<PropertyMappingBuilder<AttributeClassMapTest, string>>().AttributeName.Should().Be("ou");
+            properties[3].CastTo<PropertyMappingBuilder<AttributeClassMapTest, string>>().AttributeName.Should().Be("distinguishedname");
         }
 
         [TestMethod]
@@ -57,18 +57,18 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new AttributeClassMap<AttributeClassMapSubTest>().PerformMapping();
 
             //assert
-            mapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo("name");
-            mapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("oc");
-            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Have.SameSequenceAs(new[] { "cl" });
+            mapping.FieldValueEx<string>("_namingContext").Should().Be("name");
+            mapping.FieldValueEx<string>("_objectCategory").Should().Be("oc");
+            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().ContainInOrder(new[] { "cl" });
             var properties = mapping.FieldValueEx<List<IPropertyMappingBuilder>>("PropertyMappings").ToList();
 
-            properties.Should().Have.Count.EqualTo(4);
+            properties.Should().HaveCount(4);
 
-            properties[0].As<PropertyMappingBuilder<AttributeClassMapSubTest, string[]>>().AttributeName.Should().Be.Null();
-            properties[0].As<PropertyMappingBuilder<AttributeClassMapSubTest, string[]>>().PropertyInfo.Name.Should().Be.EqualTo("Property4");
-            properties[1].As<PropertyMappingBuilder<AttributeClassMapSubTest, int?>>().AttributeName.Should().Be.EqualTo("prop1");
-            properties[2].As<PropertyMappingBuilder<AttributeClassMapSubTest, string>>().AttributeName.Should().Be.EqualTo("ou");
-            properties[3].As<PropertyMappingBuilder<AttributeClassMapSubTest, string>>().AttributeName.Should().Be.EqualTo("distinguishedname");
+            properties[0].CastTo<PropertyMappingBuilder<AttributeClassMapSubTest, string[]>>().AttributeName.Should().BeNull();
+            properties[0].CastTo<PropertyMappingBuilder<AttributeClassMapSubTest, string[]>>().PropertyInfo.Name.Should().Be("Property4");
+            properties[1].CastTo<PropertyMappingBuilder<AttributeClassMapSubTest, int?>>().AttributeName.Should().Be("prop1");
+            properties[2].CastTo<PropertyMappingBuilder<AttributeClassMapSubTest, string>>().AttributeName.Should().Be("ou");
+            properties[3].CastTo<PropertyMappingBuilder<AttributeClassMapSubTest, string>>().AttributeName.Should().Be("distinguishedname");
         }
     }
 

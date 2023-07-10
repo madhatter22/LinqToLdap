@@ -11,7 +11,7 @@ using LinqToLdap.Mapping.PropertyMappingBuilders;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -72,14 +72,14 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property_34");
             var builder = new CustomPropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>(property);
-            builder.As<ICustomPropertyMapper<PropertyMappingBuilderTest, DateTime>>().Named("prop34");
+            builder.CastTo<ICustomPropertyMapper<PropertyMappingBuilderTest, DateTime>>().Named("prop34");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("prop34");
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
+            mapping.AttributeName.Should().Be("prop34");
+            mapping.PropertyName.Should().Be(property.Name);
         }
 
         [TestMethod]
@@ -93,8 +93,8 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("Property-34");
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
+            mapping.AttributeName.Should().Be("Property-34");
+            mapping.PropertyName.Should().Be(property.Name);
         }
 
         [TestMethod]
@@ -103,14 +103,14 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property_34");
             var builder = new DateTimePropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>(property);
-            builder.As<IDateTimePropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>>().Named("prop34");
+            builder.CastTo<IDateTimePropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>>().Named("prop34");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("prop34");
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
+            mapping.AttributeName.Should().Be("prop34");
+            mapping.PropertyName.Should().Be(property.Name);
         }
 
         [TestMethod]
@@ -124,8 +124,8 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("Property-34");
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
+            mapping.AttributeName.Should().Be("Property-34");
+            mapping.PropertyName.Should().Be(property.Name);
         }
 
         [TestMethod]
@@ -134,15 +134,15 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property_33");
             var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("prop33");
+            builder.CastTo<IPropertyMapper>().Named("prop33");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("prop33");
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.AttributeName.Should().Be("prop33");
+            mapping.PropertyName.Should().Be(property.Name);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -156,9 +156,9 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("Property-33");
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.AttributeName.Should().Be("Property-33");
+            mapping.PropertyName.Should().Be(property.Name);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -173,12 +173,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2PropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property21");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property21");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -193,12 +193,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2PropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property22");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property22");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -213,12 +213,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(ByteArrayArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property15");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property15");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -233,12 +233,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(ByteArrayCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property19");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property19");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -253,12 +253,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(CatchAllPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("AllProperties");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Always);
+            mapping.PropertyName.Should().Be("AllProperties");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Always);
         }
 
         [TestMethod]
@@ -273,12 +273,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(ByteArrayCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property18");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property18");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -293,12 +293,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(StringCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property17");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property17");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -313,12 +313,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(StringCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property16");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property16");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -333,12 +333,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2CollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property23");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property23");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -353,12 +353,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2CollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property24");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property24");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -373,12 +373,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2CollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property25");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property25");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -393,12 +393,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(SecurityIdentifierArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be(property.Name);
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -413,12 +413,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(SecurityIdentifierCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be(property.Name);
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -433,12 +433,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(SecurityIdentifierCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo(property.Name);
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be(property.Name);
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -453,12 +453,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2CollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property26");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property26");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -473,12 +473,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2ArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property27");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property27");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -493,12 +493,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(X509Certificate2ArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property28");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property28");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -507,20 +507,20 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property2");
             var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().DateTimeFormat(null);
+            builder.CastTo<IPropertyMapper>().DateTimeFormat(null);
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(DatePropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property2");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.FieldValueEx<bool>("_isFileTimeFormat").Should().Be.True();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property2");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.FieldValueEx<bool>("_isFileTimeFormat").Should().BeTrue();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -535,14 +535,14 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(DatePropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property3");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.FieldValueEx<bool>("_isFileTimeFormat").Should().Be.False();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.FieldValueEx<string>("_dateFormat").Should().Be.EqualTo("yyyyMMddHHmmss.0Z");
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property3");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.FieldValueEx<bool>("_isFileTimeFormat").Should().BeFalse();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.FieldValueEx<string>("_dateFormat").Should().Be("yyyyMMddHHmmss.0Z");
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -557,12 +557,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(ByteArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property6");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property6");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -577,12 +577,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(SecurityIdentifierPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property20");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property20");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -597,12 +597,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(GuidPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property4");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property4");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -617,12 +617,12 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(GuidPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property5");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property5");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -631,20 +631,20 @@ namespace LinqToLdap.Tests.Mapping
             //prepare
             var property = GetType().GetProperty("Property7");
             var builder = new PropertyMappingBuilder<PropertyMappingBuilderTest, BuilderEnum>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().EnumStoredAsInt();
+            builder.CastTo<IPropertyMapper>().EnumStoredAsInt();
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(EnumPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property7");
-            mapping.FieldValueEx<bool>("_isStoredAsInt").Should().Be.True();
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property7");
+            mapping.FieldValueEx<bool>("_isStoredAsInt").Should().BeTrue();
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -659,13 +659,13 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var type = typeof(EnumPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property8");
-            mapping.FieldValueEx<bool>("_isStoredAsInt").Should().Be.False();
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property8");
+            mapping.FieldValueEx<bool>("_isStoredAsInt").Should().BeFalse();
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -675,21 +675,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property1");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, string>(property, true, ReadOnly.Always);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(StringPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property1");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.True();
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Always);
-            mapping.PropertyType.Should().Be.EqualTo(typeof(string));
-            mapping.GetType().Should().Be.EqualTo(type);
+            mapping.PropertyName.Should().Be("Property1");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeTrue();
+            mapping.ReadOnly.Should().Be(ReadOnly.Always);
+            mapping.PropertyType.Should().Be(typeof(string));
+            mapping.GetType().Should().Be(type);
         }
 
         [TestMethod]
@@ -699,21 +699,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property14");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, string[]>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(StringArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property14");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(string[]));
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property14");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.PropertyType.Should().Be(typeof(string[]));
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -723,21 +723,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property29");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime?[]>(property, false, ReadOnly.OnAdd);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(DateArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property29");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(DateTime?[]));
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.OnAdd);
+            mapping.PropertyName.Should().Be("Property29");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.PropertyType.Should().Be(typeof(DateTime?[]));
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.OnAdd);
         }
 
         [TestMethod]
@@ -747,21 +747,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property30");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, DateTime[]>(property, false, ReadOnly.OnUpdate);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(DateArrayPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property30");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(DateTime[]));
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.OnUpdate);
+            mapping.PropertyName.Should().Be("Property30");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.PropertyType.Should().Be(typeof(DateTime[]));
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.OnUpdate);
         }
 
         [TestMethod]
@@ -771,21 +771,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property31");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<DateTime?>>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(DateCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property31");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(Collection<DateTime?>));
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property31");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.PropertyType.Should().Be(typeof(Collection<DateTime?>));
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -795,21 +795,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property32");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, Collection<DateTime?>>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(DateCollectionPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property32");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(ICollection<DateTime>));
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property32");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.PropertyType.Should().Be(typeof(ICollection<DateTime>));
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -819,21 +819,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property12");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, int>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(NumericPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property12");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(int));
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property12");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.PropertyType.Should().Be(typeof(int));
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -843,21 +843,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property13");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, int?>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(NumericPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property13");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(int?));
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property13");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.PropertyType.Should().Be(typeof(int?));
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -867,21 +867,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property10");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, bool>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(BooleanPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property10");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(bool));
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property10");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.PropertyType.Should().Be(typeof(bool));
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -891,21 +891,21 @@ namespace LinqToLdap.Tests.Mapping
             var property = GetType().GetProperty("Property11");
             var builder =
                 new PropertyMappingBuilder<PropertyMappingBuilderTest, bool?>(property, false, ReadOnly.Never);
-            builder.As<IPropertyMapper>().Named("Attribute1");
+            builder.CastTo<IPropertyMapper>().Named("Attribute1");
 
             //act
             var mapping = builder.ToPropertyMapping();
 
             //assert
             var type = typeof(BooleanPropertyMapping<PropertyMappingBuilderTest>);
-            mapping.PropertyName.Should().Be.EqualTo("Property11");
-            mapping.AttributeName.Should().Be.EqualTo("Attribute1");
-            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().Not.Be.Null();
-            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(bool?));
-            mapping.GetType().Should().Be.EqualTo(type);
-            mapping.ReadOnly.Should().Be.EqualTo(ReadOnly.Never);
+            mapping.PropertyName.Should().Be("Property11");
+            mapping.AttributeName.Should().Be("Attribute1");
+            mapping.PropertyValue<Action<PropertyMappingBuilderTest, object>>("Setter").Should().NotBeNull();
+            mapping.PropertyValue<Func<PropertyMappingBuilderTest, object>>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.PropertyType.Should().Be(typeof(bool?));
+            mapping.GetType().Should().Be(type);
+            mapping.ReadOnly.Should().Be(ReadOnly.Never);
         }
 
         [TestMethod]
@@ -920,10 +920,10 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = builder.ToPropertyMapping();
 
             //assert
-            mapping.PropertyValue<object>("Setter").Should().Be.Null();
-            mapping.PropertyValue<object>("Getter").Should().Not.Be.Null();
-            mapping.IsDistinguishedName.Should().Be.False();
-            mapping.PropertyType.Should().Be.EqualTo(typeof(string));
+            mapping.PropertyValue<object>("Setter").Should().BeNull();
+            mapping.PropertyValue<object>("Getter").Should().NotBeNull();
+            mapping.IsDistinguishedName.Should().BeFalse();
+            mapping.PropertyType.Should().Be(typeof(string));
         }
 
         private static PropertyMappingBuilder<T, string> GetMappingString<T>(T example, PropertyInfo property) where T : class

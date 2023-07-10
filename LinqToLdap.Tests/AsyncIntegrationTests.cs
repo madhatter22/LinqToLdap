@@ -3,7 +3,7 @@ using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.DirectoryServices.Protocols;
 using System.Linq;
@@ -60,8 +60,8 @@ namespace LinqToLdap.Tests
             var anyPredicateAsnyc = _context.Query<PersonInheritanceTest>().AnyAsync(x => x.CommonName.StartsWith("X")).Result;
 
             //assert
-            any.Should().Be.EqualTo(anyAsnyc);
-            anyPredicate.Should().Be.EqualTo(anyPredicateAsnyc);
+            any.Should().Be(anyAsnyc);
+            anyPredicate.Should().Be(anyPredicateAsnyc);
         }
 
         [TestMethod]
@@ -77,11 +77,12 @@ namespace LinqToLdap.Tests
                 }
             };
 
-            Executing.This(
-                () =>
+            var func = () =>
                     System.Threading.Tasks.Task.WaitAll(System.Threading.Tasks.Task.Factory.StartNew(work),
                         System.Threading.Tasks.Task.Factory.StartNew(work),
-                        System.Threading.Tasks.Task.Factory.StartNew(work)))
+                        System.Threading.Tasks.Task.Factory.StartNew(work));
+
+            func
                 .Should()
                 .NotThrow();
         }
@@ -96,7 +97,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.Should().Have.Count.GreaterThan(1);
+            task.Result.Should().HaveCountGreaterThan(1);
         }
 
         [TestMethod]
@@ -109,7 +110,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.Should().Have.Count.GreaterThan(1);
+            task.Result.Should().HaveCountGreaterThan(1);
         }
 
         [TestMethod]
@@ -123,8 +124,8 @@ namespace LinqToLdap.Tests
                 .CountAsync(x => Filter.StartsWith(x, "sn", "J", false)).Result;
 
             //assert
-            countWithout.Should().Be.GreaterThan(1);
-            countWith.Should().Be.GreaterThan(1).And.Be.LessThan(countWithout);
+            countWithout.Should().BeGreaterThan(1);
+            countWith.Should().BeGreaterThan(1).And.BeLessThan(countWithout);
         }
 
         [TestMethod]
@@ -138,8 +139,8 @@ namespace LinqToLdap.Tests
                 .LongCountAsync(x => Filter.StartsWith(x, "sn", "J", false)).Result;
 
             //assert
-            countWithout.Should().Be.GreaterThan(1);
-            countWith.Should().Be.GreaterThan(1).And.Be.LessThan(countWithout);
+            countWithout.Should().BeGreaterThan(1);
+            countWith.Should().BeGreaterThan(1).And.BeLessThan(countWithout);
         }
 
         [TestMethod]
@@ -151,7 +152,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.Should().Not.Be.Null();
+            task.Result.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -163,7 +164,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.CommonName.Should().Be.EqualTo("RangeTest");
+            task.Result.CommonName.Should().Be("RangeTest");
         }
 
         [TestMethod]
@@ -175,7 +176,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.Should().Not.Be.Null();
+            task.Result.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -187,7 +188,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.CommonName.Should().Be.EqualTo("RangeTest");
+            task.Result.CommonName.Should().Be("RangeTest");
         }
 
         [TestMethod]
@@ -200,7 +201,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
         [TestMethod]
@@ -213,7 +214,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
         [TestMethod]
@@ -226,7 +227,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
         [TestMethod]
@@ -239,7 +240,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
         [TestMethod]
@@ -252,8 +253,8 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.Should().Have.Count.EqualTo(1);
-            task.Result.First().Value.Should().Have.Count.GreaterThan(1);
+            task.Result.Should().HaveCount(1);
+            task.Result.First().Value.Should().HaveCountGreaterThan(1);
         }
 
         [TestMethod]
@@ -266,8 +267,9 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.Should().Have.Count.EqualTo(1);
-            task.Result.First().Value.Satisfies(kvp => kvp.Count() == 1 && kvp.First().Key == "cn");
+            task.Result.Should().HaveCount(1);
+            task.Result.First().Value.Should().HaveCount(1);
+            task.Result.First().Value.First().Key.Should().Be("cn");
         }
 
         [TestMethod]
@@ -279,7 +281,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
         [TestMethod]
@@ -291,7 +293,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
         [TestMethod]
@@ -304,7 +306,7 @@ namespace LinqToLdap.Tests
             task.Wait();
 
             //assert
-            task.Result.DistinguishedName.Should().Be.EqualTo(PersonInheritanceTest.NamingContext);
+            task.Result.DistinguishedName.Should().Be(PersonInheritanceTest.NamingContext);
         }
 
 #endif

@@ -12,7 +12,7 @@ using LinqToLdap.Tests.TestSupport;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests
 {
@@ -31,8 +31,8 @@ namespace LinqToLdap.Tests
             var context = new DirectoryContext(connection);
 
             //assert
-            context.FieldValueEx<bool>("_disposeOfConnection").Should().Be.False();
-            context.FieldValueEx<ILdapConfiguration>("_configuration").Should().Not.Be.Null();
+            context.FieldValueEx<bool>("_disposeOfConnection").Should().BeFalse();
+            context.FieldValueEx<ILdapConfiguration>("_configuration").Should().NotBeNull();
         }
 
         [TestMethod]
@@ -47,8 +47,8 @@ namespace LinqToLdap.Tests
         {
             //assert
             Executing.This(() => new DirectoryContext(default(ILdapConfiguration))).Should()
-                .Throw<MappingException>().And.Exception.Message
-                .Should().Be.EqualTo("configuration cannot be null and must be associated with a connection factory.");
+                .Throw<MappingException>().And.Message
+                .Should().Be("configuration cannot be null and must be associated with a connection factory.");
         }
 
         [TestMethod]
@@ -61,8 +61,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => new DirectoryContext(config.Object)).Should()
-                .Throw<MappingException>().And.Exception.Message
-                .Should().Be.EqualTo("configuration cannot be null and must be associated with a connection factory.");
+                .Throw<MappingException>().And.Message
+                .Should().Be("configuration cannot be null and must be associated with a connection factory.");
         }
 
         [TestMethod]
@@ -70,8 +70,8 @@ namespace LinqToLdap.Tests
         {
             //assert
             Executing.This(() => new DirectoryContext()).Should()
-                .Throw<MappingException>().And.Exception.Message
-                .Should().Be.EqualTo("A static configuration and connection factory must be provided. See LdapConfiguration.UseStaticStorage()");
+                .Throw<MappingException>().And.Message
+                .Should().Be("A static configuration and connection factory must be provided. See LdapConfiguration.UseStaticStorage()");
         }
 
         #endregion Constructor Tests
@@ -136,7 +136,7 @@ namespace LinqToLdap.Tests
             //assert
             Executing.This(() => context.Update("test"))
                 .Should().Throw<MappingException>()
-                .And.Exception.Message.Should().Be.EqualTo("Cannot update an unmapped class.");
+                .And.Message.Should().Be("Cannot update an unmapped class.");
         }
 
         [TestMethod]
@@ -226,7 +226,7 @@ namespace LinqToLdap.Tests
             context.Update(obj, "dn");
 
             //assert
-            connection.SentRequests.Should().Be.Empty();
+            connection.SentRequests.Should().BeEmpty();
         }
 
         [TestMethod]
@@ -350,11 +350,11 @@ namespace LinqToLdap.Tests
             propertyMapping1.VerifyAll();
 
             var modifyRequest = connection.SentRequests[0].CastTo<ModifyRequest>();
-            modifyRequest.Modifications.Count.Should().Be.EqualTo(1);
-            modifyRequest.Modifications[0].Name.Should().Be.EqualTo("att1");
-            modifyRequest.Modifications[0][0].Should().Be.EqualTo("pm1");
-            modifyRequest.DistinguishedName.Should().Be.EqualTo("dn");
-            modifyRequest.Controls.Cast<DirectoryControl>().Should().Have.SameSequenceAs(controls);
+            modifyRequest.Modifications.Count.Should().Be(1);
+            modifyRequest.Modifications[0].Name.Should().Be("att1");
+            modifyRequest.Modifications[0][0].Should().Be("pm1");
+            modifyRequest.DistinguishedName.Should().Be("dn");
+            modifyRequest.Controls.Cast<DirectoryControl>().Should().ContainInOrder(controls);
         }
 
         [TestMethod]
@@ -387,8 +387,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.Update(obj, "dn"))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(modifyResponse.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(modifyResponse.ToLogString());
         }
 
         [TestMethod]
@@ -509,15 +509,16 @@ namespace LinqToLdap.Tests
             context.UpdateAndGet(directoryObject.Object, "dn");
 
             //assert
-            connection.SentRequests.Count.Should().Be.EqualTo(2);
+            connection.SentRequests.Count.Should().Be(2);
             connection.SentRequests[1]
-                .Should().Be.InstanceOf<SearchRequest>().And.Value.DistinguishedName
-                .Should().Be.EqualTo("dn");
+                .Should().BeOfType<SearchRequest>();
+            connection.SentRequests[1].CastTo<SearchRequest>().DistinguishedName
+                .Should().Be("dn");
             var modifyRequest = connection.SentRequests[0].CastTo<ModifyRequest>();
-            modifyRequest.Modifications.Count.Should().Be.EqualTo(1);
-            modifyRequest.Modifications[0].Name.Should().Be.EqualTo("att1");
-            modifyRequest.Modifications[0][0].Should().Be.EqualTo("pm1");
-            modifyRequest.DistinguishedName.Should().Be.EqualTo("dn");
+            modifyRequest.Modifications.Count.Should().Be(1);
+            modifyRequest.Modifications[0].Name.Should().Be("att1");
+            modifyRequest.Modifications[0][0].Should().Be("pm1");
+            modifyRequest.DistinguishedName.Should().Be("dn");
         }
 
         [TestMethod]
@@ -564,8 +565,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.Update(directoryAttributes))
-                .Should().Throw<ArgumentException>().And.Exception.Message
-                .Should().Be.EqualTo("entry.DistinguishedName is invalid.");
+                .Should().Throw<ArgumentException>().And.Message
+                .Should().Be("entry.DistinguishedName is invalid.");
         }
 
         [TestMethod]
@@ -583,9 +584,10 @@ namespace LinqToLdap.Tests
             context.UpdateAndGet(directoryAttributes);
 
             //assert
-            connection.SentRequests.Should().Have.Count.EqualTo(1);
-            connection.SentRequests.First().Should().Be.OfType<SearchRequest>()
-                .And.Value.DistinguishedName.Should().Be.EqualTo("dn");
+            connection.SentRequests.Should().HaveCount(1);
+            connection.SentRequests.First().Should().BeOfType<SearchRequest>();
+            connection.SentRequests.First().CastTo<SearchRequest>()
+                .DistinguishedName.Should().Be("dn");
         }
 
         [TestMethod]
@@ -697,16 +699,17 @@ namespace LinqToLdap.Tests
             context.UpdateAndGetEntry(directoryAttributes, controls);
 
             //assert
-            connection.SentRequests.Count.Should().Be.EqualTo(2);
+            connection.SentRequests.Count.Should().Be(2);
             connection.SentRequests[1]
-                .Should().Be.InstanceOf<SearchRequest>().And.Value.DistinguishedName
-                .Should().Be.EqualTo("dn");
+                .Should().BeOfType<SearchRequest>();
+            connection.SentRequests[1].CastTo<SearchRequest>().DistinguishedName
+                .Should().Be("dn");
             var modifyRequest = connection.SentRequests[0].CastTo<ModifyRequest>();
-            modifyRequest.Controls.OfType<DirectoryControl>().Should().Have.SameSequenceAs(controls);
-            modifyRequest.Modifications.Count.Should().Be.EqualTo(1);
-            modifyRequest.Modifications[0].Name.Should().Be.EqualTo("test");
-            modifyRequest.Modifications[0][0].Should().Be.EqualTo("value");
-            modifyRequest.DistinguishedName.Should().Be.EqualTo("dn");
+            modifyRequest.Controls.OfType<DirectoryControl>().Should().ContainInOrder(controls);
+            modifyRequest.Modifications.Count.Should().Be(1);
+            modifyRequest.Modifications[0].Name.Should().Be("test");
+            modifyRequest.Modifications[0][0].Should().Be("value");
+            modifyRequest.DistinguishedName.Should().Be("dn");
         }
 
         [TestMethod]
@@ -727,8 +730,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.UpdateAndGet(directoryAttributes))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(modifyResponse.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(modifyResponse.ToLogString());
         }
 
         [TestMethod]
@@ -895,13 +898,13 @@ namespace LinqToLdap.Tests
 
             //assert
             var addRequest = connection.SentRequests[0].CastTo<AddRequest>();
-            addRequest.Attributes.Count.Should().Be.EqualTo(2);
-            addRequest.Attributes[0].Name.Should().Be.EqualTo("att1");
-            addRequest.Attributes[0][0].Should().Be.EqualTo("pm1");
-            addRequest.Attributes[1].Name.Should().Be.EqualTo("objectClass");
-            addRequest.Attributes[1][0].Should().Be.EqualTo("oc");
-            addRequest.DistinguishedName.Should().Be.EqualTo("dn");
-            addRequest.Controls.Cast<DirectoryControl>().Should().Have.SameSequenceAs(controls);
+            addRequest.Attributes.Count.Should().Be(2);
+            addRequest.Attributes[0].Name.Should().Be("att1");
+            addRequest.Attributes[0][0].Should().Be("pm1");
+            addRequest.Attributes[1].Name.Should().Be("objectClass");
+            addRequest.Attributes[1][0].Should().Be("oc");
+            addRequest.DistinguishedName.Should().Be("dn");
+            addRequest.Controls.Cast<DirectoryControl>().Should().ContainInOrder(controls);
         }
 
         [TestMethod]
@@ -925,8 +928,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.Add(directoryAttributes))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(addResponse.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(addResponse.ToLogString());
         }
 
         [TestMethod]
@@ -1053,7 +1056,7 @@ namespace LinqToLdap.Tests
             //assert
             Executing.This(() => context.Add("test"))
                 .Should().Throw<MappingException>()
-                .And.Exception.Message.Should().Be.EqualTo("Cannot add an unmapped class.");
+                .And.Message.Should().Be("Cannot add an unmapped class.");
         }
 
         [TestMethod]
@@ -1079,8 +1082,7 @@ namespace LinqToLdap.Tests
             //assert
             Executing.This(() => context.Add("test"))
                 .Should().Throw<MappingException>()
-                .And.Exception.Message.Should().Be
-                .EqualTo(string.Format("Cannot add an entry without mapping objectClass for {0}.", typeof(string).FullName));
+                .And.Message.Should().Be(string.Format("Cannot add an entry without mapping objectClass for {0}.", typeof(string).FullName));
         }
 
         [TestMethod]
@@ -1167,8 +1169,8 @@ namespace LinqToLdap.Tests
 
             //act
             Executing.This(() => context.Add(obj, "dn"))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(addResponse.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(addResponse.ToLogString());
         }
 
         [TestMethod]
@@ -1211,13 +1213,13 @@ namespace LinqToLdap.Tests
 
             //assert
             var addRequest = connection.SentRequests[0].CastTo<AddRequest>();
-            addRequest.Attributes.Count.Should().Be.EqualTo(2);
-            addRequest.Attributes[0].Name.Should().Be.EqualTo("att1");
-            addRequest.Attributes[0][0].Should().Be.EqualTo("pm1");
-            addRequest.Attributes[1].Name.Should().Be.EqualTo("objectClass");
-            addRequest.Attributes[1][0].Should().Be.EqualTo("oc");
-            addRequest.DistinguishedName.Should().Be.EqualTo("dn");
-            addRequest.Controls.Cast<DirectoryControl>().Should().Have.SameSequenceAs(controls);
+            addRequest.Attributes.Count.Should().Be(2);
+            addRequest.Attributes[0].Name.Should().Be("att1");
+            addRequest.Attributes[0][0].Should().Be("pm1");
+            addRequest.Attributes[1].Name.Should().Be("objectClass");
+            addRequest.Attributes[1][0].Should().Be("oc");
+            addRequest.DistinguishedName.Should().Be("dn");
+            addRequest.Controls.Cast<DirectoryControl>().Should().ContainInOrder(controls);
         }
 
         [TestMethod]
@@ -1331,7 +1333,7 @@ namespace LinqToLdap.Tests
             var dn = DirectoryContext.GetDistinguishedName<object>("test", null, null);
 
             //assert
-            dn.Should().Be.EqualTo("test");
+            dn.Should().Be("test");
         }
 
         [TestMethod]
@@ -1352,7 +1354,7 @@ namespace LinqToLdap.Tests
             var dn = DirectoryContext.GetDistinguishedName(null, objectMapping.Object, obj);
 
             //assert
-            dn.Should().Be.EqualTo("test");
+            dn.Should().Be("test");
         }
 
         [TestMethod]
@@ -1366,8 +1368,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => DirectoryContext.GetDistinguishedName<object>(null, objectMapping.Object, null))
-                .Should().Throw<MappingException>().And.Exception.Message
-                .Should().Be.EqualTo("Distinguished name must be mapped.");
+                .Should().Throw<MappingException>().And.Message
+                .Should().Be("Distinguished name must be mapped.");
         }
 
         [TestMethod]
@@ -1388,8 +1390,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => DirectoryContext.GetDistinguishedName(null, objectMapping.Object, obj))
-                .Should().Throw<ArgumentException>().And.Exception.Message
-                .Should().Be.EqualTo("The distinguished name cannot be null or empty.");
+                .Should().Throw<ArgumentException>().And.Message
+                .Should().Be("The distinguished name cannot be null or empty.");
         }
 
         #endregion GetDistinguishedName Tests
@@ -1407,8 +1409,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.Delete(""))
-                .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                .Should().Be.EqualTo("distinguishedName");
+                .Should().Throw<ArgumentNullException>().And.ParamName
+                .Should().Be("distinguishedName");
         }
 
         [TestMethod]
@@ -1425,8 +1427,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.Delete(""))
-                .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                .Should().Be.EqualTo("distinguishedName");
+                .Should().Throw<ArgumentNullException>().And.ParamName
+                .Should().Be("distinguishedName");
 
             log.Verify(l => l.Error(It.IsAny<ArgumentNullException>(), "An error occurred while trying to delete ''."));
         }
@@ -1481,8 +1483,8 @@ namespace LinqToLdap.Tests
 
             //assert
             var request = connection.SentRequests[0].CastTo<DeleteRequest>();
-            request.Controls.Cast<DirectoryControl>().Should().Have.SameSequenceAs(controls);
-            request.DistinguishedName.Should().Be.EqualTo("dn");
+            request.Controls.Cast<DirectoryControl>().Should().ContainInOrder(controls);
+            request.DistinguishedName.Should().Be("dn");
         }
 
         [TestMethod]
@@ -1498,8 +1500,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.Delete("dn"))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(deleteResponse.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(deleteResponse.ToLogString());
         }
 
         [TestMethod]
@@ -1567,8 +1569,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.MoveEntry(null, "new"))
-                .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                .Should().Be.EqualTo("currentDistinguishedName");
+                .Should().Throw<ArgumentNullException>().And.ParamName
+                .Should().Be("currentDistinguishedName");
         }
 
         [TestMethod]
@@ -1601,8 +1603,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.MoveEntry("dn", null))
-                .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                .Should().Be.EqualTo("newNamingContext");
+                .Should().Throw<ArgumentNullException>().And.ParamName
+                .Should().Be("newNamingContext");
         }
 
         [TestMethod]
@@ -1624,12 +1626,12 @@ namespace LinqToLdap.Tests
             var newDn = context.MoveEntry(dn, newContainer, null, controls);
 
             //assert
-            newDn.Should().Be.EqualTo("CN=Test,OU=new container,DC=server,DC=com");
+            newDn.Should().Be("CN=Test,OU=new container,DC=server,DC=com");
             var request = connection.SentRequests[0].CastTo<ModifyDNRequest>();
-            request.Controls.OfType<DirectoryControl>().Should().Have.SameSequenceAs(controls);
-            request.DistinguishedName.Should().Be.EqualTo(dn);
-            request.NewParentDistinguishedName.Should().Be.EqualTo(newContainer);
-            request.NewName.Should().Be.EqualTo("CN=Test");
+            request.Controls.OfType<DirectoryControl>().Should().ContainInOrder(controls);
+            request.DistinguishedName.Should().Be(dn);
+            request.NewParentDistinguishedName.Should().Be(newContainer);
+            request.NewName.Should().Be("CN=Test");
         }
 
         [TestMethod]
@@ -1706,8 +1708,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.MoveEntry(dn, newContainer))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(response.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(response.ToLogString());
         }
 
         #endregion MoveEntry Tests
@@ -1725,8 +1727,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.RenameEntry(null, "new"))
-                .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                .Should().Be.EqualTo("currentDistinguishedName");
+                .Should().Throw<ArgumentNullException>().And.ParamName
+                .Should().Be("currentDistinguishedName");
         }
 
         [TestMethod]
@@ -1759,8 +1761,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.RenameEntry("dn", null))
-                .Should().Throw<ArgumentNullException>().And.Exception.ParamName
-                .Should().Be.EqualTo("newName");
+                .Should().Throw<ArgumentNullException>().And.ParamName
+                .Should().Be("newName");
         }
 
         [TestMethod]
@@ -1782,12 +1784,12 @@ namespace LinqToLdap.Tests
             var newDn = context.RenameEntry(dn, newName, null, controls);
 
             //assert
-            newDn.Should().Be.EqualTo("CN=Another Test,OU=container,DC=server,DC=com");
+            newDn.Should().Be("CN=Another Test,OU=container,DC=server,DC=com");
             var request = connection.SentRequests[0].CastTo<ModifyDNRequest>();
-            request.Controls.OfType<DirectoryControl>().Should().Have.SameSequenceAs(controls);
-            request.DistinguishedName.Should().Be.EqualTo(dn);
-            request.NewParentDistinguishedName.Should().Be.EqualTo("OU=container,DC=server,DC=com");
-            request.NewName.Should().Be.EqualTo("CN=Another Test");
+            request.Controls.OfType<DirectoryControl>().Should().ContainInOrder(controls);
+            request.DistinguishedName.Should().Be(dn);
+            request.NewParentDistinguishedName.Should().Be("OU=container,DC=server,DC=com");
+            request.NewName.Should().Be("CN=Another Test");
         }
 
         [TestMethod]
@@ -1864,8 +1866,8 @@ namespace LinqToLdap.Tests
 
             //assert
             Executing.This(() => context.RenameEntry(dn, newName))
-                .Should().Throw<LdapException>().And.Exception.Message
-                .Should().Be.EqualTo(response.ToLogString());
+                .Should().Throw<LdapException>().And.Message
+                .Should().Be(response.ToLogString());
         }
 
         #endregion RenameEntry Tests
@@ -1887,7 +1889,7 @@ namespace LinqToLdap.Tests
                                    context.Dispose();
                                })
                 .Should().NotThrow();
-            connection.TimesDisposed.Should().Be.EqualTo(1);
+            connection.TimesDisposed.Should().Be(1);
         }
 
         [TestMethod]
@@ -1902,9 +1904,9 @@ namespace LinqToLdap.Tests
             context.Dispose();
 
             //assert
-            connection.TimesDisposed.Should().Be.EqualTo(1);
-            context.FieldValueEx<LdapConnection>("_connection").Should().Be.Null();
-            context.FieldValueEx<ILdapConfiguration>("_configuration").Should().Be.Null();
+            connection.TimesDisposed.Should().Be(1);
+            context.FieldValueEx<LdapConnection>("_connection").Should().BeNull();
+            context.FieldValueEx<ILdapConfiguration>("_configuration").Should().BeNull();
         }
 
         [TestMethod]
@@ -1919,9 +1921,9 @@ namespace LinqToLdap.Tests
             context.Dispose();
 
             //assert
-            connection.TimesDisposed.Should().Be.EqualTo(0);
-            context.FieldValueEx<LdapConnection>("_connection").Should().Be.Null();
-            context.FieldValueEx<ILdapConfiguration>("_configuration").Should().Be.Null();
+            connection.TimesDisposed.Should().Be(0);
+            context.FieldValueEx<LdapConnection>("_connection").Should().BeNull();
+            context.FieldValueEx<ILdapConfiguration>("_configuration").Should().BeNull();
         }
 
         [TestMethod]
@@ -1937,7 +1939,7 @@ namespace LinqToLdap.Tests
             GC.WaitForPendingFinalizers();
 
             //assert
-            connection.TimesDisposed.Should().Be.EqualTo(1);
+            connection.TimesDisposed.Should().Be(1);
         }
 
         [TestMethod]
@@ -1977,7 +1979,7 @@ namespace LinqToLdap.Tests
             GC.WaitForPendingFinalizers();
 
             //assert
-            connection.TimesDisposed.Should().Be.EqualTo(0);
+            connection.TimesDisposed.Should().Be(0);
         }
 
 #if (NET35 || NET40 || NET45)
@@ -2027,7 +2029,7 @@ namespace LinqToLdap.Tests
             GC.WaitForPendingFinalizers();
 
             //assert
-            connection.TimesDisposed.Should().Be.EqualTo(0);
+            connection.TimesDisposed.Should().Be(0);
             connectionFactory.Verify(x => x.ReleaseConnection(connection), Times.Never());
         }
 

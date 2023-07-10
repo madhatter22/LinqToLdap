@@ -11,7 +11,7 @@ using LinqToLdap.Tests.TestSupport;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.QueryCommands
 {
@@ -42,19 +42,19 @@ namespace LinqToLdap.Tests.QueryCommands
             var command = new GetRequestCommand(options.Object, mapping.Object);
 
             //act
-            var result = command.Execute(connection, SearchScope.Subtree, 1, true).As<SearchRequest>();
+            var result = command.Execute(connection, SearchScope.Subtree, 1, true).CastTo<SearchRequest>();
 
             //assert
-            result.Filter.Should().Be.EqualTo("x=1");
-            result.Controls[0].As<AsqRequestControl>().AttributeName.Should().Be.EqualTo("att");
-            result.Controls[1].As<SortRequestControl>().SortKeys[0].AttributeName.Should().Be.EqualTo("att1");
-            result.Controls[1].As<SortRequestControl>().SortKeys[0].ReverseOrder.Should().Be.True();
-            result.Controls[2].As<PageResultRequestControl>().PageSize.Should().Be.EqualTo(2);
-            result.Attributes[0].Should().Be.EqualTo("prop1");
-            result.Attributes[1].Should().Be.EqualTo("prop2");
-            result.Scope.Should().Be.EqualTo(SearchScope.Subtree);
+            result.Filter.Should().Be("x=1");
+            result.Controls[0].CastTo<AsqRequestControl>().AttributeName.Should().Be("att");
+            result.Controls[1].CastTo<SortRequestControl>().SortKeys[0].AttributeName.Should().Be("att1");
+            result.Controls[1].CastTo<SortRequestControl>().SortKeys[0].ReverseOrder.Should().BeTrue();
+            result.Controls[2].CastTo<PageResultRequestControl>().PageSize.Should().Be(2);
+            result.Attributes[0].Should().Be("prop1");
+            result.Attributes[1].Should().Be("prop2");
+            result.Scope.Should().Be(SearchScope.Subtree);
             
-            result.DistinguishedName.Should().Be.EqualTo("nm");
+            result.DistinguishedName.Should().Be("nm");
         }
     }
 }

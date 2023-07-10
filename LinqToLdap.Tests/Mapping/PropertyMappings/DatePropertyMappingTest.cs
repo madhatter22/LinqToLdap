@@ -4,7 +4,7 @@ using System.DirectoryServices.Protocols;
 using LinqToLdap.Exceptions;
 using LinqToLdap.Mapping.PropertyMappings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -37,7 +37,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter(date);
 
             //assert
-            value.Should().Be.EqualTo(date.ToFileTime().ToString());
+            value.Should().Be(date.ToFileTime().ToString());
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter(date);
 
             //assert
-            value.Should().Be.EqualTo(date.FormatLdapDateTime("yyyyMMddHHmmss.0Z"));
+            value.Should().Be(date.FormatLdapDateTime("yyyyMMddHHmmss.0Z"));
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(new DirectoryAttribute("name"), "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -117,7 +117,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(new DirectoryAttribute("name", date.ToFileTime().ToString()), "dn");
 
             //assert
-            value.Should().Be.EqualTo(date);
+            value.Should().Be(date);
         }
 
         [TestMethod]
@@ -132,7 +132,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueFromDirectory(new DirectoryAttribute("name", date.FormatLdapDateTime("yyyyMMddHHmmss.0Z")), "dn");
 
             //assert
-            value.Should().Be.EqualTo(date);
+            value.Should().Be(date);
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             //act
             Executing.This(() => mapping.FormatValueFromDirectory(new DirectoryAttribute("name", "a"), "dn"))
                 .Should().Throw<MappingException>()
-                .And.Exception.InnerException.Should().Be.InstanceOf<FormatException>();
+                .And.InnerException.Should().BeOfType<FormatException>();
         }
 
         [TestMethod]
@@ -160,9 +160,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value[0].Should().Be.EqualTo(now.FormatLdapDateTime(ExtensionMethods.LdapFormat));
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value[0].Should().Be(now.FormatLdapDateTime(ExtensionMethods.LdapFormat));
         }
 
         [TestMethod]
@@ -177,9 +177,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value[0].Should().Be.EqualTo(now.ToFileTime().ToString());
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value[0].Should().Be(now.ToFileTime().ToString());
         }
 
         [TestMethod]
@@ -194,8 +194,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, date.AddDays(1), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -209,8 +209,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, DateTime.Now, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -225,8 +225,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, now, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

@@ -3,7 +3,7 @@ using System.DirectoryServices.Protocols;
 using System.Net;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests
 {
@@ -32,8 +32,8 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("server");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server");
-            factory.Port.Should().Be.EqualTo(389);
+            factory.ServerName.Should().Be("server");
+            factory.Port.Should().Be(389);
         }
 
         [TestMethod]
@@ -43,8 +43,8 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("Ldap://server:1234/");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server");
-            factory.Port.Should().Be.EqualTo(1234);
+            factory.ServerName.Should().Be("server");
+            factory.Port.Should().Be(1234);
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace LinqToLdap.Tests
             //assert
             Executing.This(() => new ConnectionFactoryTest("LDAP://server:1234/DC=local,DC=com"))
                 .Should().Throw<ArgumentException>()
-                .And.Exception.Message.Should().Be.EqualTo("You cannot specify a directory container in the connection.  Use only \"server:1234\" and then use DirectoryContext to query \"dc=local,dc=com\".");
+                .And.Message.Should().Be("You cannot specify a directory container in the connection.  Use only \"server:1234\" and then use DirectoryContext to query \"dc=local,dc=com\".");
         }
 
         [TestMethod]
@@ -63,8 +63,8 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("server:389");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server");
-            factory.Port.Should().Be.EqualTo(389);
+            factory.ServerName.Should().Be("server");
+            factory.Port.Should().Be(389);
         }
 
         [TestMethod]
@@ -74,9 +74,9 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("server:636");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server");
-            factory.Port.Should().Be.EqualTo(636);
-            factory.UsesSsl.Should().Be.True();
+            factory.ServerName.Should().Be("server");
+            factory.Port.Should().Be(636);
+            factory.UsesSsl.Should().BeTrue();
         }
 
         [TestMethod]
@@ -86,8 +86,8 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("server:3268");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server");
-            factory.Port.Should().Be.EqualTo(3268);
+            factory.ServerName.Should().Be("server");
+            factory.Port.Should().Be(3268);
         }
 
         [TestMethod]
@@ -97,8 +97,8 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("server:1111");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server");
-            factory.Port.Should().Be.EqualTo(1111);
+            factory.ServerName.Should().Be("server");
+            factory.Port.Should().Be(1111);
         }
 
         [TestMethod]
@@ -108,8 +108,8 @@ namespace LinqToLdap.Tests
             var factory = new ConnectionFactoryTest("server:1111:asd");
 
             //assert
-            factory.ServerName.Should().Be.EqualTo("server:1111:asd");
-            factory.Port.Should().Be.EqualTo(389);
+            factory.ServerName.Should().Be("server:1111:asd");
+            factory.Port.Should().Be(389);
         }
 
         [TestMethod]
@@ -123,19 +123,12 @@ namespace LinqToLdap.Tests
             var connection = BuildConnection();
 
             //assert
-            connection.SessionOptions.ProtocolVersion.Should().Be.EqualTo(3);
-            connection.SessionOptions.SecureSocketLayer.Should().Be.False();
-#if (NET35 || NET40 || NET45)
-            connection.FieldValueEx<NetworkCredential>("directoryCredential").Should().Not.Be.Null();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("directoryIdentifier").Connectionless.Should().Be.True();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("directoryIdentifier").FullyQualifiedDnsHostName.Should().Be.False();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("directoryIdentifier").PortNumber.Should().Be.EqualTo(389);
-#else
-            connection.FieldValueEx<NetworkCredential>("_directoryCredential").Should().Not.Be.Null();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").Connectionless.Should().Be.True();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").FullyQualifiedDnsHostName.Should().Be.False();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").PortNumber.Should().Be.EqualTo(389);
-#endif
+            connection.SessionOptions.ProtocolVersion.Should().Be(3);
+            connection.SessionOptions.SecureSocketLayer.Should().BeFalse();
+            connection.FieldValueEx<NetworkCredential>("_directoryCredential").Should().NotBeNull();
+            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").Connectionless.Should().BeTrue();
+            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").FullyQualifiedDnsHostName.Should().BeFalse();
+            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").PortNumber.Should().Be(389);
         }
 
         [TestMethod]
@@ -150,21 +143,13 @@ namespace LinqToLdap.Tests
             var connection = BuildConnection();
 
             //assert
-            connection.SessionOptions.ProtocolVersion.Should().Be.EqualTo(2);
-            connection.SessionOptions.SecureSocketLayer.Should().Be.False();
-#if (NET35 || NET40 || NET45)
-            connection.FieldValueEx<AuthType>("connectionAuthType").Should().Be.EqualTo(System.DirectoryServices.Protocols.AuthType.Basic);
-            connection.FieldValueEx<NetworkCredential>("directoryCredential").Should().Be.Null();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("directoryIdentifier").Connectionless.Should().Be.True();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("directoryIdentifier").FullyQualifiedDnsHostName.Should().Be.False();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("directoryIdentifier").PortNumber.Should().Be.EqualTo(389);
-#else
-            connection.AuthType.Should().Be.EqualTo(System.DirectoryServices.Protocols.AuthType.Basic);
-            connection.FieldValueEx<NetworkCredential>("_directoryCredential").Should().Be.Null();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").Connectionless.Should().Be.True();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").FullyQualifiedDnsHostName.Should().Be.False();
-            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").PortNumber.Should().Be.EqualTo(389);
-#endif
+            connection.SessionOptions.ProtocolVersion.Should().Be(2);
+            connection.SessionOptions.SecureSocketLayer.Should().BeFalse();
+            connection.AuthType.Should().Be(System.DirectoryServices.Protocols.AuthType.Basic);
+            connection.FieldValueEx<NetworkCredential>("_directoryCredential").Should().BeNull();
+            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").Connectionless.Should().BeTrue();
+            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").FullyQualifiedDnsHostName.Should().BeFalse();
+            connection.FieldValueEx<LdapDirectoryIdentifier>("_directoryIdentifier").PortNumber.Should().Be(389);
         }
     }
 }

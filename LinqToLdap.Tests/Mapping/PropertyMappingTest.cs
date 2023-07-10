@@ -1,6 +1,6 @@
 ﻿using LinqToLdap.Mapping;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.DirectoryServices.Protocols;
 
@@ -53,10 +53,10 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new PropertyMappingTestClass(typeof(string), "prop", "att");
 
             //assert
-            mapping.AttributeName.Should().Be.EqualTo("att");
-            mapping.PropertyName.Should().Be.Equals("prop");
-            mapping.PropertyType.Should().Be.EqualTo(typeof(string));
-            mapping.IsNullable.Should().Be.True();
+            mapping.AttributeName.Should().Be("att");
+            mapping.PropertyName.Should().Be("prop");
+            mapping.PropertyType.Should().Be(typeof(string));
+            mapping.IsNullable.Should().BeTrue();
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new PropertyMappingTestClass(typeof(string[]), "prop", "prop");
 
             //assert
-            mapping.IsNullable.Should().Be.True();
+            mapping.IsNullable.Should().BeTrue();
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new PropertyMappingTestClass(typeof(byte[]), "prop", "prop");
 
             //assert
-            mapping.IsNullable.Should().Be.True();
+            mapping.IsNullable.Should().BeTrue();
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new PropertyMappingTestClass(typeof(Guid?), "prop", "prop");
 
             //assert
-            mapping.IsNullable.Should().Be.True();
+            mapping.IsNullable.Should().BeTrue();
         }
 
         [TestMethod]
@@ -96,7 +96,7 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = new PropertyMappingTestClass(typeof(Guid), "prop", "prop");
 
             //assert
-            mapping.IsNullable.Should().Be.False();
+            mapping.IsNullable.Should().BeFalse();
         }
 
         [TestMethod]
@@ -109,7 +109,7 @@ namespace LinqToLdap.Tests.Mapping
             var value = mapping.Default();
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -122,7 +122,7 @@ namespace LinqToLdap.Tests.Mapping
             var value = mapping.Default();
 
             //assert
-            value.Should().Be.EqualTo(default(DateTime));
+            value.Should().Be(default(DateTime));
         }
 
         [TestMethod]
@@ -135,7 +135,7 @@ namespace LinqToLdap.Tests.Mapping
             var value = mapping.Default();
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -150,8 +150,8 @@ namespace LinqToLdap.Tests.Mapping
             var value2 = mapping2.Default();
 
             //assert
-            value.Should().Be.Null();
-            value2.Should().Be.Null();
+            value.Should().BeNull();
+            value2.Should().BeNull();
         }
     }
 }

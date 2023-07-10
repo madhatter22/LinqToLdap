@@ -5,7 +5,7 @@ using LinqToLdap.Mapping;
 using LinqToLdap.Tests.ClassMapAssembly;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,8 +46,8 @@ namespace LinqToLdap.Tests.Mapping
             _mapper.Map(_classMap.Object, "nc", new[] { "oc" }, false, "oc", false);
 
             //assert
-            _mapper.GetMappings().Should().Have.Count.EqualTo(1);
-            _mapper.GetMappings()[GetType()].Should().Be.EqualTo(objectMapping.Object);
+            _mapper.GetMappings().Should().HaveCount(1);
+            _mapper.GetMappings()[GetType()].Should().Be(objectMapping.Object);
             _classMap.Verify(c => c.PerformMapping("nc", "oc", false, new[] { "oc" }, false));
             _classMap.Verify(c => c.Validate());
         }
@@ -59,8 +59,8 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = _mapper.Map<DirectoryMapperTest>("context");
 
             //assert
-            _mapper.GetMappings().Should().Have.Count.EqualTo(1);
-            mapping.Type.Should().Be.EqualTo(GetType());
+            _mapper.GetMappings().Should().HaveCount(1);
+            mapping.Type.Should().Be(GetType());
         }
 
         [TestMethod]
@@ -83,9 +83,9 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = _mapper.Map<DirectoryMapperTest>("nc", objectCategory: "oc", objectClasses: new[] { "oc" });
 
             //assert
-            _mapper.GetMappings().Should().Have.Count.EqualTo(1);
-            mapping.Type.Should().Be.EqualTo(GetType());
-            mapping.Should().Be.SameInstanceAs(objectMapping.Object);
+            _mapper.GetMappings().Should().HaveCount(1);
+            mapping.Type.Should().Be(GetType());
+            mapping.Should().BeSameAs(objectMapping.Object);
             _classMap.Verify(c => c.PerformMapping("nc", "oc", true, new[] { "oc" }, true));
             _classMap.Verify(c => c.Validate());
         }
@@ -109,9 +109,9 @@ namespace LinqToLdap.Tests.Mapping
             var mapping = _mapper.Map<AttributeClass>("nc", objectCategory: "oc", objectClasses: new[] { "oc" });
 
             //assert
-            _mapper.GetMappings().Should().Have.Count.EqualTo(1);
-            mapping.Type.Should().Be.EqualTo(typeof(AttributeClass));
-            mapping.Should().Be.SameInstanceAs(objectMapping.Object);
+            _mapper.GetMappings().Should().HaveCount(1);
+            mapping.Type.Should().Be(typeof(AttributeClass));
+            mapping.Should().BeSameAs(objectMapping.Object);
             _classMap.Verify(c => c.PerformMapping("nc", "oc", true, new[] { "oc" }, true));
             _classMap.Verify(c => c.Validate());
         }
@@ -121,7 +121,7 @@ namespace LinqToLdap.Tests.Mapping
         {
             //act
             Executing.This(() => _mapper.Map<DirectoryMapperTest>("context", objectClass: "oc", objectClasses: new[] { "oc" }))
-                .Should().Throw<ArgumentException>().And.Exception.Message.Should().Be.EqualTo("objectClass and objectClasses cannot both have a value.");
+                .Should().Throw<ArgumentException>().And.Message.Should().Be("objectClass and objectClasses cannot both have a value.");
         }
 
         [TestMethod]
@@ -135,10 +135,10 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var mappings = _mapper.GetMappings();
-            mappings.Should().Have.Count.EqualTo(3);
-            mappings.ContainsKey(typeof(AssemblyTestClass)).Should().Be.True();
-            mappings.ContainsKey(typeof(AssenblyTestClass2)).Should().Be.True();
-            mappings.ContainsKey(typeof(AssemblyTestClassSub)).Should().Be.True();
+            mappings.Should().HaveCount(3);
+            mappings.ContainsKey(typeof(AssemblyTestClass)).Should().BeTrue();
+            mappings.ContainsKey(typeof(AssenblyTestClass2)).Should().BeTrue();
+            mappings.ContainsKey(typeof(AssemblyTestClassSub)).Should().BeTrue();
         }
 
         [TestMethod]
@@ -149,7 +149,7 @@ namespace LinqToLdap.Tests.Mapping
 
             //assert
             var mappings = _mapper.GetMappings();
-            mappings.Should().Have.Count.EqualTo(3);
+            mappings.Should().HaveCount(3);
             mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AssemblyTestClass).ToString());
             mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AssenblyTestClass2).ToString());
             mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AssemblyTestClassSub).ToString());
@@ -161,7 +161,7 @@ namespace LinqToLdap.Tests.Mapping
             //act
             _mapper.GetMapping<AttributeClass>();
             var mappings = _mapper.GetMappings();
-            mappings.Should().Have.Count.EqualTo(1);
+            mappings.Should().HaveCount(1);
             mappings.Keys.Select(k => k.ToString()).Should().Contain(typeof(AttributeClass).ToString());
         }
 
@@ -173,8 +173,8 @@ namespace LinqToLdap.Tests.Mapping
 
             //act
             action.Should().Throw<MappingException>()
-                .And.Exception.Message.Should()
-                .Be.EqualTo(string.Format("Mapping not found for '{0}'", typeof(object).FullName));
+                .And.GetBaseException().Message.Should()
+                .Be(string.Format("Mapping not found for '{0}'", typeof(object).FullName));
         }
 
         [TestMethod]
@@ -185,7 +185,7 @@ namespace LinqToLdap.Tests.Mapping
             var subType = _mapper.GetMapping<SubAttributeClass>();
 
             //assert
-            baseType.SubTypeMappings.Should().Contain(subType).And.Have.Count.EqualTo(1);
+            baseType.SubTypeMappings.Should().Contain(subType).And.HaveCount(1);
         }
 
         [TestMethod]
@@ -196,7 +196,7 @@ namespace LinqToLdap.Tests.Mapping
             var baseType = _mapper.GetMapping<AttributeClass>();
 
             //assert
-            baseType.SubTypeMappings.Should().Contain(subType).And.Have.Count.EqualTo(1);
+            baseType.SubTypeMappings.Should().Contain(subType).And.HaveCount(1);
         }
 
         [TestMethod]
@@ -210,46 +210,46 @@ namespace LinqToLdap.Tests.Mapping
             var subType2Same = _mapper.GetMapping<Sub2SameAttributeClass>();
 
             //assert
-            subType2Same.SubTypeMappings.Should().Be.Empty();
-            subType3.SubTypeMappings.Should().Be.Empty();
-            subType2.SubTypeMappings.Should().Contain(subType3).And.Have.Count.EqualTo(1);
-            subType2.As<ObjectMapping>()
+            subType2Same.SubTypeMappings.Should().BeEmpty();
+            subType3.SubTypeMappings.Should().BeEmpty();
+            subType2.SubTypeMappings.Should().Contain(subType3).And.HaveCount(1);
+            subType2.CastTo<ObjectMapping>()
                 .SubTypeMappingsObjectClassDictionary.All(x => x.Key == "sub3" && x.Value == subType3)
                 .Should()
-                .Be.True();
-            subType2.As<ObjectMapping>()
+                .BeTrue();
+            subType2.CastTo<ObjectMapping>()
                 .SubTypeMappingsTypeDictionary.All(x => x.Key == subType3.Type && x.Value == subType3)
                 .Should()
-                .Be.True();
-            subType.SubTypeMappings.Should().Contain(subType2).And.Contain(subType3).And.Contain(subType2Same).And.Have.Count.EqualTo(3);
-            subType.As<ObjectMapping>()
+                .BeTrue();
+            subType.SubTypeMappings.Should().Contain(subType2).And.Contain(subType3).And.Contain(subType2Same).And.HaveCount(3);
+            subType.CastTo<ObjectMapping>()
                 .SubTypeMappingsObjectClassDictionary.All(x => (x.Key == "sub2" && x.Value == subType2) || (x.Key == "sub2same" && x.Value == subType2Same) || (x.Key == "sub3" && x.Value == subType3))
                 .Should()
-                .Be.True();
-            subType.As<ObjectMapping>()
+                .BeTrue();
+            subType.CastTo<ObjectMapping>()
                 .SubTypeMappingsTypeDictionary.All(x => (x.Key == subType2.Type && x.Value == subType2) || (x.Key == subType2Same.Type && x.Value == subType2Same) || (x.Key == subType3.Type && x.Value == subType3))
                 .Should()
-                .Be.True();
+                .BeTrue();
             baseType.SubTypeMappings.Should()
                 .Contain(subType)
                 .And.Contain(subType2)
                 .And.Contain(subType2Same)
                 .And.Contain(subType3)
-                .And.Have.Count.EqualTo(4);
-            baseType.As<ObjectMapping>()
+                .And.HaveCount(4);
+            baseType.CastTo<ObjectMapping>()
                 .SubTypeMappingsObjectClassDictionary.All(x => (x.Key == "sub2" && x.Value == subType2) ||
                                                     (x.Key == "sub3" && x.Value == subType3) ||
                                                     (x.Key == "sub2same" && x.Value == subType2Same) ||
                                                     (x.Key == "sub" && x.Value == subType))
                 .Should()
-                .Be.True();
-            baseType.As<ObjectMapping>()
+                .BeTrue();
+            baseType.CastTo<ObjectMapping>()
                 .SubTypeMappingsTypeDictionary.All(x => (x.Key == subType2.Type && x.Value == subType2) ||
                                                     (x.Key == subType3.Type && x.Value == subType3) ||
                                                     (x.Key == subType2Same.Type && x.Value == subType2Same) ||
                                                     (x.Key == subType.Type && x.Value == subType))
                 .Should()
-                .Be.True();
+                .BeTrue();
         }
 
         [TestMethod]
@@ -269,8 +269,8 @@ namespace LinqToLdap.Tests.Mapping
             Executing.This(() => DirectoryMapper.ValidateObjectClasses(baseTypeMapping.Object, subTypeMapping.Object))
                 .Should()
                 .Throw<InvalidOperationException>()
-                .Exception.Message.Should()
-                .Be.EqualTo(
+                .And.Message.Should()
+                .Be(
                     $"In order to use subclass mapping {typeof(AttributeClass).Name} must be mapped with objectClasses");
         }
 
@@ -291,8 +291,8 @@ namespace LinqToLdap.Tests.Mapping
             Executing.This(() => DirectoryMapper.ValidateObjectClasses(baseTypeMapping.Object, subTypeMapping.Object))
                 .Should()
                 .Throw<InvalidOperationException>()
-                .Exception.Message.Should()
-                .Be.EqualTo(
+                .And.Message.Should()
+                .Be(
                     $"In order to use subclass mapping {typeof(SubAttributeClass).Name} must be mapped with objectClasses");
         }
 
@@ -317,8 +317,8 @@ namespace LinqToLdap.Tests.Mapping
             Executing.This(() => DirectoryMapper.ValidateObjectClasses(baseTypeMapping.Object, subTypeMapping.Object))
                 .Should()
                 .Throw<InvalidOperationException>()
-                .Exception.Message.Should()
-                .Be.EqualTo(
+                .And.Message.Should()
+                .Be(
                     $"All sub types of {typeof(AttributeClass).Name} must have a unique sequence of objectClasses.");
         }
 
@@ -350,8 +350,8 @@ namespace LinqToLdap.Tests.Mapping
             Executing.This(() => DirectoryMapper.ValidateObjectClasses(baseTypeMapping.Object, subTypeMapping.Object))
                 .Should()
                 .Throw<InvalidOperationException>()
-                .Exception.Message.Should()
-                .Be.EqualTo(
+                .And.Message.Should()
+                .Be(
                     $"All sub types of {typeof(AttributeClass).Name} must have a unique sequence of objectClasses.");
         }
 
@@ -393,14 +393,14 @@ namespace LinqToLdap.Tests.Mapping
             var subType = _mapper.GetMapping<SubAttributeWithoutHierarchyClass>();
 
             //assert
-            baseType.SubTypeMappings.Should().Not.Contain(subType).And.Have.Count.EqualTo(0);
-            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property1)).Should().Not.Be.Null();
-            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property2)).Should().Not.Be.Null();
+            baseType.SubTypeMappings.Should().NotContain(subType).And.HaveCount(0);
+            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property1)).Should().NotBeNull();
+            subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property2)).Should().NotBeNull();
 
             var instance = new SubAttributeWithoutHierarchyClass();
             subType.GetPropertyMapping(nameof(SubAttributeWithoutHierarchyClass.Property1)).SetValue(instance, "sub");
 
-            instance.Property1.Should().Be.EqualTo("sub");
+            instance.Property1.Should().Be("sub");
         }
 
         [DirectorySchema("test", ObjectClasses = new[] { "base" })]

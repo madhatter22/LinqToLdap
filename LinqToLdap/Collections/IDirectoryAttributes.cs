@@ -194,7 +194,7 @@ namespace LinqToLdap.Collections
         /// Gets the <see cref="SecurityIdentifier"/> value for the specified attribute if available.
         /// </summary>
         /// <param name="attribute">The name of the attribute</param>
-        /// <returns></returns>
+        /// <returns></returns>L
         SecurityIdentifier GetSecurityIdentifier(string attribute);
 
         /// <summary>

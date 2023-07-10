@@ -4,7 +4,7 @@ using System.DirectoryServices.Protocols;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System.Collections.Generic;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
@@ -48,7 +48,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = mapping.FormatValueToFilter(bytes);
 
             //assert
-            value.Should().Be.EqualTo(bytes.ToStringOctet());
+            value.Should().Be(bytes.ToStringOctet());
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("names", bytes), "dn");
 
             //assert
-            value.As<Collection<byte[]>>().Should().Have.SameSequenceAs(bytes);
+            value.CastTo<Collection<byte[]>>().Should().ContainInOrder(bytes);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", bytes), "dn");
 
             //assert
-            value.As<Collection<byte[]>>().Should().Contain(bytes);
+            value.CastTo<Collection<byte[]>>().Should().Contain(bytes);
         }
 
         [TestMethod]
@@ -105,8 +105,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<byte[]>(new List<byte[]> { new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 7 } }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -120,8 +120,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<byte[]>(new List<byte[]> { new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 } }), out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -135,8 +135,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 7 } }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -150,8 +150,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new Collection<byte[]>(new List<byte[]> { new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 } }), out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using LinqToLdap.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -170,16 +170,16 @@ namespace LinqToLdap.Tests.PerformanceTests
                 inst.Property10 = Speed.SpeedEnum.None;
             }
             watch.Stop();
-            inst.Property1.Should().Be.EqualTo("1");
-            inst.Property2.Should().Be.EqualTo(2);
-            inst.Property3.Should().Be.EqualTo(3m);
-            inst.Property4.Should().Not.Be.Null();
-            inst.Property5.Should().Be.EqualTo("5");
-            inst.Property6.Should().Be.EqualTo(6);
-            inst.Property7.Should().Be.EqualTo(7);
-            inst.Property8.Should().Be.EqualTo(8);
-            inst.Property9.Should().Be.EqualTo(9);
-            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            inst.Property1.Should().Be("1");
+            inst.Property2.Should().Be(2);
+            inst.Property3.Should().Be(3m);
+            inst.Property4.Should().NotBeNull();
+            inst.Property5.Should().Be("5");
+            inst.Property6.Should().Be(6);
+            inst.Property7.Should().Be(7);
+            inst.Property8.Should().Be(8);
+            inst.Property9.Should().Be(9);
+            inst.Property10.Should().Be(Speed.SpeedEnum.None);
             Trace.WriteLine(watch.ElapsedMilliseconds);
         }
 
@@ -216,16 +216,16 @@ namespace LinqToLdap.Tests.PerformanceTests
                 prop10Setter(inst, Speed.SpeedEnum.None);
             }
             watch.Stop();
-            inst.Property1.Should().Be.EqualTo("1");
-            inst.Property2.Should().Be.EqualTo(2);
-            inst.Property3.Should().Be.EqualTo(3m);
-            inst.Property4.Should().Not.Be.Null();
-            inst.Property5.Should().Be.EqualTo("5");
-            inst.Property6.Should().Be.EqualTo(6);
-            inst.Property7.Should().Be.EqualTo(7);
-            inst.Property8.Should().Be.EqualTo(8);
-            inst.Property9.Should().Be.EqualTo(9);
-            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            inst.Property1.Should().Be("1");
+            inst.Property2.Should().Be(2);
+            inst.Property3.Should().Be(3m);
+            inst.Property4.Should().NotBeNull();
+            inst.Property5.Should().Be("5");
+            inst.Property6.Should().Be(6);
+            inst.Property7.Should().Be(7);
+            inst.Property8.Should().Be(8);
+            inst.Property9.Should().Be(9);
+            inst.Property10.Should().Be(Speed.SpeedEnum.None);
             Trace.WriteLine(watch.ElapsedMilliseconds);
         }
 
@@ -263,16 +263,16 @@ namespace LinqToLdap.Tests.PerformanceTests
                 var k = inst.Property10;
             }
             watch.Stop();
-            inst.Property1.Should().Be.EqualTo("1");
-            inst.Property2.Should().Be.EqualTo(2);
-            inst.Property3.Should().Be.EqualTo(3m);
-            inst.Property4.Should().Not.Be.Null();
-            inst.Property5.Should().Be.EqualTo("5");
-            inst.Property6.Should().Be.EqualTo(6);
-            inst.Property7.Should().Be.EqualTo(7);
-            inst.Property8.Should().Be.EqualTo(8);
-            inst.Property9.Should().Be.EqualTo(9);
-            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            inst.Property1.Should().Be("1");
+            inst.Property2.Should().Be(2);
+            inst.Property3.Should().Be(3m);
+            inst.Property4.Should().NotBeNull();
+            inst.Property5.Should().Be("5");
+            inst.Property6.Should().Be(6);
+            inst.Property7.Should().Be(7);
+            inst.Property8.Should().Be(8);
+            inst.Property9.Should().Be(9);
+            inst.Property10.Should().Be(Speed.SpeedEnum.None);
             Trace.WriteLine(watch.ElapsedMilliseconds);
         }
 
@@ -319,16 +319,16 @@ namespace LinqToLdap.Tests.PerformanceTests
                 var k = prop10GGetter(inst);
             }
             watch.Stop();
-            inst.Property1.Should().Be.EqualTo("1");
-            inst.Property2.Should().Be.EqualTo(2);
-            inst.Property3.Should().Be.EqualTo(3m);
-            inst.Property4.Should().Not.Be.Null();
-            inst.Property5.Should().Be.EqualTo("5");
-            inst.Property6.Should().Be.EqualTo(6);
-            inst.Property7.Should().Be.EqualTo(7);
-            inst.Property8.Should().Be.EqualTo(8);
-            inst.Property9.Should().Be.EqualTo(9);
-            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            inst.Property1.Should().Be("1");
+            inst.Property2.Should().Be(2);
+            inst.Property3.Should().Be(3m);
+            inst.Property4.Should().NotBeNull();
+            inst.Property5.Should().Be("5");
+            inst.Property6.Should().Be(6);
+            inst.Property7.Should().Be(7);
+            inst.Property8.Should().Be(8);
+            inst.Property9.Should().Be(9);
+            inst.Property10.Should().Be(Speed.SpeedEnum.None);
             Trace.WriteLine(watch.ElapsedMilliseconds);
         }
 
@@ -365,16 +365,16 @@ namespace LinqToLdap.Tests.PerformanceTests
                 prop10Setter.SetValue(inst, Speed.SpeedEnum.None, null);
             }
             watch.Stop();
-            inst.Property1.Should().Be.EqualTo("1");
-            inst.Property2.Should().Be.EqualTo(2);
-            inst.Property3.Should().Be.EqualTo(3m);
-            inst.Property4.Should().Not.Be.Null();
-            inst.Property5.Should().Be.EqualTo("5");
-            inst.Property6.Should().Be.EqualTo(6);
-            inst.Property7.Should().Be.EqualTo(7);
-            inst.Property8.Should().Be.EqualTo(8);
-            inst.Property9.Should().Be.EqualTo(9);
-            inst.Property10.Should().Be.EqualTo(Speed.SpeedEnum.None);
+            inst.Property1.Should().Be("1");
+            inst.Property2.Should().Be(2);
+            inst.Property3.Should().Be(3m);
+            inst.Property4.Should().NotBeNull();
+            inst.Property5.Should().Be("5");
+            inst.Property6.Should().Be(6);
+            inst.Property7.Should().Be(7);
+            inst.Property8.Should().Be(8);
+            inst.Property9.Should().Be(9);
+            inst.Property10.Should().Be(Speed.SpeedEnum.None);
             Trace.WriteLine(watch.ElapsedMilliseconds);
         }
 

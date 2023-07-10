@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using LinqToLdap.Tests.TestSupport;
 using LinqToLdap.Visitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System.Linq;
 
 namespace LinqToLdap.Tests.Visitors
@@ -37,7 +37,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
 
         [TestMethod]
@@ -108,7 +108,7 @@ namespace LinqToLdap.Tests.Visitors
             
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
         
         [TestMethod]
@@ -128,7 +128,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
 
         [TestMethod]
@@ -148,7 +148,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
 
         [TestMethod]
@@ -168,7 +168,7 @@ namespace LinqToLdap.Tests.Visitors
             var rewritten = new BooleanRewriter().Rewrite(expression1);
 
             //assert
-            expression2.ToString().Should().Be.EqualTo(rewritten.ToString());
+            expression2.ToString().Should().Be(rewritten.ToString());
         }
     }
 }

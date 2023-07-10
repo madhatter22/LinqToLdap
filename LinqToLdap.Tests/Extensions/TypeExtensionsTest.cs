@@ -1,6 +1,6 @@
 ﻿using LinqToLdap.Mapping;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Extensions
 {
@@ -11,7 +11,7 @@ namespace LinqToLdap.Tests.Extensions
         [TestMethod]
         public void IsAnonymous_NonAnonymousClass_ReturnsFalse()
         {
-            GetType().IsAnonymous().Should().Be.False();
+            GetType().IsAnonymous().Should().BeFalse();
         }
 
         [TestMethod]
@@ -19,13 +19,13 @@ namespace LinqToLdap.Tests.Extensions
         {
             var anon = new {Prop = ""};
 
-            anon.GetType().IsAnonymous().Should().Be.True();
+            anon.GetType().IsAnonymous().Should().BeTrue();
         }
 
         [TestMethod]
         public void HasDirectorySchema_ClassWithDirectorySchema_ReturnsTrue()
         {
-            GetType().HasDirectorySchema().Should().Be.True();
+            GetType().HasDirectorySchema().Should().BeTrue();
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace LinqToLdap.Tests.Extensions
         {
             var anon = new { Prop = "" };
 
-            anon.GetType().HasDirectorySchema().Should().Be.False();
+            anon.GetType().HasDirectorySchema().Should().BeFalse();
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace LinqToLdap
 {
@@ -15,21 +16,12 @@ namespace LinqToLdap
     /// </summary>
     public class LdapConfiguration : ILdapConfiguration
     {
+        internal static readonly bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
         private IDirectoryMapper _mapper;
         private static readonly object _mapperLock = new object();
 
-#if (NET35 || NET40)
-        private readonly LinqToLdap.Collections.SafeDictionary<string, IDirectoryMapper> _mappers = new LinqToLdap.Collections.SafeDictionary<string, IDirectoryMapper>();
-#else
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, IDirectoryMapper> _mappers = new System.Collections.Concurrent.ConcurrentDictionary<string, IDirectoryMapper>();
-#endif
-
-#if NET35 || NET40 || NET45
-        /// <summary>
-        /// Default processing behavior. <see cref="PartialResultProcessing.NoPartialResultSupport"/> has the best performance.
-        /// </summary>
-        public const PartialResultProcessing DefaultAsyncResultProcessing = PartialResultProcessing.NoPartialResultSupport;
-#else
 
         /// <summary>
         /// Default processing behavior. <see cref="PartialResultProcessing.NoPartialResultSupport"/> has the best performance. <see cref="System.Threading.Tasks.Task.Run(Action)"/> is used instead of <see cref="LdapConnection.BeginSendRequest(DirectoryRequest, PartialResultProcessing, AsyncCallback, object)"/> for versions targeting .Net Standard / Core due to the performance impact.
@@ -38,15 +30,9 @@ namespace LinqToLdap
         /// </summary>
         public const PartialResultProcessing DefaultAsyncResultProcessing = PartialResultProcessing.ReturnPartialResults;
 
-#endif
-
         private int _serverMaxPageSize = 500;
         private bool _pagingEnabled = true;
-#if NET35
-        private readonly Collections.SafeList<IEventListener> _listeners = new Collections.SafeList<IEventListener>();
-#else
         private readonly System.Collections.Concurrent.ConcurrentBag<IEventListener> _listeners = new System.Collections.Concurrent.ConcurrentBag<IEventListener>();
-#endif
 
         /// <summary>
         /// Constructs an instance of this class and initializes <see cref="Mapper"/>.
@@ -94,12 +80,7 @@ namespace LinqToLdap
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (mapper != null)
             {
-#if (NET35 || NET40)
-
-                _mappers.AddOrUpdate(key, mapper);
-#else
                 _mappers.AddOrUpdate(key, mapper, (k, old) => mapper);
-#endif
             }
             else
             {
@@ -130,11 +111,7 @@ namespace LinqToLdap
         /// <returns></returns>
         public IEnumerable<IEventListener> GetListeners()
         {
-#if NET35
-            return _listeners.ToList();
-#else
             return _listeners;
-#endif
         }
 
         /// <summary>

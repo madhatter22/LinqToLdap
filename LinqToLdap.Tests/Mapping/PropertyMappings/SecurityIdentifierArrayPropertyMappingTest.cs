@@ -6,7 +6,7 @@ using System.Security.Principal;
 using LinqToLdap.Mapping.PropertyMappings;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -61,7 +61,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(_identifier);
 
             //assert
-            value.Should().Be.EqualTo(_bytes.ToStringOctet());
+            value.Should().Be(_bytes.ToStringOctet());
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
                 }).ToArray()), "dn");
 
             //assert
-            value.As<SecurityIdentifier[]>().Should().Have.SameSequenceAs(identifiers);
+            value.CastTo<SecurityIdentifier[]>().Should().ContainInOrder(identifiers);
         }
 
         [TestMethod]
@@ -96,7 +96,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -110,7 +110,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", _bytes), "dn");
 
             //assert
-            value.As<SecurityIdentifier[]>().Should().Contain(_identifier);
+            value.CastTo<SecurityIdentifier[]>().Should().Contain(_identifier);
         }
 
         [TestMethod]
@@ -124,8 +124,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { _identifier, _identifier2 }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -139,8 +139,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { _identifier }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -154,8 +154,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { _identifier }, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -169,8 +169,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, new[] { _identifier, _identifier2 }, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
     }
 }

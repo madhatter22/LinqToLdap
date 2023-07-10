@@ -4,7 +4,7 @@ using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using LinqToLdap.Transformers;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Collections
 {
@@ -48,8 +48,8 @@ namespace LinqToLdap.Tests.Collections
                                                                                       _resultTransformer.Object).GetEnumerator();
             
             //assert
-            enumerator.MoveNext().Should().Be.True();
-            enumerator.Current.Should().Be.SameInstanceAs(fake);
+            enumerator.MoveNext().Should().BeTrue();
+            enumerator.Current.Should().BeSameAs(fake);
         }
     }
 }

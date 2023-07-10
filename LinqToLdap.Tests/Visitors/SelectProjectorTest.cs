@@ -2,7 +2,7 @@
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using LinqToLdap.Visitors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Visitors
 {
@@ -39,9 +39,9 @@ namespace LinqToLdap.Tests.Visitors
             var projection = _projector.ProjectProperties(expression);
 
             //assert
-            projection.ReturnType.Should().Be.EqualTo(typeof(QueryTranslatorTestClass));
-            projection.SelectedProperties.Should().Have.SameSequenceAs(_properties);
-            projection.Projection.DynamicInvoke(instance).Should().Be.SameInstanceAs(instance);
+            projection.ReturnType.Should().Be(typeof(QueryTranslatorTestClass));
+            projection.SelectedProperties.Should().ContainInOrder(_properties);
+            projection.Projection.DynamicInvoke(instance).Should().BeSameAs(instance);
         }
 
         [TestMethod]
@@ -55,11 +55,11 @@ namespace LinqToLdap.Tests.Visitors
             var projection = _projector.ProjectProperties(expression);
 
             //assert
-            projection.ReturnType.Should().Be.EqualTo(typeof(QueryTranslatorTestClass));
-            projection.SelectedProperties.Count.Should().Be.EqualTo(1);
+            projection.ReturnType.Should().Be(typeof(QueryTranslatorTestClass));
+            projection.SelectedProperties.Count.Should().Be(1);
             projection.SelectedProperties.Should().Contain(new KeyValuePair<string, string>("Property1", "x"));
             projection.Projection.DynamicInvoke(instance)
-                .As<QueryTranslatorTestClass>().Property1.Should().Be.EqualTo("p1");
+                .CastTo<QueryTranslatorTestClass>().Property1.Should().Be("p1");
         }
 
         [TestMethod]
@@ -74,9 +74,9 @@ namespace LinqToLdap.Tests.Visitors
             var projection = _projector.ProjectProperties(expression);
 
             //assert
-            projection.ReturnType.IsAnonymous().Should().Be.True();
-            projection.SelectedProperties.Count.Should().Be.EqualTo(5);
-            projection.Projection.DynamicInvoke(instance).PropertyValue<string>("Property1").Should().Be.EqualTo("p1");
+            projection.ReturnType.IsAnonymous().Should().BeTrue();
+            projection.SelectedProperties.Count.Should().Be(5);
+            projection.Projection.DynamicInvoke(instance).PropertyValue<string>("Property1").Should().Be("p1");
         }
 
         [TestMethod]
@@ -90,10 +90,10 @@ namespace LinqToLdap.Tests.Visitors
             var projection = _projector.ProjectProperties(expression);
 
             //assert
-            projection.ReturnType.Should().Be.EqualTo(typeof(string));
-            projection.SelectedProperties.Count.Should().Be.EqualTo(1);
+            projection.ReturnType.Should().Be(typeof(string));
+            projection.SelectedProperties.Count.Should().Be(1);
             projection.SelectedProperties.Should().Contain(new KeyValuePair<string, string>("Property2", "y"));
-            projection.Projection.DynamicInvoke(instance).Should().Be.EqualTo("p2");
+            projection.Projection.DynamicInvoke(instance).Should().Be("p2");
         }
     }
 }

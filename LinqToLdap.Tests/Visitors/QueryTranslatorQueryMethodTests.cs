@@ -11,7 +11,7 @@ using LinqToLdap.Tests.TestSupport;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using LinqToLdap.Visitors;
 using Moq;
-using SharpTestsEx;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinqToLdap.Tests.Visitors
@@ -103,11 +103,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Options.YieldNoResults.Should().Be.True();
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Options.YieldNoResults.Should().BeTrue();
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -121,12 +121,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Filter.Should().Be.NullOrEmpty();
-            _mockFacotry.Options.YieldNoResults.Should().Be.False();
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Filter.Should().BeNullOrEmpty();
+            _mockFacotry.Options.YieldNoResults.Should().BeFalse();
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -140,10 +140,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -157,10 +157,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -174,11 +174,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.AttributesToLoad.Values.Should().Have.SameSequenceAs(new[] { "x", "y" });
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.AttributesToLoad.Values.Should().ContainInOrder(new[] { "x", "y" });
         }
 
         [TestMethod]
@@ -192,10 +192,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -209,10 +209,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -226,10 +226,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.AnyCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.AnyCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -243,10 +243,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.AnyCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.AnyCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -260,10 +260,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -277,10 +277,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -295,10 +295,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -312,10 +312,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstOrDefaultCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstOrDefaultCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -329,10 +329,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -347,10 +347,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -364,10 +364,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.GetRequestCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.GetRequestCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -381,10 +381,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.SingleOrDefaultCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.SingleOrDefaultCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -398,10 +398,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.SingleOrDefaultCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.SingleOrDefaultCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -416,10 +416,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.SingleOrDefaultCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.SingleOrDefaultCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -433,10 +433,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.SingleCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.SingleCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -450,10 +450,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.SingleCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.SingleCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -468,10 +468,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.SingleCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.SingleCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -487,11 +487,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Filter.Should().Be.Null();
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ListAttributesQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Filter.Should().BeNull();
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ListAttributesQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -508,12 +508,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Filter.Should().Be.Null();
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ListAttributesQueryCommandOptions>();
-            _mockFacotry.Options.AttributesToLoad.Should().Have.SameSequenceAs(attributes);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Filter.Should().BeNull();
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ListAttributesQueryCommandOptions>();
+            _mockFacotry.Options.AttributesToLoad.Should().ContainInOrder(attributes);
         }
 
         [TestMethod]
@@ -530,10 +530,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ListAttributesQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ListAttributesQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -552,10 +552,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ListAttributesQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ListAttributesQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -569,10 +569,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.CountCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.CountCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -586,11 +586,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.CountCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(x=a)(y=b))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.CountCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(x=a)(y=b))");
         }
 
         [TestMethod]
@@ -604,10 +604,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -622,10 +622,10 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.CountCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.CountCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
         }
 
         [TestMethod]
@@ -640,11 +640,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(some filter)");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(some filter)");
         }
 
         [TestMethod]
@@ -660,11 +660,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(some filter)(another filter))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(some filter)(another filter))");
         }
 
         [TestMethod]
@@ -679,11 +679,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(some filter)");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(some filter)");
         }
 
         [TestMethod]
@@ -698,11 +698,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(some filter)(x=a))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(some filter)(x=a))");
         }
 
         [TestMethod]
@@ -723,11 +723,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(some filter)(&(objectCategory=oc)(x=a)))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(some filter)(&(objectCategory=oc)(x=a)))");
         }
 
         [TestMethod]
@@ -750,11 +750,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.FirstCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(some filter)(&(objectCategory=oc)(x=a)(y=a)))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.FirstCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(some filter)(&(objectCategory=oc)(x=a)(y=a)))");
         }
 
         [TestMethod]
@@ -773,11 +773,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(x=a)");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(x=a)");
         }
 
         [TestMethod]
@@ -796,11 +796,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(x=a)");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(x=a)");
         }
 
         [TestMethod]
@@ -818,11 +818,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(objectCategory=oc)");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(objectCategory=oc)");
         }
 
         [TestMethod]
@@ -841,11 +841,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(objectClass=cl)(objectClass=c2))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(objectClass=cl)(objectClass=c2))");
         }
 
         [TestMethod]
@@ -864,11 +864,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(x=some))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(objectCategory=oc)(x=some))");
         }
 
         [TestMethod]
@@ -888,11 +888,11 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(&(objectClass=cl)(objectClass=c2)(x=some))");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(&(objectClass=cl)(objectClass=c2)(x=some))");
         }
 
         [TestMethod]
@@ -908,19 +908,19 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(2);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.False();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("test");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().Be.False();
-            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be.EqualTo("other");
-            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be.EqualTo("rule");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(2);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeFalse();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("test");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().BeNull();
+            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().BeFalse();
+            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be("other");
+            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be("rule");
         }
 
         [TestMethod]
@@ -936,19 +936,19 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(2);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.False();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("test");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().Be.False();
-            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be.EqualTo("other");
-            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be.EqualTo("rule");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(2);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeFalse();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("test");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().BeNull();
+            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().BeFalse();
+            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be("other");
+            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be("rule");
         }
 
         [TestMethod]
@@ -963,16 +963,16 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(1);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.False();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("x");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.Null();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(1);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeFalse();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("x");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().BeNull();
         }
 
         [TestMethod]
@@ -987,16 +987,16 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(1);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.False();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("x");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.EqualTo("mr");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(1);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeFalse();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("x");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be("mr");
         }
 
         [TestMethod]
@@ -1012,19 +1012,19 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(2);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.True();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("test");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().Be.True();
-            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be.EqualTo("other");
-            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be.EqualTo("rule");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(2);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeTrue();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("test");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().BeNull();
+            _mockFacotry.Options.SortingOptions.Keys[1].ReverseOrder.Should().BeTrue();
+            _mockFacotry.Options.SortingOptions.Keys[1].AttributeName.Should().Be("other");
+            _mockFacotry.Options.SortingOptions.Keys[1].MatchingRule.Should().Be("rule");
         }
 
         [TestMethod]
@@ -1039,16 +1039,16 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(1);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.True();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("x");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.Null();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(1);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeTrue();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("x");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().BeNull();
         }
 
         [TestMethod]
@@ -1063,16 +1063,16 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.SortingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.SortingOptions.Keys.Should().Have.Count.EqualTo(1);
-            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().Be.True();
-            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be.EqualTo("x");
-            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be.EqualTo("mr");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.SortingOptions.Should().NotBeNull();
+            _mockFacotry.Options.SortingOptions.Keys.Should().HaveCount(1);
+            _mockFacotry.Options.SortingOptions.Keys[0].ReverseOrder.Should().BeTrue();
+            _mockFacotry.Options.SortingOptions.Keys[0].AttributeName.Should().Be("x");
+            _mockFacotry.Options.SortingOptions.Keys[0].MatchingRule.Should().Be("mr");
         }
 
         [TestMethod]
@@ -1087,14 +1087,14 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.Null();
-            _mockFacotry.Options.PagingOptions.Should().Be.Null();
-            _mockFacotry.Options.TakeSize.Should().Be.EqualTo(10);
-            _mockFacotry.Options.PageSize.Should().Not.Have.Value();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().BeNull();
+            _mockFacotry.Options.PagingOptions.Should().BeNull();
+            _mockFacotry.Options.TakeSize.Should().Be(10);
+            _mockFacotry.Options.PageSize.Should().NotHaveValue();
         }
 
         [TestMethod]
@@ -1109,13 +1109,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.PagingOptions.Should().Be.Null();
-            _mockFacotry.Options.PageSize.Should().Be.EqualTo(2);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.PagingOptions.Should().BeNull();
+            _mockFacotry.Options.PageSize.Should().Be(2);
         }
 
         [TestMethod]
@@ -1131,14 +1131,14 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.PagingOptions.Should().Be.Null();
-            _mockFacotry.Options.TakeSize.Should().Be.EqualTo(10);
-            _mockFacotry.Options.PageSize.Should().Be.EqualTo(5);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.PagingOptions.Should().BeNull();
+            _mockFacotry.Options.TakeSize.Should().Be(10);
+            _mockFacotry.Options.PageSize.Should().Be(5);
         }
 
         [TestMethod]
@@ -1153,14 +1153,14 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.PagingOptions.Should().Be.Null();
-            _mockFacotry.Options.TakeSize.Should().Not.Have.Value();
-            _mockFacotry.Options.PageSize.Should().Not.Have.Value();
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.PagingOptions.Should().BeNull();
+            _mockFacotry.Options.TakeSize.Should().NotHaveValue();
+            _mockFacotry.Options.PageSize.Should().NotHaveValue();
         }
 
         [TestMethod]
@@ -1175,13 +1175,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(10);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(10);
         }
 
         [TestMethod]
@@ -1197,14 +1197,14 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo(null);
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(10);
-            _mockFacotry.Options.PagingOptions.NextPage.Should().Have.SameSequenceAs(cookie);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be(null);
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(10);
+            _mockFacotry.Options.PagingOptions.NextPage.Should().ContainInOrder(cookie);
         }
 
         [TestMethod]
@@ -1220,14 +1220,14 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("some filter");
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(10);
-            _mockFacotry.Options.PagingOptions.NextPage.Should().Have.SameSequenceAs(cookie);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("some filter");
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(10);
+            _mockFacotry.Options.PagingOptions.NextPage.Should().ContainInOrder(cookie);
         }
 
         [TestMethod]
@@ -1244,13 +1244,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<ProjectionQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Not.Be.NullOrEmpty();
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(100);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<ProjectionQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().NotBeNullOrEmpty();
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(100);
         }
 
         [TestMethod]
@@ -1266,13 +1266,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Not.Be.NullOrEmpty();
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(100);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().NotBeNullOrEmpty();
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(100);
         }
 
         [TestMethod]
@@ -1290,13 +1290,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Not.Be.NullOrEmpty();
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(100);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().NotBeNullOrEmpty();
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(100);
         }
 
         [TestMethod]
@@ -1315,13 +1315,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Not.Be.NullOrEmpty();
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(100);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().NotBeNullOrEmpty();
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(100);
         }
 
         [TestMethod]
@@ -1338,13 +1338,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Not.Be.NullOrEmpty();
-            _mockFacotry.Options.PagingOptions.Should().Not.Be.Null();
-            _mockFacotry.Options.PagingOptions.PageSize.Should().Be.EqualTo(100);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().NotBeNullOrEmpty();
+            _mockFacotry.Options.PagingOptions.Should().NotBeNull();
+            _mockFacotry.Options.PagingOptions.PageSize.Should().Be(100);
         }
 
         [TestMethod]
@@ -1361,12 +1361,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<DynamicQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.NullOrEmpty();
-            _mockFacotry.Options.AttributesToLoad.Should().Have.SameSequenceAs(strings.ToDictionary(s => s));
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<DynamicQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().BeNullOrEmpty();
+            _mockFacotry.Options.AttributesToLoad.Should().ContainInOrder(strings.ToDictionary(s => s));
         }
 
         [TestMethod]
@@ -1384,12 +1384,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<DynamicQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(some filter)");
-            _mockFacotry.Options.AttributesToLoad.Should().Have.SameSequenceAs(strings.ToDictionary(s => s));
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<DynamicQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(some filter)");
+            _mockFacotry.Options.AttributesToLoad.Should().ContainInOrder(strings.ToDictionary(s => s));
         }
 
         [TestMethod]
@@ -1417,12 +1417,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<DynamicQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(some filter)");
-            _mockFacotry.Options.AttributesToLoad.Should().Have.SameSequenceAs(strings.ToDictionary(s => s));
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<DynamicQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(some filter)");
+            _mockFacotry.Options.AttributesToLoad.Should().ContainInOrder(strings.ToDictionary(s => s));
         }
 
         [TestMethod]
@@ -1440,12 +1440,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<DynamicQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(some filter)");
-            _mockFacotry.Options.AttributesToLoad.Should().Have.SameSequenceAs(strings.ToDictionary(s => s));
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<DynamicQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(some filter)");
+            _mockFacotry.Options.AttributesToLoad.Should().ContainInOrder(strings.ToDictionary(s => s));
         }
 
         [TestMethod]
@@ -1457,9 +1457,11 @@ namespace LinqToLdap.Tests.Visitors
                 .Select(u => u.Property1);
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
+            var func = () => _translator.Translate(expression);
+
             //act
-            Executing.This(() => _translator.Translate(expression))
-                .Should().Throw<FilterException>().And.Exception.Message
+            func
+                .Should().Throw<FilterException>().And.GetBaseException().Message
                 .Should().Contain("Cannot have multiple Select projections.");
         }
 
@@ -1473,9 +1475,11 @@ namespace LinqToLdap.Tests.Visitors
             var expression = _queryContext.ActiveProvider.CurrentExpression;
             _translator.IsDynamic = true;
 
+            var func = () => _translator.Translate(expression);
+
             //act
-            Executing.This(() => _translator.Translate(expression))
-                .Should().Throw<FilterException>().And.Exception.Message
+            func
+                .Should().Throw<FilterException>().And.GetBaseException().Message
                 .Should().Contain("Cannot have multiple Select projections.");
         }
 
@@ -1487,9 +1491,11 @@ namespace LinqToLdap.Tests.Visitors
                 .Select("one");
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
+            var func = () => _translator.Translate(expression);
+
             //act
-            Executing.This(() => _translator.Translate(expression))
-                .Should().Throw<FilterException>().And.Exception.Message
+            func
+                .Should().Throw<FilterException>().And.GetBaseException().Message
                 .Should().Contain("Cannot use a string attribute projection with a static type.");
         }
 
@@ -1515,13 +1521,13 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<DynamicQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(some filter)");
-            _mockFacotry.Options.AttributesToLoad.Should().Have.SameSequenceAs(strings.ToDictionary(s => s));
-            _mockFacotry.Options.Controls.Should().Have.SameSequenceAs(controls);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<DynamicQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(some filter)");
+            _mockFacotry.Options.AttributesToLoad.Should().ContainInOrder(strings.ToDictionary(s => s));
+            _mockFacotry.Options.Controls.Should().ContainInOrder(controls);
         }
 
         [TestMethod]
@@ -1538,12 +1544,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.WithoutPaging.Should().Be.True();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(x=test)");
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.WithoutPaging.Should().BeTrue();
+            _mockFacotry.Options.Filter.Should().Be("(x=test)");
         }
 
         [TestMethod]
@@ -1560,12 +1566,12 @@ namespace LinqToLdap.Tests.Visitors
             var command = _translator.Translate(expression);
 
             //assert
-            command.Should().Be.SameInstanceAs(_command.Object);
-            _mockFacotry.Mapping.Should().Be.SameInstanceAs(_mapping.Object);
-            _mockFacotry.Type.Should().Be.EqualTo(QueryCommandType.StandardCommand);
-            _mockFacotry.Options.Should().Be.InstanceOf<StandardQueryCommandOptions>();
-            _mockFacotry.Options.Filter.Should().Be.EqualTo("(x=test)");
-            _mockFacotry.Options.SkipSize.Should().Be.EqualTo(1);
+            command.Should().BeSameAs(_command.Object);
+            _mockFacotry.Mapping.Should().BeSameAs(_mapping.Object);
+            _mockFacotry.Type.Should().Be(QueryCommandType.StandardCommand);
+            _mockFacotry.Options.Should().BeOfType<StandardQueryCommandOptions>();
+            _mockFacotry.Options.Filter.Should().Be("(x=test)");
+            _mockFacotry.Options.SkipSize.Should().Be(1);
         }
 
         [TestMethod]
@@ -1578,10 +1584,12 @@ namespace LinqToLdap.Tests.Visitors
 
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
+            var func = () => _translator.Translate(expression);
+
             //assert
-            Executing.This(() => _translator.Translate(expression))
+            func
                 .Should().Throw<ArgumentException>()
-                .And.Exception.Message.Should().Be.EqualTo("Skip value must be greater than zero.");
+                .And.GetBaseException().Message.Should().Be("Skip value must be greater than zero.");
         }
 
         [TestMethod]
@@ -1594,10 +1602,12 @@ namespace LinqToLdap.Tests.Visitors
 
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
+            var func = () => _translator.Translate(expression);
+
             //assert
-            Executing.This(() => _translator.Translate(expression))
+            func
                 .Should().Throw<InvalidOperationException>()
-                .And.Exception.Message.Should().Be.EqualTo("Skip relies on Virtual List Views and cannot be used with simple LDAP paging. Please use one method for paging.");
+                .And.GetBaseException().Message.Should().Be("Skip relies on Virtual List Views and cannot be used with simple LDAP paging. Please use one method for paging.");
         }
 
         [TestMethod]
@@ -1610,10 +1620,12 @@ namespace LinqToLdap.Tests.Visitors
 
             var expression = _queryContext.ActiveProvider.CurrentExpression;
 
+            var func = () => _translator.Translate(expression);
+
             //assert
-            Executing.This(() => _translator.Translate(expression))
+            func
                 .Should().Throw<InvalidOperationException>()
-                .And.Exception.Message.Should().Be.EqualTo("Skip relies on Virtual List Views and cannot be used with simple LDAP paging. Please use one method for paging.");
+                .And.GetBaseException().Message.Should().Be("Skip relies on Virtual List Views and cannot be used with simple LDAP paging. Please use one method for paging.");
         }
     }
 }

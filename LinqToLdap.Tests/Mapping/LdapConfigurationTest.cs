@@ -7,7 +7,7 @@ using LinqToLdap.Tests.ClassMapAssembly;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -28,10 +28,10 @@ namespace LinqToLdap.Tests.Mapping
             var connection = config.ConnectionFactory.GetConnection();
 
             //assert
-            connection.AuthType.Should().Be.EqualTo(AuthType.Anonymous);
+            connection.AuthType.Should().Be(AuthType.Anonymous);
 #if (NET35 || NET40 || NET45)
             connection.FieldValueEx<NetworkCredential>("directoryCredential")
-                .Should().Not.Be.Null();
+                .Should().NotBeNull();
 #endif
         }
 

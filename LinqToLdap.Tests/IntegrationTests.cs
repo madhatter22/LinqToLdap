@@ -4,7 +4,7 @@ using LinqToLdap.Logging;
 using LinqToLdap.Mapping;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -270,22 +270,22 @@ namespace LinqToLdap.Tests
             attributes.Set("objectclass", "user");
 
             var added = _context.AddAndGet(attributes);
-            added.Should().Not.Be.Null();
+            added.Should().NotBeNull();
 
-            added.GetString("cn").Should().Be.EqualTo("IntegrationTest");
-            added.GetString("accountexpires").Should().Be.Null();
-            added.GetGuid("objectguid").Should().Have.Value();
-            added.GetSecurityIdentifier("objectsid").Should().Not.Be.Null();
-            added.GetSecurityIdentifiers("objectsid").Should().Not.Be.Empty();
-            added.GetStrings("objectclass").Should().Have.Count.GreaterThan(1);
+            added.GetString("cn").Should().Be("IntegrationTest");
+            added.GetString("accountexpires").Should().BeNull();
+            added.GetGuid("objectguid").Should().HaveValue();
+            added.GetSecurityIdentifier("objectsid").Should().NotBeNull();
+            added.GetSecurityIdentifiers("objectsid").Should().NotBeEmpty();
+            added.GetStrings("objectclass").Should().HaveCountGreaterThan(1);
 
             added.Set("accountExpires", "9223372036854775807").SetNull("manager");
 
             added = _context.UpdateAndGet(added);
 
-            added.GetString("accountExpires").Should().Be.EqualTo("9223372036854775807");
-            added.GetDateTime("accountExpires", null).Should().Not.Have.Value();
-            added.GetString("manager").Should().Be.Null();
+            added.GetString("accountExpires").Should().Be("9223372036854775807");
+            added.GetDateTime("accountExpires", null).Should().NotHaveValue();
+            added.GetString("manager").Should().BeNull();
 
             var renamed = _context.RenameEntry(added.DistinguishedName, "IntegrationTest2");
 
@@ -294,7 +294,7 @@ namespace LinqToLdap.Tests
             _context.Delete(moved);
 
             Executing.This(() => _context.GetByDN(moved))
-                .Should().Throw<DirectoryOperationException>().And.Exception.Message
+                .Should().Throw<DirectoryOperationException>().And.GetBaseException().Message
                 .Should().Contain("does not exist");
         }
 
@@ -310,34 +310,34 @@ namespace LinqToLdap.Tests
 
             var added = _context.AddAndGet(test, test.GetDistinguishedName());
 
-            added.Should().Not.Be.Null();
-            added.AccountExpires.Should().Not.Have.Value();
-            added.Cn.Should().Be.EqualTo(test.Cn);
-            added.AccountExpires.Should().Not.Have.Value();
-            added.ObjectGuid.Should().Not.Be.Null().And.Not.Be.EqualTo(default(Guid));
-            added.ObjectSid.Should().Not.Be.Null();
-            added.Manager.Should().Be.Null();
-            added.Employees.Should().Be.Null();
-            added.WhenCreated.Should().Be.GreaterThan(DateTime.Now.Subtract(TimeSpan.FromHours(1)));
+            added.Should().NotBeNull();
+            added.AccountExpires.Should().NotHaveValue();
+            added.Cn.Should().Be(test.Cn);
+            added.AccountExpires.Should().NotHaveValue();
+            added.ObjectGuid.Should().NotBe(null).And.NotBe(default(Guid));
+            added.ObjectSid.Should().NotBeNull();
+            added.Manager.Should().BeNull();
+            added.Employees.Should().BeNull();
+            added.WhenCreated.Should().BeOnOrAfter(DateTime.Now.Subtract(TimeSpan.FromHours(1)));
 
             var queryResult = _context.Query<IntegrationUserTest>()
                 .Where(u => u.ObjectGuid == added.ObjectGuid)
                 .Select(u => u.ObjectGuid)
                 .FirstOrDefault();
 
-            queryResult.Should().Be.EqualTo(added.ObjectGuid);
+            queryResult.Should().Be(added.ObjectGuid);
 
             var now = DateTime.Now;
             added.AccountExpires = now;
 
             added = _context.UpdateAndGet(added);
 
-            added.AccountExpires.Should().Be.EqualTo(now);
+            added.AccountExpires.Should().Be(now);
 
             _context.Delete(added.DistinguishedName);
 
             Executing.This(() => _context.GetByDN(added.DistinguishedName))
-                .Should().Throw<DirectoryOperationException>().And.Exception.Message
+                .Should().Throw<DirectoryOperationException>().And.GetBaseException().Message
                 .Should().Contain("does not exist");
         }
 
@@ -345,7 +345,7 @@ namespace LinqToLdap.Tests
         [TestCategory("Integration")]
         public void GetByDN_LoadsObject()
         {
-            _context.GetByDN("CN=TestUser,CN=Users2,CN=Employees,DC=Northwind,DC=local").Should().Not.Be.Null();
+            _context.GetByDN("CN=TestUser,CN=Users2,CN=Employees,DC=Northwind,DC=local").Should().NotBeNull();
         }
 
         [TestMethod]
@@ -354,7 +354,7 @@ namespace LinqToLdap.Tests
         {
             var members = _context.Query<IntegrationUserTest>().Select(u => u.DistinguishedName).ToList();
 
-            members.Count.Should().Be.GreaterThan(0);
+            members.Count.Should().BeGreaterThan(0);
             var group = new IntegrationGroupTest
             {
                 Member = new Collection<string>(members.GetRange(0, members.Count - 1))
@@ -369,15 +369,15 @@ namespace LinqToLdap.Tests
                 .Select(c => c)
                 .Single();
 
-            added.OriginalValues["CommonName"].Should().Be.EqualTo("TestGroup");
-            added.OriginalValues["Member"].As<Collection<string>>().Should().Have.Count.EqualTo(members.Count - 1);
-            added.OriginalValues["distinguishedname"].Should().Be.EqualTo(added.DistinguishedName);
+            added.OriginalValues["CommonName"].Should().Be("TestGroup");
+            added.OriginalValues["Member"].CastTo<Collection<string>>().Should().HaveCount(members.Count - 1);
+            added.OriginalValues["distinguishedname"].Should().Be(added.DistinguishedName);
 
-            added.OriginalValues["CommonName"].Should().Be.EqualTo(addedQueried.OriginalValues["CommonName"]);
-            added.OriginalValues["Member"].As<Collection<string>>()
-                .Should().Have.SameSequenceAs(addedQueried.OriginalValues["Member"].As<Collection<string>>());
+            added.OriginalValues["CommonName"].Should().Be(addedQueried.OriginalValues["CommonName"]);
+            added.OriginalValues["Member"].CastTo<Collection<string>>()
+                .Should().ContainInOrder(addedQueried.OriginalValues["Member"].CastTo<Collection<string>>());
             added.OriginalValues["distinguishedname"].Should()
-                .Be.EqualTo(addedQueried.OriginalValues["distinguishedname"]);
+                .Be(addedQueried.OriginalValues["distinguishedname"]);
 
             foreach (var member in members.GetRange(0, members.Count - 1))
             {
@@ -385,26 +385,26 @@ namespace LinqToLdap.Tests
             }
 
             int removedIndex = members.IndexOf(added.Member[0]);
-            added.Member.Should().Not.Contain(members.Last());
+            added.Member.Should().NotContain(members.Last());
             added.Member.RemoveAt(0);
             added.Member.Add(members.Last());
 
             var updated = _context.UpdateAndGet(added);
 
-            updated.Should().Not.Be.EqualTo(added);
+            updated.Should().NotBe(added);
 
-            updated.Member.Count.Should().Be.EqualTo(members.Count - 1);
-            updated.Member.Should().Not.Contain(members[removedIndex]);
+            updated.Member.Count.Should().Be(members.Count - 1);
+            updated.Member.Should().NotContain(members[removedIndex]);
             updated.Member.Should().Contain(members.Last());
 
-            updated.OriginalValues["CommonName"].Should().Be.EqualTo("TestGroup");
-            updated.OriginalValues["distinguishedname"].Should().Be.EqualTo(added.DistinguishedName);
+            updated.OriginalValues["CommonName"].Should().Be("TestGroup");
+            updated.OriginalValues["distinguishedname"].Should().Be(added.DistinguishedName);
 
-            updated.OriginalValues["CommonName"].Should().Be.EqualTo(addedQueried.OriginalValues["CommonName"]);
-            updated.OriginalValues["Member"].As<Collection<string>>()
-                .Should().Have.SameSequenceAs(updated.Member);
+            updated.OriginalValues["CommonName"].Should().Be(addedQueried.OriginalValues["CommonName"]);
+            updated.OriginalValues["Member"].CastTo<Collection<string>>()
+                .Should().ContainInOrder(updated.Member);
             updated.OriginalValues["distinguishedname"].Should()
-                .Be.EqualTo(addedQueried.OriginalValues["distinguishedname"]);
+                .Be(addedQueried.OriginalValues["distinguishedname"]);
 
             _context.Delete(updated.DistinguishedName);
         }
@@ -415,7 +415,7 @@ namespace LinqToLdap.Tests
         {
             var members = _context.Query<IntegrationUserTest>().Select(u => u.DistinguishedName).ToList();
 
-            members.Count.Should().Be.GreaterThan(2);
+            members.Count.Should().BeGreaterThan(2);
             var group = new IntegrationGroupTest
             {
                 Member = new Collection<string>(members.Skip(1).ToArray())
@@ -427,19 +427,19 @@ namespace LinqToLdap.Tests
             {
                 var added = _context.AddAndGet(group);
 
-                added.Member.Should().Not.Contain(members.First()).And.Have.Count.EqualTo(members.Count - 1);
+                added.Member.Should().NotContain(members.First()).And.HaveCount(members.Count - 1);
 
                 _context.AddAttribute(group.DistinguishedName, "member", members.First());
 
                 added = _context.GetByDN<IntegrationGroupTest>(group.DistinguishedName);
 
-                added.Member.Should().Contain(members.First()).And.Have.Count.EqualTo(members.Count);
+                added.Member.Should().Contain(members.First()).And.HaveCount(members.Count);
 
                 _context.DeleteAttribute(group.DistinguishedName, "member", members.First());
 
                 added = _context.GetByDN<IntegrationGroupTest>(group.DistinguishedName);
 
-                added.Member.Should().Not.Contain(members.First()).And.Have.Count.EqualTo(members.Count - 1);
+                added.Member.Should().NotContain(members.First()).And.HaveCount(members.Count - 1);
             }
             finally
             {
@@ -458,7 +458,7 @@ namespace LinqToLdap.Tests
         public void Can_Add_Update_ModifyMembersDynamic_Group()
         {
             var members = _context.Query<IntegrationUserTest>().Select(u => u.DistinguishedName).ToList();
-            members.Count.Should().Be.GreaterThan(0);
+            members.Count.Should().BeGreaterThan(0);
 
             var group = new DirectoryAttributes("CN=TestGroup,CN=Roles,CN=Employees,DC=Northwind,DC=local");
 
@@ -475,7 +475,7 @@ namespace LinqToLdap.Tests
             }
 
             int removedIndex = members.IndexOf(addedMembers[0]);
-            addedMembers.Should().Not.Contain(members.Last());
+            addedMembers.Should().NotContain(members.Last());
             addedMembers.RemoveAt(0);
             addedMembers.Add(members.Last());
 
@@ -483,7 +483,7 @@ namespace LinqToLdap.Tests
 
             var updated = _context.UpdateAndGet(added);
 
-            updated.GetStrings("member").Should().Not.Contain(members[removedIndex])
+            updated.GetStrings("member").Should().NotContain(members[removedIndex])
                 .And.Contain(members.Last());
 
             _context.Delete(updated.DistinguishedName);
@@ -495,9 +495,9 @@ namespace LinqToLdap.Tests
         {
             string dn = "CN=Users2,CN=Employees,DC=Northwind,DC=local";
             var countResult = _context.Query(dn).Count(da => !Filter.Equal(da, "objectClass", "container", false));
-            countResult.Should().Be.GreaterThanOrEqualTo(4);
+            countResult.Should().BeGreaterThanOrEqualTo(4);
             var newDn = _context.RenameEntry(dn, "Users Rename");
-            _context.Query(newDn).Count(da => !Filter.Equal(da, "objectClass", "container", false)).Should().Be.GreaterThanOrEqualTo(4);
+            _context.Query(newDn).Count(da => !Filter.Equal(da, "objectClass", "container", false)).Should().BeGreaterThanOrEqualTo(4);
             _context.RenameEntry(newDn, "Users2");
         }
 
@@ -506,7 +506,7 @@ namespace LinqToLdap.Tests
         public void ListServerAttributes()
         {
             var attributes = _context.ListServerAttributes();
-            attributes.Should().Not.Be.Null().And.Not.Be.Empty();
+            attributes.Should().NotBeNull().And.NotBeEmpty();
         }
 
         [TestMethod]
@@ -519,14 +519,14 @@ namespace LinqToLdap.Tests
                 .Take(2)
                 .ToList();
 
-            response2.Count.Should().Be.EqualTo(2);
+            response2.Count.Should().Be(2);
         }
 
         [TestMethod]
         [TestCategory("Integration")]
         public void ToArray_Works()
         {
-            _context.Query<IntegrationUserTest>().ToArray().Should().Not.Be.Null().And.Not.Be.Empty();
+            _context.Query<IntegrationUserTest>().ToArray().Should().NotBeNull().And.NotBeEmpty();
         }
 
         [TestMethod]
@@ -547,7 +547,7 @@ namespace LinqToLdap.Tests
             _context.Delete(container.DistinguishedName, new TreeDeleteControl());
 
             Executing.This(() => _context.GetByDN(container.DistinguishedName))
-                .Should().Throw<DirectoryOperationException>().And.Exception.Message
+                .Should().Throw<DirectoryOperationException>().And.GetBaseException().Message
                 .Should().Contain("does not exist");
         }
 
@@ -563,7 +563,7 @@ namespace LinqToLdap.Tests
             var group = _context.RetrieveRanges<string>(dn, attribute);
 
             //assert
-            group.Should().Have.Count.GreaterThan(2000);
+            group.Should().HaveCountGreaterThan(2000);
         }
 
         [TestMethod]
@@ -578,7 +578,7 @@ namespace LinqToLdap.Tests
             var group = _context.RetrieveRanges<string>(dn, attribute, 3000);
 
             //assert
-            group.Should().Have.Count.GreaterThan(5000).And.Be.LessThan(10000);
+            group.Should().HaveCountGreaterThan(5000).And.HaveCountLessThan(10000);
         }
 
         [TestMethod]
@@ -587,8 +587,8 @@ namespace LinqToLdap.Tests
         {
             //act
             Executing.This(() => _context.Query("CN=Users,CN=Employees,DC=Northwind,DC=local").WithoutPaging().ToList())
-                .Should().Throw<DirectoryOperationException>().And.Exception.Message
-                .Should().Be.EqualTo("The size limit was exceeded");
+                .Should().Throw<DirectoryOperationException>().And.GetBaseException().Message
+                .Should().Be("The size limit was exceeded");
         }
 
         [TestMethod]
@@ -601,7 +601,7 @@ namespace LinqToLdap.Tests
                     .Select("distinguishedName")
                     .ToList();
 
-                users.Should().Not.Be.Empty();
+                users.Should().NotBeEmpty();
             }
         }
 
@@ -630,7 +630,7 @@ namespace LinqToLdap.Tests
                 list.AddRange(page);
             }
 
-            list.Should().Have.Count.GreaterThan(1000);
+            list.Should().HaveCountGreaterThan(1000);
         }
 
         [TestMethod]
@@ -679,17 +679,17 @@ namespace LinqToLdap.Tests
             //prepare
             var readerGroup = _context.Query<IntegrationGroupTest>()
                 .FirstOrDefault(c => c.CommonName == "Readers");
-            readerGroup.Should().Not.Be.Null();
-            readerGroup.Member.Should().Be.Null();
+            readerGroup.Should().NotBeNull();
+            readerGroup.Member.Should().BeNull();
             var user = _context.Query<IntegrationUserTest>().FirstOrDefault();
-            user.Should().Not.Be.Null();
+            user.Should().NotBeNull();
             readerGroup.Member = new Collection<string>(new List<string> { user.DistinguishedName });
 
             //act
             var updated = _context.UpdateAndGet(readerGroup);
 
             //assert
-            updated.Should().Not.Be.SameInstanceAs(readerGroup);
+            updated.Should().NotBeSameAs(readerGroup);
             updated.Member.Should().Contain(user.DistinguishedName);
 
             //prepare
@@ -699,8 +699,8 @@ namespace LinqToLdap.Tests
             var updatedAgain = _context.UpdateAndGet(updated);
 
             //assert
-            updatedAgain.Should().Not.Be.SameInstanceAs(updated);
-            updatedAgain.Member.Should().Be.Null();
+            updatedAgain.Should().NotBeSameAs(updated);
+            updatedAgain.Member.Should().BeNull();
         }
 
         [TestMethod]
@@ -719,12 +719,12 @@ namespace LinqToLdap.Tests
                 .Skip(skip)
                 .Take(700);
 
-            results.Should().Not.Be.Empty().And.Have.Count.EqualTo(700);
-            results.As<IVirtualListView<IntegrationUserTest>>().Should().Not.Be.Null();
-            results.As<IVirtualListView<IntegrationUserTest>>().ContextId
-                .Should().Not.Be.Null();
-            results.As<IVirtualListView<IntegrationUserTest>>().TargetPosition
-                .Should().Be.GreaterThanOrEqualTo(0);
+            results.Should().NotBeEmpty().And.HaveCount(700);
+            results.CastTo<IVirtualListView<IntegrationUserTest>>().Should().NotBeNull();
+            results.CastTo<IVirtualListView<IntegrationUserTest>>().ContextId
+                .Should().NotBeNull();
+            results.CastTo<IVirtualListView<IntegrationUserTest>>().TargetPosition
+                .Should().BeGreaterThanOrEqualTo(0);
 
             SearchRequest searchRequest = new SearchRequest
                                                     (IntegrationUserTest.NamingContext2,
@@ -745,15 +745,15 @@ namespace LinqToLdap.Tests
             SearchResponse searchResponse =
                 (SearchResponse)_context.SendRequest(searchRequest);
 
-            searchResponse.Should().Not.Be.Null();
-            searchResponse.Entries.Count.Should().Be.GreaterThan(0);
-            results.As<IVirtualListView<IntegrationUserTest>>().ContentCount
-                .Should().Be.EqualTo(searchResponse.Controls[1].As<VlvResponseControl>().ContentCount);
+            searchResponse.Should().NotBeNull();
+            searchResponse.Entries.Count.Should().BeGreaterThan(0);
+            results.CastTo<IVirtualListView<IntegrationUserTest>>().ContentCount
+                .Should().Be(searchResponse.Controls[1].CastTo<VlvResponseControl>().ContentCount);
 
             results.Select(x => x.DistinguishedName)
                 .OrderBy(x => x)
                 .Should()
-                .Have.SameSequenceAs(
+                .ContainInOrder(
                     searchResponse.Entries.Cast<SearchResultEntry>().Select(x => x.DistinguishedName).OrderBy(x => x));
         }
 
@@ -763,26 +763,26 @@ namespace LinqToLdap.Tests
         {
             var people = _context.Query<PersonInheritanceTest>().ToList();
 
-            people.Any(x => x is OrgPersonInheritanceTest).Should().Be.True();
-            people.Any(x => x is OrgPersonFlattenedInheritanceTest).Should().Be.False();
-            people.Any(x => x is UserInheritanceTest).Should().Be.True();
+            people.Any(x => x is OrgPersonInheritanceTest).Should().BeTrue();
+            people.Any(x => x is OrgPersonFlattenedInheritanceTest).Should().BeFalse();
+            people.Any(x => x is UserInheritanceTest).Should().BeTrue();
 
-            _context.Query<OrgPersonFlattenedInheritanceTest>().ToList().Should().Not.Be.Empty();
+            _context.Query<OrgPersonFlattenedInheritanceTest>().ToList().Should().NotBeEmpty();
 
             var utcNow = DateTime.UtcNow.AddDays(50);
             var user = people.OfType<UserInheritanceTest>().Skip(1).First();
-            user.City.Should().Not.Be.NullOrEmpty();
-            user.Title.Should().Not.Be.NullOrEmpty();
-            user.AccountExpires.Satisfies(x => x == null || x < utcNow);
+            user.City.Should().NotBeNullOrEmpty();
+            user.Title.Should().NotBeNullOrEmpty();
+            user.AccountExpires.Should().BeBefore(utcNow);
             user.AccountExpires = utcNow;
-            user.WhenCreated.Should().Have.Value();
+            user.WhenCreated.Should().HaveValue();
             _context.Update(user);
 
             var updatedUser =
                 _context.Query<PersonInheritanceTest>().FirstOrDefault(x => x.CommonName == user.CommonName);
 
-            updatedUser.Should().Not.Be.Null();
-            updatedUser.As<UserInheritanceTest>().AccountExpires.Should().Have.Value();
+            updatedUser.Should().NotBeNull();
+            updatedUser.CastTo<UserInheritanceTest>().AccountExpires.Should().HaveValue();
         }
 
         [TestMethod]
@@ -793,21 +793,21 @@ namespace LinqToLdap.Tests
 
             var user = people.FirstOrDefault(x => x is UserInheritanceTest);
 
-            user.Should().Not.Be.Null();
+            user.Should().NotBeNull();
 
             var getByDn = _context.GetByDN<PersonInheritanceTest>(user.DistinguishedName);
 
-            getByDn.Should().Be.InstanceOf<UserInheritanceTest>();
+            getByDn.Should().BeOfType<UserInheritanceTest>();
 
             var utcNow = DateTime.UtcNow.AddDays(50);
             var lastName = utcNow.ToString();
             getByDn.LastName = lastName;
-            getByDn.As<UserInheritanceTest>().AccountExpires = utcNow;
+            getByDn.CastTo<UserInheritanceTest>().AccountExpires = utcNow;
 
             var updated = _context.UpdateAndGet(getByDn);
-            updated.Should().Be.InstanceOf<UserInheritanceTest>();
-            updated.LastName.Should().Be.EqualTo(lastName);
-            updated.As<UserInheritanceTest>().AccountExpires.GetValueOrDefault().ToUniversalTime().Should().Be.EqualTo(utcNow);
+            updated.Should().BeOfType<UserInheritanceTest>();
+            updated.LastName.Should().Be(lastName);
+            updated.CastTo<UserInheritanceTest>().AccountExpires.GetValueOrDefault().ToUniversalTime().Should().Be(utcNow);
         }
 
         [TestMethod]
@@ -816,23 +816,23 @@ namespace LinqToLdap.Tests
         {
             var people = _context.Query<PersonCatchAllTest>().ToList();
 
-            people.Any(x => x is OrgPersonCatchAllTest).Should().Be.True();
+            people.Any(x => x is OrgPersonCatchAllTest).Should().BeTrue();
 
-            people.Last(x => !(x is OrgPersonCatchAllTest)).CommonName.Should().Not.Be.NullOrEmpty();
-            people.Last(x => !(x is OrgPersonCatchAllTest)).CatchAll.GetString("sn").Should().Not.Be.NullOrEmpty();
+            people.Last(x => !(x is OrgPersonCatchAllTest)).CommonName.Should().NotBeNullOrEmpty();
+            people.Last(x => !(x is OrgPersonCatchAllTest)).CatchAll.GetString("sn").Should().NotBeNullOrEmpty();
 
             var utcNow = DateTime.UtcNow.AddDays(50);
             var user = people.OfType<OrgPersonCatchAllTest>().Last();
-            user.CatchAll.GetString("l").Should().Not.Be.NullOrEmpty();
-            user.Title.Should().Not.Be.NullOrEmpty();
+            user.CatchAll.GetString("l").Should().NotBeNullOrEmpty();
+            user.Title.Should().NotBeNullOrEmpty();
 
             user.Title = utcNow.ToString("YY-MM-DD hhmm");
             user.CatchAll.Set("comment", utcNow.ToFileTime());
             var updatedUser = _context.UpdateAndGet(user);
 
-            updatedUser.Should().Not.Be.Null();
-            updatedUser.As<OrgPersonCatchAllTest>().Title.Should().Be.EqualTo(utcNow.ToString("YY-MM-DD hhmm"));
-            updatedUser.As<OrgPersonCatchAllTest>().CatchAll.GetDateTime("comment", null).GetValueOrDefault().ToUniversalTime().Should().Be.EqualTo(utcNow);
+            updatedUser.Should().NotBeNull();
+            updatedUser.CastTo<OrgPersonCatchAllTest>().Title.Should().Be(utcNow.ToString("YY-MM-DD hhmm"));
+            updatedUser.CastTo<OrgPersonCatchAllTest>().CatchAll.GetDateTime("comment", null).GetValueOrDefault().ToUniversalTime().Should().Be(utcNow);
         }
 
         [TestMethod]
@@ -854,14 +854,14 @@ namespace LinqToLdap.Tests
                 _context.Delete(added.DistinguishedName);
             }
 
-            _preAddNotified.Should().Be.True();
-            _postAddNotified.Should().Be.True();
+            _preAddNotified.Should().BeTrue();
+            _postAddNotified.Should().BeTrue();
 
-            _preUpdateNotified.Should().Be.True();
-            _postUpdateNotified.Should().Be.True();
+            _preUpdateNotified.Should().BeTrue();
+            _postUpdateNotified.Should().BeTrue();
 
-            _preDeleteNotified.Should().Be.True();
-            _postDeleteNotified.Should().Be.True();
+            _preDeleteNotified.Should().BeTrue();
+            _postDeleteNotified.Should().BeTrue();
         }
 
 #if !NET35
@@ -906,9 +906,9 @@ namespace LinqToLdap.Tests
 
         public void Notify(ListenerPreArgs<object, AddRequest> preArgs)
         {
-            preArgs.Entry.Should().Not.Be.Null();
-            preArgs.Request.Should().Not.Be.Null();
-            preArgs.Connection.Should().Not.Be.Null();
+            preArgs.Entry.Should().NotBeNull();
+            preArgs.Request.Should().NotBeNull();
+            preArgs.Connection.Should().NotBeNull();
 
             _preAddNotified = true;
         }
@@ -917,9 +917,9 @@ namespace LinqToLdap.Tests
 
         public void Notify(ListenerPreArgs<object, ModifyRequest> preArgs)
         {
-            preArgs.Entry.Should().Not.Be.Null();
-            preArgs.Request.Should().Not.Be.Null();
-            preArgs.Connection.Should().Not.Be.Null();
+            preArgs.Entry.Should().NotBeNull();
+            preArgs.Request.Should().NotBeNull();
+            preArgs.Connection.Should().NotBeNull();
 
             _preUpdateNotified = true;
         }
@@ -928,9 +928,9 @@ namespace LinqToLdap.Tests
 
         public void Notify(ListenerPreArgs<string, DeleteRequest> preArgs)
         {
-            preArgs.Entry.Should().Not.Be.Null();
-            preArgs.Request.Should().Not.Be.Null();
-            preArgs.Connection.Should().Not.Be.Null();
+            preArgs.Entry.Should().NotBeNull();
+            preArgs.Request.Should().NotBeNull();
+            preArgs.Connection.Should().NotBeNull();
 
             preArgs.Request.Controls.Add(new TreeDeleteControl());
 
@@ -941,11 +941,11 @@ namespace LinqToLdap.Tests
 
         public void Notify(ListenerPostArgs<object, AddRequest, AddResponse> postArgs)
         {
-            postArgs.Entry.Should().Not.Be.Null();
-            postArgs.Request.Should().Not.Be.Null();
-            postArgs.Connection.Should().Not.Be.Null();
-            postArgs.Response.Should().Not.Be.Null();
-            postArgs.Response.ResultCode.Should().Be.EqualTo(ResultCode.Success);
+            postArgs.Entry.Should().NotBeNull();
+            postArgs.Request.Should().NotBeNull();
+            postArgs.Connection.Should().NotBeNull();
+            postArgs.Response.Should().NotBeNull();
+            postArgs.Response.ResultCode.Should().Be(ResultCode.Success);
             _postAddNotified = true;
         }
 
@@ -953,11 +953,11 @@ namespace LinqToLdap.Tests
 
         public void Notify(ListenerPostArgs<object, ModifyRequest, ModifyResponse> postArgs)
         {
-            postArgs.Entry.Should().Not.Be.Null();
-            postArgs.Request.Should().Not.Be.Null();
-            postArgs.Response.Should().Not.Be.Null();
-            postArgs.Response.ResultCode.Should().Be.EqualTo(ResultCode.Success);
-            postArgs.Connection.Should().Not.Be.Null();
+            postArgs.Entry.Should().NotBeNull();
+            postArgs.Request.Should().NotBeNull();
+            postArgs.Response.Should().NotBeNull();
+            postArgs.Response.ResultCode.Should().Be(ResultCode.Success);
+            postArgs.Connection.Should().NotBeNull();
             _postUpdateNotified = true;
         }
 
@@ -965,11 +965,11 @@ namespace LinqToLdap.Tests
 
         public void Notify(ListenerPostArgs<string, DeleteRequest, DeleteResponse> postArgs)
         {
-            postArgs.Entry.Should().Not.Be.Null();
-            postArgs.Request.Should().Not.Be.Null();
-            postArgs.Response.Should().Not.Be.Null();
-            postArgs.Response.ResultCode.Should().Be.EqualTo(ResultCode.Success);
-            postArgs.Connection.Should().Not.Be.Null();
+            postArgs.Entry.Should().NotBeNull();
+            postArgs.Request.Should().NotBeNull();
+            postArgs.Response.Should().NotBeNull();
+            postArgs.Response.ResultCode.Should().Be(ResultCode.Success);
+            postArgs.Connection.Should().NotBeNull();
 
             _postDeleteNotified = true;
         }

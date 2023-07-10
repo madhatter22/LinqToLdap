@@ -2,7 +2,7 @@
 using LinqToLdap.Exceptions;
 using LinqToLdap.Mapping.PropertyMappings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping.PropertyMappings
 {
@@ -32,7 +32,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(true);
 
             //assert
-            value.Should().Be.EqualTo("TRUE");
+            value.Should().Be("TRUE");
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueToFilter(false);
 
             //assert
-            value.Should().Be.EqualTo("FALSE");
+            value.Should().Be("FALSE");
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", "TRUE"), "dn");
 
             //assert
-            value.Should().Be.EqualTo(true);
+            value.Should().Be(true);
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(new DirectoryAttribute("name", "FALSE"), "dn");
 
             //assert
-            value.Should().Be.EqualTo(false);
+            value.Should().Be(false);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.FormatValueFromDirectory(null, "dn");
 
             //assert
-            value.Should().Be.Null();
+            value.Should().BeNull();
         }
 
         [TestMethod]
@@ -111,9 +111,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value[0].Should().Be.EqualTo("TRUE");
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value[0].Should().Be("TRUE");
         }
 
         [TestMethod]
@@ -127,9 +127,9 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.GetDirectoryAttributeModification(this);
 
             //assert
-            value.Name.Should().Be.EqualTo(_mappingArguments.AttributeName);
-            value.Operation.Should().Be.EqualTo(DirectoryAttributeOperation.Replace);
-            value[0].Should().Be.EqualTo("FALSE");
+            value.Name.Should().Be(_mappingArguments.AttributeName);
+            value.Operation.Should().Be(DirectoryAttributeOperation.Replace);
+            value[0].Should().Be("FALSE");
         }
 
         [TestMethod]
@@ -143,8 +143,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, true, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -158,8 +158,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, true, out modification);
 
             //assert
-            value.Should().Be.True();
-            modification.Should().Be.Null();
+            value.Should().BeTrue();
+            modification.Should().BeNull();
         }
 
         [TestMethod]
@@ -173,8 +173,8 @@ namespace LinqToLdap.Tests.Mapping.PropertyMappings
             var value = propertyMapping.IsEqual(this, true, out modification);
 
             //assert
-            value.Should().Be.False();
-            modification.Should().Not.Be.Null();
+            value.Should().BeFalse();
+            modification.Should().NotBeNull();
         }
     }
 }

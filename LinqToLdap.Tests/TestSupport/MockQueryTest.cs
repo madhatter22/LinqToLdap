@@ -5,7 +5,7 @@ using LinqToLdap.Collections;
 using LinqToLdap.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.TestSupport
 {
@@ -29,8 +29,8 @@ namespace LinqToLdap.Tests.TestSupport
                 .ToList();
 
             //assert
-            query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(1);
-            result.Should().Be.SameInstanceAs(list);
+            query.MockProvider.ExecutedExpressions.Should().HaveCount(1);
+            result.Should().BeSameAs(list);
         }
 
         [TestMethod]
@@ -54,15 +54,15 @@ namespace LinqToLdap.Tests.TestSupport
                 .Select(x => x.GetString("whatever"))
                 .FirstOrDefault();
 
-            query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(2);
+            query.MockProvider.ExecutedExpressions.Should().HaveCount(2);
             query.MockProvider.ExecutedExpressions[0].ToString()
                 .Should().Contain("Where")
-                .And.Not.Contain("FirstOrDefault");
+                .And.NotContain("FirstOrDefault");
             query.MockProvider.ExecutedExpressions[1].ToString()
                 .Should().Contain("FirstOrDefault")
-                .And.Not.Contain("Where");
-            result1.Should().Have.SameSequenceAs(array);
-            result2.Should().Be.EqualTo(item);
+                .And.NotContain("Where");
+            result1.Should().ContainInOrder(array);
+            result2.Should().Be(item);
         }
 
         [TestMethod]
@@ -84,14 +84,14 @@ namespace LinqToLdap.Tests.TestSupport
                 .Select(x => x.GetString("whatever"))
                 .ToArray();
 
-            query.MockProvider.ExecutedExpressions.Should().Have.Count.EqualTo(1);
+            query.MockProvider.ExecutedExpressions.Should().HaveCount(1);
             query.MockProvider.ExecutedExpressions[0].ToString()
                 .Should().Contain("Equal(x, \"x\", \"y\", False)")
                 .And.Contain("OrElse")
                 .And.Contain("Equal(x, \"a\", \"b\", True)")
                 .And.Contain("x => x.GetString(\"whatever\")");
 
-            result.Should().Have.SameSequenceAs(array);
+            result.Should().ContainInOrder(array);
         }
     }
 }

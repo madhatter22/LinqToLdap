@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Extensions
 {
@@ -11,7 +11,7 @@ namespace LinqToLdap.Tests.Extensions
         {
             string value = "!&:|~a\\*()\u0000z";
 
-            value.CleanFilterValue().Should().Be.EqualTo("\\21\\26\\3a\\7c\\7ea\\5c\\2a\\28\\29\\00z");
+            value.CleanFilterValue().Should().Be("\\21\\26\\3a\\7c\\7ea\\5c\\2a\\28\\29\\00z");
         }
     }
 }

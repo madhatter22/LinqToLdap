@@ -7,7 +7,7 @@ using LinqToLdap.Tests.TestSupport;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.QueryCommands
 {
@@ -43,13 +43,13 @@ namespace LinqToLdap.Tests.QueryCommands
 
             //assert
             var request = connection.SentRequests[0];
-            request.Controls[0].As<PageResultRequestControl>().PageSize.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Scope.Should().Be.EqualTo(SearchScope.Subtree);
-            request.As<SearchRequest>().Attributes.Count.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Attributes.Contains("cn").Should().Be.True();
-            request.As<SearchRequest>().TypesOnly.Should().Be.True();
+            request.Controls[0].CastTo<PageResultRequestControl>().PageSize.Should().Be(1);
+            request.CastTo<SearchRequest>().Scope.Should().Be(SearchScope.Subtree);
+            request.CastTo<SearchRequest>().Attributes.Count.Should().Be(1);
+            request.CastTo<SearchRequest>().Attributes.Contains("cn").Should().BeTrue();
+            request.CastTo<SearchRequest>().TypesOnly.Should().BeTrue();
 
-            result.Should().Be.EqualTo(false);
+            result.Should().Be(false);
         }
 
         [TestMethod]
@@ -80,13 +80,13 @@ namespace LinqToLdap.Tests.QueryCommands
 
             //assert
             var request = connection.SentRequests[0];
-            request.Controls.Count.Should().Be.EqualTo(0);
-            request.As<SearchRequest>().Scope.Should().Be.EqualTo(SearchScope.Subtree);
-            request.As<SearchRequest>().Attributes.Count.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Attributes.Contains("cn").Should().Be.True();
-            request.As<SearchRequest>().TypesOnly.Should().Be.True();
+            request.Controls.Count.Should().Be(0);
+            request.CastTo<SearchRequest>().Scope.Should().Be(SearchScope.Subtree);
+            request.CastTo<SearchRequest>().Attributes.Count.Should().Be(1);
+            request.CastTo<SearchRequest>().Attributes.Contains("cn").Should().BeTrue();
+            request.CastTo<SearchRequest>().TypesOnly.Should().BeTrue();
 
-            result.Should().Be.EqualTo(false);
+            result.Should().Be(false);
         }
 
         [TestMethod]
@@ -126,13 +126,13 @@ namespace LinqToLdap.Tests.QueryCommands
 
             //assert
             var request = connection.SentRequests[0];
-            request.Controls[0].As<PageResultRequestControl>().PageSize.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Scope.Should().Be.EqualTo(SearchScope.Subtree);
-            request.As<SearchRequest>().Attributes.Count.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Attributes.Contains("cn").Should().Be.True();
-            request.As<SearchRequest>().TypesOnly.Should().Be.True();
+            request.Controls[0].CastTo<PageResultRequestControl>().PageSize.Should().Be(1);
+            request.CastTo<SearchRequest>().Scope.Should().Be(SearchScope.Subtree);
+            request.CastTo<SearchRequest>().Attributes.Count.Should().Be(1);
+            request.CastTo<SearchRequest>().Attributes.Contains("cn").Should().BeTrue();
+            request.CastTo<SearchRequest>().TypesOnly.Should().BeTrue();
 
-            result.Should().Be.EqualTo(true);
+            result.Should().Be(true);
         }
 
         [TestMethod]
@@ -170,14 +170,14 @@ namespace LinqToLdap.Tests.QueryCommands
 
             //assert
             var request = connection.SentRequests[0];
-            command.FieldValueEx<SearchRequest>("SearchRequest").DistinguishedName.Should().Be.EqualTo("nc");
-            request.Controls[0].As<PageResultRequestControl>().PageSize.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Scope.Should().Be.EqualTo(SearchScope.Subtree);
-            request.As<SearchRequest>().Attributes.Count.Should().Be.EqualTo(1);
-            request.As<SearchRequest>().Attributes.Contains("cn").Should().Be.True();
-            request.As<SearchRequest>().TypesOnly.Should().Be.True();
+            command.FieldValueEx<SearchRequest>("SearchRequest").DistinguishedName.Should().Be("nc");
+            request.Controls[0].CastTo<PageResultRequestControl>().PageSize.Should().Be(1);
+            request.CastTo<SearchRequest>().Scope.Should().Be(SearchScope.Subtree);
+            request.CastTo<SearchRequest>().Attributes.Count.Should().Be(1);
+            request.CastTo<SearchRequest>().Attributes.Contains("cn").Should().BeTrue();
+            request.CastTo<SearchRequest>().TypesOnly.Should().BeTrue();
 
-            result.Should().Be.EqualTo(true);
+            result.Should().Be(true);
         }
     }
 }

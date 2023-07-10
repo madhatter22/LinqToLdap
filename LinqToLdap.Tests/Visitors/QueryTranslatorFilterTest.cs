@@ -11,7 +11,7 @@ using LinqToLdap.TestSupport;
 using LinqToLdap.Visitors;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Visitors
 {
@@ -142,7 +142,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         #region OC Tests
@@ -161,7 +161,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(x=assd))");
         }
 
         [TestMethod]
@@ -178,7 +178,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -195,7 +195,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -212,7 +212,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -229,7 +229,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(x=assd))");
         }
 
         [TestMethod]
@@ -246,7 +246,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(x=assd))");
         }
 
         [TestMethod]
@@ -263,7 +263,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectClass=oc1)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectClass=oc1)(x=assd))");
         }
 
         [TestMethod]
@@ -280,7 +280,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -297,7 +297,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -314,7 +314,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -331,7 +331,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
         }
 
         [TestMethod]
@@ -348,7 +348,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
         }
 
         [TestMethod]
@@ -369,7 +369,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(objectClass=oc1)(objectClass=oc2)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(objectClass=oc1)(objectClass=oc2)(x=assd))");
         }
 
         [TestMethod]
@@ -390,7 +390,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(objectClass=oc1)(objectClass=oc2)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(objectClass=oc1)(objectClass=oc2)(x=assd))");
         }
 
         [TestMethod]
@@ -411,7 +411,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(query.Provider.CastTo<MockQueryProvider>().CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(x=assd))");
         }
 
         [TestMethod]
@@ -432,7 +432,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
         }
 
         [TestMethod]
@@ -453,7 +453,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectCategory=oc)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectCategory=oc)(x=assd))");
         }
 
         [TestMethod]
@@ -474,7 +474,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
+            _factory.Filter.Should().Be("(&(objectClass=oc1)(objectClass=oc2)(x=assd))");
         }
 
         [TestMethod]
@@ -495,7 +495,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         #endregion OC Tests
@@ -509,7 +509,7 @@ namespace LinqToLdap.Tests.Visitors
             //act
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
-            _factory.Filter.Should().Be.EqualTo("(&(x=s)(y=a))");
+            _factory.Filter.Should().Be("(&(x=s)(y=a))");
         }
 
         [TestMethod]
@@ -521,7 +521,7 @@ namespace LinqToLdap.Tests.Visitors
             //act
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
-            _factory.Filter.Should().Be.EqualTo("(&(x=s)(b=TRUE))");
+            _factory.Filter.Should().Be("(&(x=s)(b=TRUE))");
         }
 
         [TestMethod]
@@ -533,7 +533,7 @@ namespace LinqToLdap.Tests.Visitors
             //act
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
-            _factory.Filter.Should().Be.EqualTo("(&(x=s)(b=FALSE))");
+            _factory.Filter.Should().Be("(&(x=s)(b=FALSE))");
         }
 
         [TestMethod]
@@ -545,7 +545,7 @@ namespace LinqToLdap.Tests.Visitors
             //act
             _translator.Translate(_queryContext.ActiveProvider.CurrentExpression);
 
-            _factory.Filter.Should().Be.EqualTo("(&(x=s)(y=a))");
+            _factory.Filter.Should().Be("(&(x=s)(y=a))");
         }
 
         [TestMethod]
@@ -558,7 +558,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=assd)(y=as)(z=2))");
+            _factory.Filter.Should().Be("(&(x=assd)(y=as)(z=2))");
         }
 
         [TestMethod]
@@ -571,7 +571,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=assd)(y=as)(z=2))");
+            _factory.Filter.Should().Be("(&(x=assd)(y=as)(z=2))");
         }
 
         [TestMethod]
@@ -584,7 +584,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -597,7 +597,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -610,7 +610,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=ASSD)");
+            _factory.Filter.Should().Be("(x=ASSD)");
         }
 
         [TestMethod]
@@ -623,7 +623,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=ASSD)");
+            _factory.Filter.Should().Be("(x=ASSD)");
         }
 
         [TestMethod]
@@ -636,7 +636,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -649,7 +649,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd)");
+            _factory.Filter.Should().Be("(x=assd)");
         }
 
         [TestMethod]
@@ -662,7 +662,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=assd\\7e)");
+            _factory.Filter.Should().Be("(x=assd\\7e)");
         }
 
         [TestMethod]
@@ -675,7 +675,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=assd~)(y=blah))");
+            _factory.Filter.Should().Be("(&(x=assd~)(y=blah))");
         }
 
         [TestMethod]
@@ -688,7 +688,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=p1)(x=assd)(y=blah))");
+            _factory.Filter.Should().Be("(&(x=p1)(x=assd)(y=blah))");
         }
 
         [TestMethod]
@@ -701,7 +701,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=p1)(x=assd)(y=blah))");
+            _factory.Filter.Should().Be("(&(x=p1)(x=assd)(y=blah))");
         }
 
         [TestMethod]
@@ -714,7 +714,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(!(x=assd))(!(y=as)))");
+            _factory.Filter.Should().Be("(&(!(x=assd))(!(y=as)))");
         }
 
         [TestMethod]
@@ -727,7 +727,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*))");
+            _factory.Filter.Should().Be("(!(x=*))");
         }
 
         [TestMethod]
@@ -740,7 +740,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*))");
+            _factory.Filter.Should().Be("(!(x=*))");
         }
 
         [TestMethod]
@@ -764,7 +764,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=*)");
+            _factory.Filter.Should().Be("(x=*)");
         }
 
         [TestMethod]
@@ -777,7 +777,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*))");
+            _factory.Filter.Should().Be("(!(x=*))");
         }
 
         [TestMethod]
@@ -790,7 +790,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=*)");
+            _factory.Filter.Should().Be("(x=*)");
         }
 
         [TestMethod]
@@ -803,7 +803,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(x=1)(x=2)(x=3))");
+            _factory.Filter.Should().Be("(|(x=1)(x=2)(x=3))");
         }
 
         [TestMethod]
@@ -816,7 +816,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(|(x=1)(x=2)(x=3))(x=4))");
+            _factory.Filter.Should().Be("(&(|(x=1)(x=2)(x=3))(x=4))");
         }
 
         [TestMethod]
@@ -829,7 +829,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(|(x=1)(x=2)(x=3))(x=4))");
+            _factory.Filter.Should().Be("(&(|(x=1)(x=2)(x=3))(x=4))");
         }
 
         [TestMethod]
@@ -842,7 +842,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=1)(x=2)(x=3))");
+            _factory.Filter.Should().Be("(&(x=1)(x=2)(x=3))");
         }
 
         [TestMethod]
@@ -855,7 +855,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=1)(|(x=2)(x=3)(x=4)))");
+            _factory.Filter.Should().Be("(&(x=1)(|(x=2)(x=3)(x=4)))");
         }
 
         [TestMethod]
@@ -868,7 +868,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(x=string1)(x=string2)(x=string3))");
+            _factory.Filter.Should().Be("(|(x=string1)(x=string2)(x=string3))");
         }
 
         [TestMethod]
@@ -881,7 +881,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(x=string1)(x=string2)(x=string3))");
+            _factory.Filter.Should().Be("(|(x=string1)(x=string2)(x=string3))");
         }
 
         [TestMethod]
@@ -894,7 +894,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(|(x=string1)(x=string2)(x=string3))(x=assd))");
+            _factory.Filter.Should().Be("(&(|(x=string1)(x=string2)(x=string3))(x=assd))");
         }
 
         [TestMethod]
@@ -908,7 +908,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(x=string1)(x=string2)(x=string3))");
+            _factory.Filter.Should().Be("(|(x=string1)(x=string2)(x=string3))");
         }
 
         [TestMethod]
@@ -922,7 +922,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(!(x=string1))(!(x=string2))(!(x=string3)))");
+            _factory.Filter.Should().Be("(|(!(x=string1))(!(x=string2))(!(x=string3)))");
         }
 
         [TestMethod]
@@ -935,7 +935,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(z>=1)(!(z=1)))");
+            _factory.Filter.Should().Be("(&(z>=1)(!(z=1)))");
         }
 
         [TestMethod]
@@ -948,7 +948,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(z<=1)(!(z=1)))");
+            _factory.Filter.Should().Be("(&(z<=1)(!(z=1)))");
         }
 
         [TestMethod]
@@ -961,7 +961,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(z>=1)");
+            _factory.Filter.Should().Be("(z>=1)");
         }
 
         [TestMethod]
@@ -974,7 +974,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(z<=1)");
+            _factory.Filter.Should().Be("(z<=1)");
         }
 
         [TestMethod]
@@ -987,7 +987,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(z<=1)(!(z=1)))");
+            _factory.Filter.Should().Be("(&(z<=1)(!(z=1)))");
         }
 
         [TestMethod]
@@ -1000,7 +1000,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(z>=1)(!(z=1)))");
+            _factory.Filter.Should().Be("(&(z>=1)(!(z=1)))");
         }
 
         [TestMethod]
@@ -1013,7 +1013,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(z<=1)");
+            _factory.Filter.Should().Be("(z<=1)");
         }
 
         [TestMethod]
@@ -1026,7 +1026,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(z>=1)");
+            _factory.Filter.Should().Be("(z>=1)");
         }
 
         [TestMethod]
@@ -1040,7 +1040,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=anon)(y=*anon*))");
+            _factory.Filter.Should().Be("(&(x=anon)(y=*anon*))");
         }
 
         [TestMethod]
@@ -1054,7 +1054,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=anon)(y=*anon*))");
+            _factory.Filter.Should().Be("(&(x=anon)(y=*anon*))");
         }
 
         [TestMethod]
@@ -1068,7 +1068,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=anon)");
+            _factory.Filter.Should().Be("(x=anon)");
         }
 
         [TestMethod]
@@ -1082,7 +1082,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x=anon)(x=anon2))");
+            _factory.Filter.Should().Be("(&(x=anon)(x=anon2))");
         }
 
         [TestMethod]
@@ -1096,7 +1096,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=anon)");
+            _factory.Filter.Should().Be("(x=anon)");
         }
 
         [TestMethod]
@@ -1110,7 +1110,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=anon))");
+            _factory.Filter.Should().Be("(!(x=anon))");
         }
 
         [TestMethod]
@@ -1124,7 +1124,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=anon))");
+            _factory.Filter.Should().Be("(!(x=anon))");
         }
 
         [TestMethod]
@@ -1138,7 +1138,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=anon))");
+            _factory.Filter.Should().Be("(!(x=anon))");
         }
 
         [TestMethod]
@@ -1152,7 +1152,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo(string.Format("(c={0})", guid.ToStringOctet()));
+            _factory.Filter.Should().Be(string.Format("(c={0})", guid.ToStringOctet()));
         }
 
         [TestMethod]
@@ -1166,7 +1166,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(a=*))");
+            _factory.Filter.Should().Be("(!(a=*))");
         }
         
         [TestMethod]
@@ -1179,7 +1179,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(b=TRUE)");
+            _factory.Filter.Should().Be("(b=TRUE)");
         }
 
         [TestMethod]
@@ -1192,7 +1192,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(b=TRUE)");
+            _factory.Filter.Should().Be("(b=TRUE)");
         }
 
         [TestMethod]
@@ -1205,7 +1205,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(b=FALSE)");
+            _factory.Filter.Should().Be("(b=FALSE)");
         }
 
         [TestMethod]
@@ -1218,7 +1218,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(b=FALSE)");
+            _factory.Filter.Should().Be("(b=FALSE)");
         }
         
         [TestMethod]
@@ -1231,7 +1231,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x~=some value)");
+            _factory.Filter.Should().Be("(x~=some value)");
         }
 
         [TestMethod]
@@ -1244,7 +1244,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(prop~=some value\\7e)");
+            _factory.Filter.Should().Be("(prop~=some value\\7e)");
         }
 
         [TestMethod]
@@ -1257,7 +1257,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x~=some value~))");
+            _factory.Filter.Should().Be("(!(x~=some value~))");
         }
 
         [TestMethod]
@@ -1270,7 +1270,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(prop~=some value))");
+            _factory.Filter.Should().Be("(!(prop~=some value))");
         }
 
         [TestMethod]
@@ -1283,7 +1283,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=some value)");
+            _factory.Filter.Should().Be("(x=some value)");
         }
 
         [TestMethod]
@@ -1296,7 +1296,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=some value))");
+            _factory.Filter.Should().Be("(!(x=some value))");
         }
 
         [TestMethod]
@@ -1309,7 +1309,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(a=test)(|(x=a)(x=b)(x=c)(x=\\7e)))");
+            _factory.Filter.Should().Be("(&(a=test)(|(x=a)(x=b)(x=c)(x=\\7e)))");
         }
 
         [TestMethod]
@@ -1322,7 +1322,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=~))");
+            _factory.Filter.Should().Be("(!(x=~))");
         }
 
         [TestMethod]
@@ -1335,7 +1335,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=some value\\2a*)");
+            _factory.Filter.Should().Be("(x=some value\\2a*)");
         }
 
         [TestMethod]
@@ -1348,7 +1348,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=some value~*))");
+            _factory.Filter.Should().Be("(!(x=some value~*))");
         }
 
         [TestMethod]
@@ -1361,7 +1361,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=some value*))");
+            _factory.Filter.Should().Be("(!(x=some value*))");
         }
 
         [TestMethod]
@@ -1374,7 +1374,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=*some value\\2a)");
+            _factory.Filter.Should().Be("(x=*some value\\2a)");
         }
 
         [TestMethod]
@@ -1387,7 +1387,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*some value*))");
+            _factory.Filter.Should().Be("(!(x=*some value*))");
         }
 
         [TestMethod]
@@ -1400,7 +1400,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*some value))");
+            _factory.Filter.Should().Be("(!(x=*some value))");
         }
 
         [TestMethod]
@@ -1413,7 +1413,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=*some value\\2a*)");
+            _factory.Filter.Should().Be("(x=*some value\\2a*)");
         }
 
         [TestMethod]
@@ -1426,7 +1426,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*some value~*))");
+            _factory.Filter.Should().Be("(!(x=*some value~*))");
         }
 
         [TestMethod]
@@ -1439,7 +1439,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(x=*some value*))");
+            _factory.Filter.Should().Be("(!(x=*some value*))");
         }
 
         [TestMethod]
@@ -1452,7 +1452,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x>=1\\2a)");
+            _factory.Filter.Should().Be("(x>=1\\2a)");
         }
 
         [TestMethod]
@@ -1465,7 +1465,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x<=1~)");
+            _factory.Filter.Should().Be("(x<=1~)");
         }
 
         [TestMethod]
@@ -1478,7 +1478,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x<=1)");
+            _factory.Filter.Should().Be("(x<=1)");
         }
 
         [TestMethod]
@@ -1491,7 +1491,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x<=1\\2a)");
+            _factory.Filter.Should().Be("(x<=1\\2a)");
         }
 
         [TestMethod]
@@ -1504,7 +1504,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x>=1~)");
+            _factory.Filter.Should().Be("(x>=1~)");
         }
 
         [TestMethod]
@@ -1517,7 +1517,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x>=1)");
+            _factory.Filter.Should().Be("(x>=1)");
         }
 
         [TestMethod]
@@ -1530,7 +1530,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x<=1\\2a)(!(x=1\\2a)))");
+            _factory.Filter.Should().Be("(&(x<=1\\2a)(!(x=1\\2a)))");
         }
 
         [TestMethod]
@@ -1543,7 +1543,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x>=1~)");
+            _factory.Filter.Should().Be("(x>=1~)");
         }
 
         [TestMethod]
@@ -1556,7 +1556,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x>=1)");
+            _factory.Filter.Should().Be("(x>=1)");
         }
 
         [TestMethod]
@@ -1569,7 +1569,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(&(x>=1\\2a)(!(x=1\\2a)))");
+            _factory.Filter.Should().Be("(&(x>=1\\2a)(!(x=1\\2a)))");
         }
 
         [TestMethod]
@@ -1582,7 +1582,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x<=1~)");
+            _factory.Filter.Should().Be("(x<=1~)");
         }
 
         [TestMethod]
@@ -1595,7 +1595,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x<=1)");
+            _factory.Filter.Should().Be("(x<=1)");
         }
 
         [TestMethod]
@@ -1610,7 +1610,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(d=1)");
+            _factory.Filter.Should().Be("(d=1)");
         }
 
         [TestMethod]
@@ -1625,7 +1625,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(d=Value2)");
+            _factory.Filter.Should().Be("(d=Value2)");
         }
 
         [TestMethod]
@@ -1644,7 +1644,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(x=ab)(x=ab)(&(x=a*)(|(x=b*)(x=b*))))");
+            _factory.Filter.Should().Be("(|(x=ab)(x=ab)(&(x=a*)(|(x=b*)(x=b*))))");
         }
 
         [TestMethod]
@@ -1663,7 +1663,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(|(x=ab)(x=ab)(&(|(x=a)(x=b)(x=c))(|(x=b*)(x=b*))))");
+            _factory.Filter.Should().Be("(|(x=ab)(x=ab)(&(|(x=a)(x=b)(x=c))(|(x=b*)(x=b*))))");
         }
 
         [TestMethod]
@@ -1676,7 +1676,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.Null();
+            _factory.Filter.Should().BeNull();
         }
 
         [TestMethod]
@@ -1690,7 +1690,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(a=" + now.Value.ToFileTime() + ")");
+            _factory.Filter.Should().Be("(a=" + now.Value.ToFileTime() + ")");
         }
 
         [TestMethod]
@@ -1704,7 +1704,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.Null();
+            _factory.Filter.Should().BeNull();
         }
 
         [TestMethod]
@@ -1718,7 +1718,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(a=" + now.ToFileTime() + ")");
+            _factory.Filter.Should().Be("(a=" + now.ToFileTime() + ")");
         }
 
         [TestMethod]
@@ -1731,7 +1731,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(a=*)");
+            _factory.Filter.Should().Be("(a=*)");
         }
 
         [TestMethod]
@@ -1744,7 +1744,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(a=*))");
+            _factory.Filter.Should().Be("(!(a=*))");
         }
 
         [TestMethod]
@@ -1757,7 +1757,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(prop1=*)");
+            _factory.Filter.Should().Be("(prop1=*)");
         }
 
         [TestMethod]
@@ -1770,7 +1770,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(a=*)");
+            _factory.Filter.Should().Be("(a=*)");
         }
 
         [TestMethod]
@@ -1783,7 +1783,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(prop1=*))");
+            _factory.Filter.Should().Be("(!(prop1=*))");
         }
 
         [TestMethod]
@@ -1796,7 +1796,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(prop1:1.2.840.113556.1.4.803:=2\\2a)");
+            _factory.Filter.Should().Be("(prop1:1.2.840.113556.1.4.803:=2\\2a)");
         }
 
         [TestMethod]
@@ -1809,7 +1809,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(!(prop1:1.2.840.113556.1.4.803:=2~))");
+            _factory.Filter.Should().Be("(!(prop1:1.2.840.113556.1.4.803:=2~))");
         }
 
         [TestMethod]
@@ -1822,7 +1822,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(a:1.2.840.113556.1.4.803:=2)");
+            _factory.Filter.Should().Be("(a:1.2.840.113556.1.4.803:=2)");
         }
 
         [TestMethod]
@@ -1835,7 +1835,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=*something*)");
+            _factory.Filter.Should().Be("(x=*something*)");
         }
 
         [TestMethod]
@@ -1849,7 +1849,7 @@ namespace LinqToLdap.Tests.Visitors
             _translator.Translate(_expression);
 
             //assert
-            _factory.Filter.Should().Be.EqualTo("(x=some string)");
+            _factory.Filter.Should().Be("(x=some string)");
         }
 
         private static IEnumerable<string> GetStrings()

@@ -2,7 +2,7 @@
 using LinqToLdap.Mapping;
 using LinqToLdap.Tests.TestSupport.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SharpTestsEx;
+using FluentAssertions;
 
 namespace LinqToLdap.Tests.Mapping
 {
@@ -43,25 +43,25 @@ namespace LinqToLdap.Tests.Mapping
                 .CastTo<SubTestClassMapping>();
 
             //assert
-            mapping.FieldValueEx<string>("_namingContext").Should().Be.EqualTo("subcontainer");
-            mapping.FieldValueEx<string>("_objectCategory").Should().Be.EqualTo("subcategory");
-            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().Be.Equals(new[] { "subclass" });
+            mapping.FieldValueEx<string>("_namingContext").Should().Be("subcontainer");
+            mapping.FieldValueEx<string>("_objectCategory").Should().Be("subcategory");
+            mapping.FieldValueEx<IEnumerable<string>>("_objectClass").Should().ContainInOrder(new[] { "subclass" });
 
             var propertyMappings = mapping.PropertyMappings;
-            propertyMappings.Should().Have.Count.EqualTo(5);
+            propertyMappings.Should().HaveCount(5);
 
-            var first = propertyMappings[0].As<IPropertyMappingBuilder>();
-            var second = propertyMappings[3].As<IPropertyMappingBuilder>();
-            var third = propertyMappings[4].As<IPropertyMappingBuilder>();
+            var first = propertyMappings[0].CastTo<IPropertyMappingBuilder>();
+            var second = propertyMappings[3].CastTo<IPropertyMappingBuilder>();
+            var third = propertyMappings[4].CastTo<IPropertyMappingBuilder>();
 
-            first.AttributeName.Should().Be.EqualTo("prop2");
-            first.PropertyInfo.Should().Not.Be.Null();
+            first.AttributeName.Should().Be("prop2");
+            first.PropertyInfo.Should().NotBeNull();
 
-            second.ReadOnlyConfiguration.Should().Be.EqualTo(ReadOnly.Always);
-            second.AttributeName.Should().Be.EqualTo("ou");
-            second.PropertyInfo.Should().Not.Be.Null();
+            second.ReadOnlyConfiguration.Should().Be(ReadOnly.Always);
+            second.AttributeName.Should().Be("ou");
+            second.PropertyInfo.Should().NotBeNull();
 
-            third.PropertyName.Should().Be.EqualTo("Property6");
+            third.PropertyName.Should().Be("Property6");
         }
     }
 }
